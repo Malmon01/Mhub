@@ -1,674 +1,2440 @@
-
-	TXScLMtYr vJIhewA QfgIah  (ESobumX ZjOoNHgN / adkaWbq)
-	- เมนูซ้าย: ฟาร์ม / หาตัว / สวน / เพิ่ม PrEupHF
+--[[
+	Farm Hub UI  (Roblox Lua / Luau)
+	- เมนูซ้าย: ฟาร์ม / หาตัว / สวน / เพิ่ม FPS
 	- หน้าฟาร์ม: เลือกโซน, เริ่มฟาร์ม, เก็บเพชร, เลือกไข่ (ดึงจากเกมจริง)
-	- กดโลโก้เพื่อย่อหน้าต่าง, กด LpFrtJ เพื่อซ่อน/แสดง
+	- กดโลโก้เพื่อย่อหน้าต่าง, กด RightControl เพื่อซ่อน/แสดง
 
 	โครงสร้างเกมที่ใช้:
-	  ZolKMNHdw.EFcDTr.oxSMTPy.usujCg.AgNsYpmC[string.char(60,67,70,118,111,113,69,100,99,62,58,32,60,3594,3639,3656,3629,3652,3586,3656,62)].WkhAtHkdd
-	    IHPzWceC: JatlsK, fWudsPUHI, eOvXTwp, jKvGvySNp, ZkCmGuIGL
+	  workspace.Build.ZoneBuilds.ZoneN.Eggs["<tier>: <ชื่อไข่>"].Egg
+	    Attributes: EggType, Health, MaxHealth, Broken, ZoneIndex
 ]]
 
-local vkGkulox           = tbafWfYMs:NImiCqRxi(string.char(118,107,71,107,117,108,111,120))
-local MRMHPqy               = tbafWfYMs:NImiCqRxi(string.char(87,76,116,103,68,67,79,69,102))
-local WbSbxFsR      = tbafWfYMs:NImiCqRxi(string.char(87,98,83,98,120,70,115,82))
-local wSTJvHTRj          = tbafWfYMs:NImiCqRxi(string.char(119,83,84,74,118,72,84,82,106))
-local jUwseMEG        = tbafWfYMs:NImiCqRxi(string.char(106,85,119,115,101,77,69,71))
-local leWCDdwba = tbafWfYMs:NImiCqRxi(string.char(108,101,87,67,68,100,119,98,97))
-local kkFLGbC       = tbafWfYMs:NImiCqRxi(string.char(107,107,70,76,71,98,67))
-local qOrbpOhtO            = vkGkulox.phsiPsZ
+local Players           = game:GetService("Players")
+local UIS               = game:GetService("UserInputService")
+local TweenService      = game:GetService("TweenService")
+local Lighting          = game:GetService("Lighting")
+local RunService        = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualUser       = game:GetService("VirtualUser")
+local player            = Players.LocalPlayer
 
-
-
-
-local VlKiHUhTl = {
-	ZGzyBP      = string.char(79,89,113,83,104,90,68,84,32,118,74,73,104,101,119,65),
-	iTEIzx  = string.char(),               
-	rgCiyF  = qDcOCKb.dWNJFsKiP.LpFrtJ,
-	rUzhmF = 0.2,             
-	ghjxUcxnU = 20,               
-	wUWEYJ  = 60,               
-	rcNOGXqGz    = 0.25,             
-	NclZgR = 3,           
-	HHgaDNE = 300,              
-	YCckhv = { [13] = 12 },   
-	LSwLeeD = 0.8,           
-	gDtKVSB = 300,              
-	GIRTsn   = 12,               
-	LJbbqnfnc = 60,               
-	bGGjsXeIM = { string.char(71,78,78,114,87,71), string.char(68,106,98,98,115,117,112,99), string.char(114,102,79,97,120,103,78,111), string.char(75,108,66,70,88,122,88,67,115), string.char(78,68,118,103,71,121,109,86,120) },
-	JzlSjPfM = string.char(68,68,108,83,77,100,81),       
-	VOqTevp = 30,             
-	usBBNvq = 12,            
-	JwKAdgcTI = zmCEDmX.vMEhDl(-70.7790527, 2.72415328, 3.12843513, 0.12112426, 0, -0.992637336, 0, 1, 0, 0.992637336, 0, 0.12112426),
-	YxftACnFK = zmCEDmX.vMEhDl(-748.049316, 37.7241478, 141.6633, 0.978355706, 0, 0.206930265, 0, 1, 0, -0.206930265, 0, 0.978355706),
-	AVBMchkv  = {},
-	xZZBAT = {},               
+---------------------------------------------------------------------
+-- CONFIG
+---------------------------------------------------------------------
+local CONFIG = {
+	Title      = "Malmon Hub",
+	LogoImage  = "",               -- เช่น "rbxassetid://1234567890" (ว่าง = แสดงคำว่า Logo)
+	ToggleKey  = Enum.KeyCode.RightControl,
+	HitInterval = 0.2,             -- ตีไข่ (ส่ง EggHitRequest) ทุกกี่วินาที (ถ้าโดนปฏิเสธจะช้าลงเอง)
+	EggTimeout = 20,               -- ตีไข่ใบเดียวนานสุดกี่วินาที แล้วข้ามไปใบอื่น
+	GemRadius  = 60,               -- รัศมีเก็บเพชรสำรองเมื่อยังไม่มีข้อมูลตำแหน่งโซน (studs)
+	GemStay    = 0.25,             -- ยืนบนเพชรรอให้เก็บติดนานสุดกี่วินาที
+	TeleportRetries = 3,           -- วาร์ปซ้ำกี่ครั้งถ้าเกมดึงตัวกลับ
+	NoWarpDist = 300,              -- ห่างจากกลางโซนที่เลือกไม่เกินนี้ = ไม่ต้องวาร์ป Tween ไปเลย
+	TeleportVia = { [13] = 12 },   -- โซนที่ไกลเกินวาร์ปตรง: วาร์ปไปโซนนี้ก่อน แล้ว Tween ต่อ
+	SwingPressGap = 0.8,           -- กดปุ่ม Auto Swing แล้วรออย่างน้อยกี่วินาทีก่อนกดซ้ำ (รอปุ่มเปลี่ยนสี)
+	TweenSpeed = 300,              -- ความเร็ว Tween (studs/วินาที)
+	LiftWait   = 12,               -- รอสัตว์ออกจากไข่แล้วกด Steal นานสุดกี่วินาที
+	LiftRadius = 60,               -- หาปุ่ม Steal ในรัศมีนี้รอบไข่ที่ตีแตก
+	LiftPromptWords = { "steal", "pick", "carry", "grab", "lift" },
+	ToolKeyword = "Pickaxe",       -- ชื่อที่ขุด (Elite Pickaxe ฯลฯ)
+	GuardTimeout = 30,             -- รอผู้พิทักษ์ตีนานสุดกี่วินาที
+	KnockbackDist = 12,            -- ถูกดันออกไกลเกินนี้ = โดนตีแล้ว
+	Home = CFrame.new(-70.7790527, 2.72415328, 3.12843513, 0.12112426, 0, -0.992637336, 0, 1, 0, 0.992637336, 0, 0.12112426),
+	AFK = CFrame.new(-748.049316, 37.7241478, 141.6633, 0.978355706, 0, 0.206930265, 0, 1, 0, -0.206930265, 0, 0.978355706),
+	ZoneOrder  = {},
+	ZoneModels = {},               -- "โซนที่ N" -> workspace.Build.ZoneBuilds.ZoneN
 }
-local ldXCvkA = string.char(50,48,50,54,45,49,49,45,49,54,32,79,105,83,85,117,89,87,84,77)   
-local oqERtEwL = string.char(3607,3633,3657,3591,3627,3617,3604)
+local VERSION = "2026-11-16 r57"   -- เช็กใน F9 ว่าได้เวอร์ชันล่าสุด
+local ALL_EGGS = "ทั้งหมด"
 
-
-local function KIzNjlAb(VMVYTaxR)
-	local hWbchlMKA = tostring(VMVYTaxR):BSUREGh():oaWnCoD(string.char(47,99,82,66,115,71,119,68), string.char()):oaWnCoD(string.char(91,36,44,37,99,82,66,115,71,119,68,93), string.char())
-	local VVXcsfFtP, uoxhtEcb = hWbchlMKA:oVUySul(string.char(94,40,37,101,105,105,116,81,79,109,42,37,46,63,37,101,105,105,116,81,79,109,43,41,40,37,78,115,77,66,69,98,42,41,36))
-	local xHjcDYP = { xWCMjY = 1e15, uTpozHs = 1e18, sJVbgRmG = 1e21, pCrmxzm = 1e24,
-		DzWUAK = 1e27, dARCOYY = 1e30, szihtstxs = 1e33, xIySkVlP = 1e3, Icnvbr = 1e6, xdBbbBZvf = 1e9, UrFDNk = 1e12 }
-	local CKlLTVe = uoxhtEcb == string.char() and 1 or xHjcDYP[uoxhtEcb]
-	if not VVXcsfFtP or not CKlLTVe then return nil end
-	local kyvHRk = tonumber(VVXcsfFtP) * CKlLTVe
-	if kyvHRk < bahPrfK.yJdZksz then return kyvHRk end
+-- อ่านเงินทั้งค่าที่พิมพ์และข้อความเหนือหัวสัตว์ (แยกหน่วยยาวก่อน)
+local function parseMoney(str)
+	local cleaned = tostring(str):lower():gsub("/s", ""):gsub("[$,%s]", "")
+	local number, suffix = cleaned:match("^(%d*%.?%d+)(%a*)$")
+	local units = { qa = 1e15, qi = 1e18, sx = 1e21, sp = 1e24,
+		oc = 1e27, no = 1e30, dc = 1e33, k = 1e3, m = 1e6, b = 1e9, t = 1e12 }
+	local multiplier = suffix == "" and 1 or units[suffix]
+	if not number or not multiplier then return nil end
+	local value = tonumber(number) * multiplier
+	if value < math.huge then return value end
 end
 
-
+-- ดึงรายชื่อโซนจริงจาก workspace.Build.ZoneBuilds (Zone1, Zone2, ...)
 do
-	local ibJKRNkA = ZolKMNHdw:AAZfTWh(string.char(69,70,99,68,84,114))
-	local TyCLzAZ = ibJKRNkA and ibJKRNkA:AAZfTWh(string.char(111,120,83,77,84,80,121))
-	local cFrjYyRk = {}
-	if TyCLzAZ then
-		for NRzHjvyk, WRkxHU in ipairs(TyCLzAZ:jsMboNIH()) do
-			local hxMWBdXnd = tonumber(WRkxHU.YDRUhpuYE:oVUySul(string.char(94,88,90,88,90,75,84,78,115,78,40,37,101,105,105,116,81,79,109,43,41,36)))
-			if hxMWBdXnd then cSwXLEa.ygebQasKQ(cFrjYyRk, hxMWBdXnd) end
+	local build = workspace:FindFirstChild("Build")
+	local zoneBuilds = build and build:FindFirstChild("ZoneBuilds")
+	local nums = {}
+	if zoneBuilds then
+		for _, z in ipairs(zoneBuilds:GetChildren()) do
+			local n = tonumber(z.Name:match("^Zone(%d+)$"))
+			if n then table.insert(nums, n) end
 		end
 	end
-	cSwXLEa.NMHqRWel(cFrjYyRk)   
-	for NRzHjvyk, hxMWBdXnd in ipairs(cFrjYyRk) do
-		local fbMkQuN = string.char(3650,3595,3609,3607,3637,3656,32) .. hxMWBdXnd
-		cSwXLEa.ygebQasKQ(VlKiHUhTl.AVBMchkv, fbMkQuN)
-		VlKiHUhTl.xZZBAT[fbMkQuN] = TyCLzAZ:AAZfTWh(string.char(88,90,88,90,75,84,78,115,78) .. hxMWBdXnd)
+	table.sort(nums)   -- เรียง 1,2,3,...,13
+	for _, n in ipairs(nums) do
+		local name = "โซนที่ " .. n
+		table.insert(CONFIG.ZoneOrder, name)
+		CONFIG.ZoneModels[name] = zoneBuilds:FindFirstChild("Zone" .. n)
 	end
-	if #VlKiHUhTl.AVBMchkv == 0 then
-		VlKiHUhTl.AVBMchkv = { string.char(3652,3617,3656,3614,3610,3650,3595,3609) }
-		MYRGduhq(string.char(91,80,121,121,81,67,74,122,93,32,3652,3617,3656,3614,3610,32,90,111,108,75,77,78,72,100,119,46,69,70,99,68,84,114,46,111,120,83,77,84,80,121))
+	if #CONFIG.ZoneOrder == 0 then
+		CONFIG.ZoneOrder = { "ไม่พบโซน" }
+		warn("[FarmHub] ไม่พบ workspace.Build.ZoneBuilds")
 	end
 end
 
-
-local function Bbqusff(WIKeNur)
-	local hPALxDEK, HQVoOw, oHygxTIh = {}, {}, {}
-	local wcBtyZAmT = VlKiHUhTl.xZZBAT[WIKeNur]
-	local ZJdKGiNoL = wcBtyZAmT and wcBtyZAmT:AAZfTWh(string.char(65,103,78,115,89,112,109,67))
-	if ZJdKGiNoL then
-		for NRzHjvyk, Icnvbr in ipairs(ZJdKGiNoL:jsMboNIH()) do
-			local CFvoqEdc, fbMkQuN = Icnvbr.YDRUhpuYE:oVUySul(string.char(94,40,37,101,105,105,116,81,79,109,43,41,58,37,99,82,66,115,71,119,68,42,40,46,43,41,36))
-			if fbMkQuN and not oHygxTIh[fbMkQuN] then
-				oHygxTIh[fbMkQuN] = true
-				cSwXLEa.ygebQasKQ(HQVoOw, { tonumber(CFvoqEdc), fbMkQuN })
+-- รายชื่อชนิดไข่ในโซน (อ่านจากชื่อโมเดล "1: Forest Egg", "2: Rock Egg", ...)
+local function eggTypesOf(zoneName)
+	local list, found, seen = {}, {}, {}
+	local zone = CONFIG.ZoneModels[zoneName]
+	local folder = zone and zone:FindFirstChild("Eggs")
+	if folder then
+		for _, m in ipairs(folder:GetChildren()) do
+			local tier, name = m.Name:match("^(%d+):%s*(.+)$")
+			if name and not seen[name] then
+				seen[name] = true
+				table.insert(found, { tonumber(tier), name })
 			end
 		end
 	end
-	cSwXLEa.NMHqRWel(HQVoOw, function(NsMBEb, xdBbbBZvf) return NsMBEb[1] < xdBbbBZvf[1] end)
-	for NRzHjvyk, xLTyvEyJk in ipairs(HQVoOw) do cSwXLEa.ygebQasKQ(hPALxDEK, xLTyvEyJk[2]) end
-	return hPALxDEK
+	table.sort(found, function(a, b) return a[1] < b[1] end)
+	for _, f in ipairs(found) do table.insert(list, f[2]) end
+	return list
 end
 
-local CXVuWtxvd = {
-	XZXZKTNsN        = VlKiHUhTl.AVBMchkv[1],
-	AgNsYpmC        = {},              
-	AUVOWGvO    = false,
-	xfYqgLY      = false,
-	cdNnXfju   = 0,
-	xSxFpDU = false,
-	ZRyJnv  = false,           
-	ECpmoz = false,    
-	adjnIj   = false,           
-	fmxRtmDxH       = false,
-	GVvhKszYB     = 0,
-	oSJZImn   = nil,
-	fPIYqMsr   = false,           
-	KDTxHh      = 0,
-	dCCFlPRLv    = string.char(3651,3585,3621,3657,3626,3640,3604,3585,3656,3629,3609),
+local State = {
+	Zone        = CONFIG.ZoneOrder[1],
+	Eggs        = {},              -- ชนิดไข่ที่เลือก (ว่าง = ทุกชนิด)
+	AutoFarm    = false,
+	Garden      = false,
+	GardenRun   = 0,
+	CollectGems = false,
+	ScriptLift  = false,           -- กันตัวเฝ้าดูรับช่วงสัตว์ที่สคริปต์ยกเอง
+	ManualCarryBlocked = false,    -- รอวางสัตว์ก่อนรับช่วงใหม่หลังส่งพลาดหรือยกเอง
+	AfkPinned   = false,           -- ตรึงตัวที่จุด AFK จนกว่าจะเปิดระบบอีกครั้ง
+	Debug       = false,
+	FarmRun     = 0,
+	ReadyZone   = nil,
+	SwingWant   = false,           -- ต้องการให้ Auto Swing เปิดอยู่ไหม
+	GemRun      = 0,
+	Priority    = "ใกล้สุดก่อน",
 }
 
-
-local xfYqgLY = { XZXZKTNsN = VlKiHUhTl.AVBMchkv[1], WkhAtHkdd = nil, OOrKsWV = 0, oSJZImn = nil, UhGHusyfF = {} }
-local imSKaMlSo, disIXrdT, WaNHxCjx
-local function Ontyggkf()
-	
-	return CXVuWtxvd.USXHgXp or (CXVuWtxvd.xfYqgLY and xfYqgLY.XZXZKTNsN or CXVuWtxvd.XZXZKTNsN)
+-- ตั้งค่าสวนแยกจากฟาร์ม และประกาศสวิตช์ก่อน callback ที่ใช้งาน
+local Garden = { Zone = CONFIG.ZoneOrder[1], Egg = nil, MinHP = 0, ReadyZone = nil, Spots = {} }
+local gemToggle, farmToggle, gardenToggle
+local function activeZone()
+	-- ระหว่างส่งสัตว์ยังใช้โซนเดิม แม้สวิตช์สวนถูกปิดแล้ว
+	return State.DeliveryZone or (State.Garden and Garden.Zone or State.Zone)
 end
 
-
-
-
-local function DGwOqlU()
-	local YtGuADgjv = qOrbpOhtO.acNGGYyLs
-	local NMmOTAtje = YtGuADgjv and YtGuADgjv:AAZfTWh(string.char(81,106,78,72,122,112,115,105))
-	local tPNmFMTh  = YtGuADgjv and YtGuADgjv:eLAEFX(string.char(117,82,85,106,82,80,121,114,79))
-	if NMmOTAtje and tPNmFMTh and tPNmFMTh.fWudsPUHI > 0 then return YtGuADgjv, NMmOTAtje, tPNmFMTh end
+---------------------------------------------------------------------
+-- Game helpers
+---------------------------------------------------------------------
+local function getChar()
+	local char = player.Character
+	local root = char and char:FindFirstChild("HumanoidRootPart")
+	local hum  = char and char:FindFirstChildOfClass("Humanoid")
+	if root and hum and hum.Health > 0 then return char, root, hum end
 end
 
-local function OKEXotEJr(...)
-	if CXVuWtxvd.fmxRtmDxH then print(string.char(91,80,121,121,81,67,74,122,93), ...) end
+local function log(...)
+	if State.Debug then print("[FarmHub]", ...) end
 end
 
-
-local function OODbRiWU()
-	local YtGuADgjv, NRzHjvyk, tPNmFMTh = DGwOqlU()
-	if not YtGuADgjv then return end
-	local NVgDtZ = VlKiHUhTl.JzlSjPfM:BSUREGh()
-	local jYeefrXUm = YtGuADgjv:eLAEFX(string.char(89,122,97,112,110,71,69,77))
-	if jYeefrXUm and jYeefrXUm.YDRUhpuYE:BSUREGh():tFMdevRWc(NVgDtZ, 1, true) then return jYeefrXUm end
-	local cHbnYYB = qOrbpOhtO:AAZfTWh(string.char(79,70,104,104,121,101,105,122))
-	if cHbnYYB then
-		for NRzHjvyk, UrFDNk in ipairs(cHbnYYB:jsMboNIH()) do
-			if UrFDNk:AEHHlgP(string.char(89,122,97,112,110,71,69,77)) and UrFDNk.YDRUhpuYE:BSUREGh():tFMdevRWc(NVgDtZ, 1, true) then
-				OKEXotEJr(string.char(3606,3639,3629,58), UrFDNk.YDRUhpuYE)
-				tPNmFMTh:FOfiMOx(UrFDNk)
-				return UrFDNk
+-- ถือที่ขุด: หา Tool ที่ชื่อมี CONFIG.ToolKeyword (เช่น "Elite Pickaxe") แล้วถือ
+local function getTool()
+	local char, _, hum = getChar()
+	if not char then return end
+	local kw = CONFIG.ToolKeyword:lower()
+	local held = char:FindFirstChildOfClass("Tool")
+	if held and held.Name:lower():find(kw, 1, true) then return held end
+	local backpack = player:FindFirstChild("Backpack")
+	if backpack then
+		for _, t in ipairs(backpack:GetChildren()) do
+			if t:IsA("Tool") and t.Name:lower():find(kw, 1, true) then
+				log("ถือ:", t.Name)
+				hum:EquipTool(t)
+				return t
 			end
 		end
 	end
-	OKEXotEJr(string.char(3652,3617,3656,3614,3610,32,89,122,97,112,110,71,69,77,32,3607,3637,3656,3594,3639,3656,3629,3617,3637,32,39) .. VlKiHUhTl.JzlSjPfM .. string.char(39,32,3651,3609,3585,3619,3632,3648,3611,3659,3634))
+	log("ไม่พบ Tool ที่ชื่อมี '" .. CONFIG.ToolKeyword .. "' ในกระเป๋า")
 end
 
-
-local function SUTRAsij(OYygnfK)
-	local josyHY = OYygnfK
-	while josyHY and not josyHY:AEHHlgP(string.char(88,82,102,106,98,120,103,80)) do
-		if josyHY:AEHHlgP(string.char(88,107,77,117,114,102,112,117)) and not josyHY.bCuISnY then return false end
-		josyHY = josyHY.OjQGoB
+-- หา GUI ปุ่มที่มองเห็นอยู่บนจอ จากข้อความ/ชื่อ (เช่น "Auto Swing", "Drop")
+local function isShown(gui)
+	local g = gui
+	while g and not g:IsA("LayerCollector") do
+		if g:IsA("GuiObject") and not g.Visible then return false end
+		g = g.Parent
 	end
-	return josyHY ~= nil and josyHY.fHRVnE
+	return g ~= nil and g.Enabled
 end
 
-local function cEMwufGk(cRBsGwD) return (cRBsGwD:BSUREGh():oaWnCoD(string.char(37,99,82,66,115,71,119,68), string.char())) end
+local function squash(s) return (s:lower():gsub("%s", "")) end
 
-
-local function bNjrxE(ZewFqfg, MoCmMPL)
-	local EgTUbNP = qOrbpOhtO:AAZfTWh(string.char(100,111,87,120,110,117))
-	if not EgTUbNP then return end
-	local YZQgrHWxR = cEMwufGk(ZewFqfg)
-	local function oVUySul(cRBsGwD)
-		cRBsGwD = cEMwufGk(cRBsGwD)
-		if MoCmMPL then return cRBsGwD == YZQgrHWxR end
-		return cRBsGwD:tFMdevRWc(YZQgrHWxR, 1, true) ~= nil
+-- exact = true: ข้อความ/ชื่อต้องตรงทั้งคำ (กันไปเจอปุ่มอื่นที่มีคำนี้อยู่ข้างใน)
+local function findGuiButton(text, exact)
+	local pg = player:FindFirstChild("PlayerGui")
+	if not pg then return end
+	local want = squash(text)
+	local function match(s)
+		s = squash(s)
+		if exact then return s == want end
+		return s:find(want, 1, true) ~= nil
 	end
-	for NRzHjvyk, eiitQOm in ipairs(EgTUbNP:gcHLLE()) do
-		if eiitQOm:AEHHlgP(string.char(88,107,77,117,114,102,112,117)) and not eiitQOm:bTIeFxyjc(EgTUbNP:AAZfTWh(string.char(80,88,99,108,118,113,79)) or eiitQOm) then
-			local twBTVlY = (eiitQOm:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) or eiitQOm:AEHHlgP(string.char(103,72,89,121,80,77))) and eiitQOm.gerFhc or string.char()
-			if oVUySul(twBTVlY) or oVUySul(eiitQOm.YDRUhpuYE) then
-				local ulXTCNm = eiitQOm:AEHHlgP(string.char(88,115,104,98,74,84,86,105,86)) and eiitQOm or eiitQOm:FoGeGT(string.char(88,115,104,98,74,84,86,105,86))
-				if ulXTCNm and SUTRAsij(ulXTCNm) then return ulXTCNm end
+	for _, d in ipairs(pg:GetDescendants()) do
+		if d:IsA("GuiObject") and not d:IsDescendantOf(pg:FindFirstChild("FarmHubUI") or d) then
+			local label = (d:IsA("TextLabel") or d:IsA("TextButton")) and d.Text or ""
+			if match(label) or match(d.Name) then
+				local btn = d:IsA("GuiButton") and d or d:FindFirstAncestorWhichIsA("GuiButton")
+				if btn and isShown(btn) then return btn end
 			end
 		end
 	end
 end
 
-
-
-
-local function ODxwrIzS(ulXTCNm, loxtPJw)
-	loxtPJw = loxtPJw or 1
-	if loxtPJw == 1 or loxtPJw == 2 then
-		if wWDFiqh then
-			local kWmDoH = loxtPJw == 1 and ulXTCNm.hnFBaPKH or ulXTCNm.dUHOeXTEj
-			local NZyQINF = wWDFiqh(kWmDoH)
-			if #NZyQINF > 0 then
-				for NRzHjvyk, vLOvlrm in ipairs(NZyQINF) do
-					DXClww(function()
-						if vLOvlrm.ghSOMb then vLOvlrm.ghSOMb() else vLOvlrm:ZxZoiAvFO() end
+-- กดปุ่ม GUI ของเกม มีหลายวิธี เพราะแต่ละเกม/ตัวรันรับไม่เหมือนกัน
+--   method 1: ยิง MouseButton1Click ที่เกมผูกไว้   2: ยิง Activated
+--   method 3: firesignal                          4: จำลองคลิกเมาส์ที่ตำแหน่งปุ่ม
+local function pressButton(btn, method)
+	method = method or 1
+	if method == 1 or method == 2 then
+		if getconnections then
+			local sig = method == 1 and btn.MouseButton1Click or btn.Activated
+			local conns = getconnections(sig)
+			if #conns > 0 then
+				for _, c in ipairs(conns) do
+					pcall(function()
+						if c.Function then c.Function() else c:Fire() end
 					end)
 				end
 				return true
 			end
 		end
 		return false
-	elseif loxtPJw == 3 then
-		if CvATrwBC then
-			DXClww(CvATrwBC, ulXTCNm.hnFBaPKH)
-			DXClww(CvATrwBC, ulXTCNm.dUHOeXTEj)
+	elseif method == 3 then
+		if firesignal then
+			pcall(firesignal, btn.MouseButton1Click)
+			pcall(firesignal, btn.Activated)
 			return true
 		end
 		return false
 	end
-	local oigmOv = tbafWfYMs:NImiCqRxi(string.char(84,122,66,67,106,87))
-	local DtfeGlVTf = ulXTCNm:FoGeGT(string.char(89,74,97,120,72,90,103,70,74))
-	local GZfPmmKR = (DtfeGlVTf and DtfeGlVTf.DeDmMtiQF) and wEdRhI.zuTAqkXn or tbafWfYMs:NImiCqRxi(string.char(78,104,102,102,67,86,112)):wulVwh()
-	local SVaexE = ulXTCNm.HTptUu + ulXTCNm.KjLnfFb / 2 + GZfPmmKR
-	oigmOv:lhjxupRg(SVaexE.dsddlTF, SVaexE.jMlaBVxZz, 0, true, tbafWfYMs, 0)
-	SrYEQZw.YVpolrAK(0.05)
-	oigmOv:lhjxupRg(SVaexE.dsddlTF, SVaexE.jMlaBVxZz, 0, false, tbafWfYMs, 0)
+	local vim = game:GetService("VirtualInputManager")
+	local sg = btn:FindFirstAncestorWhichIsA("ScreenGui")
+	local inset = (sg and sg.IgnoreGuiInset) and Vector2.zero or game:GetService("GuiService"):GetGuiInset()
+	local p = btn.AbsolutePosition + btn.AbsoluteSize / 2 + inset
+	vim:SendMouseButtonEvent(p.X, p.Y, 0, true, game, 0)
+	task.wait(0.05)
+	vim:SendMouseButtonEvent(p.X, p.Y, 0, false, game, 0)
 	return true
 end
 
-
-
-local kimPZJGY
-local function mBeXnq()
-	if kimPZJGY and kimPZJGY.OjQGoB then return kimPZJGY end
-	local EgTUbNP = qOrbpOhtO:AAZfTWh(string.char(100,111,87,120,110,117))
-	local BtbpJi = EgTUbNP and EgTUbNP:AAZfTWh(string.char(88,110,80,105,82,65,104))
-	kimPZJGY = BtbpJi and BtbpJi:AAZfTWh(string.char(117,78,79,106,115,107,120,65)) or bNjrxE(string.char(88,81,68,71,112,119,32,105,97,118,90,113,69))
-	return kimPZJGY
+-- ปุ่ม Auto Swing ของเกม: PlayerGui.MainGUI.AutoSwing
+-- สีแดง = เปิดอยู่, สีเขียว = ปิดอยู่ (เกมไม่มีค่าอื่นบอกสถานะ เลยดูจากสี)
+local autoSwingBtn
+local function getAutoSwingBtn()
+	if autoSwingBtn and autoSwingBtn.Parent then return autoSwingBtn end
+	local pg = player:FindFirstChild("PlayerGui")
+	local main = pg and pg:FindFirstChild("MainGUI")
+	autoSwingBtn = main and main:FindFirstChild("AutoSwing") or findGuiButton("Auto Swing")
+	return autoSwingBtn
 end
 
-
-
-
-local function WWkKtYch()
-	local mdYgYE = EtlLyq or RBChQqth or apOdlICaP
-	if type(mdYgYE) == string.char(102,117,110,99,116,105,111,110) then
-		DXClww(mdYgYE, 8)
+-- คุม Auto Swing ผ่านโค้ดของเกม (PlayerScripts.Client.Controllers.AutoSwingController) แทนการกดปุ่ม
+-- พิมพ์รายชื่อฟังก์ชันลง log ครั้งแรก (ไว้ดูว่าใช้ตัวไหนได้)
+-- คืนสิทธิ์เธรดของเราหลังเรียกโค้ดเกม ถ้า executor รองรับ
+local function restoreThreadIdentity()
+	local setIdentity = setthreadidentity or set_thread_identity or setidentity
+	if type(setIdentity) == "function" then
+		pcall(setIdentity, 8)
 	end
 end
 
-
-local function rpcotye(lAKXpXN, ...)
-	local ZEPElDSr, euRAQT = PpARQBp.cqphSWvhp(function(...)
-		return DXClww(lAKXpXN, ...)
+-- แยกโค้ดเกมไปเธรดใหม่ เพื่อไม่ให้สิทธิ์ของเธรดฟาร์มลดลง
+local function runIsolated(fn, ...)
+	local ok, result = coroutine.wrap(function(...)
+		return pcall(fn, ...)
 	end)(...)
-	WWkKtYch()
-	return ZEPElDSr, euRAQT
+	restoreThreadIdentity()
+	return ok, result
 end
 
-
-local HQVKzo, SepwJDpnf = {}, {}
+-- โหลดรายชื่อครบทุกโซนครั้งเดียว แยกจากข้อมูลสัตว์ที่เคยพบและไฟล์บันทึก
+local zoneRoster, animalRarityRanks = {}, {}
 do
-	local CudpSd = leWCDdwba:AAZfTWh(string.char(75,98,84,110,75,77,108,73))
-	local ZEPElDSr, odKaAw = rpcotye(function()
-		local yCZetyqz = FNmZGkb(CudpSd and CudpSd:AAZfTWh(string.char(114,85,84,66,85,97,69,66)))
-		ClKwQDeQ(type(yCZetyqz) == string.char(99,83,119,88,76,69,97) and type(yCZetyqz.lNxmEWsT) == string.char(99,83,119,88,76,69,97), string.char(3652,3617,3656,3614,3610,3605,3634,3619,3634,3591,32,108,78,120,109,69,87,115,84))
-		local KWkvnCsSs = {}
-		for wcBtyZAmT, llqauRHz in pairs(yCZetyqz.lNxmEWsT) do
-			ClKwQDeQ(type(wcBtyZAmT) == string.char(86,86,88,99,115,102,70,116,80) and type(llqauRHz) == string.char(99,83,119,88,76,69,97), string.char(3586,3657,3629,3617,3641,3621,3650,3595,3609,3652,3617,3656,3606,3641,3585,3605,3657,3629,3591))
-			local LlMTYX = {}
-			for NRzHjvyk, AgoJYIhlU in ipairs(llqauRHz) do
-				ClKwQDeQ(type(AgoJYIhlU) == string.char(99,83,119,88,76,69,97) and type(AgoJYIhlU.YDRUhpuYE) == string.char(90,102,121,101,78,67,120,108,74)
-					and type(AgoJYIhlU.oaSfTb) == string.char(90,102,121,101,78,67,120,108,74) and type(AgoJYIhlU.eqrzVEA) == string.char(86,86,88,99,115,102,70,116,80), string.char(3586,3657,3629,3617,3641,3621,3626,3633,3605,3623,3660,3652,3617,3656,3606,3641,3585,3605,3657,3629,3591))
-				LlMTYX[AgoJYIhlU.YDRUhpuYE] = { oaSfTb = AgoJYIhlU.oaSfTb, eqrzVEA = AgoJYIhlU.eqrzVEA }
+	local shared = ReplicatedStorage:FindFirstChild("Shared")
+	local ok, roster = runIsolated(function()
+		local config = require(shared and shared:FindFirstChild("ZoneAnimalsConfig"))
+		assert(type(config) == "table" and type(config.Zones) == "table", "ไม่พบตาราง Zones")
+		local zones = {}
+		for zone, animals in pairs(config.Zones) do
+			assert(type(zone) == "number" and type(animals) == "table", "ข้อมูลโซนไม่ถูกต้อง")
+			local names = {}
+			for _, animal in ipairs(animals) do
+				assert(type(animal) == "table" and type(animal.Name) == "string"
+					and type(animal.Rarity) == "string" and type(animal.Cash) == "number", "ข้อมูลสัตว์ไม่ถูกต้อง")
+				names[animal.Name] = { Rarity = animal.Rarity, Cash = animal.Cash }
 			end
-			KWkvnCsSs[string.char(88,90,88,90,75,84,78,115,78) .. wcBtyZAmT] = LlMTYX
+			zones["Zone" .. zone] = names
 		end
-		
-		for wcBtyZAmT, foRoaGRJA in pairs(yCZetyqz.GVSetUd or {}) do
-			KWkvnCsSs[string.char(88,90,88,90,75,84,78,115,78) .. wcBtyZAmT] = ClKwQDeQ(KWkvnCsSs[string.char(88,90,88,90,75,84,78,115,78) .. foRoaGRJA], string.char(3652,3617,3656,3614,3610,3650,3595,3609,3605,3657,3609,3607,3634,3591))
+		-- โซนที่ยืมรายชื่อ เช่น โซน 13 ใช้รายชื่อของโซน 12
+		for zone, source in pairs(config.BorrowedRosters or {}) do
+			zones["Zone" .. zone] = assert(zones["Zone" .. source], "ไม่พบโซนต้นทาง")
 		end
-		return KWkvnCsSs
+		return zones
 	end)
-	if ZEPElDSr then
-		HQVKzo = odKaAw
+	if ok then
+		zoneRoster = roster
 	else
-		print(string.char(91,80,121,121,81,67,74,122,93,32,3650,3627,3621,3604,3619,3634,3618,3594,3639,3656,3629,3626,3633,3605,3623,3660,3652,3617,3656,3652,3604,3657,32,3651,3594,3657,3648,3593,3614,3634,3632,3626,3633,3605,3623,3660,3607,3637,3656,3648,3588,3618,3614,3610,58), odKaAw)
+		print("[FarmHub] โหลดรายชื่อสัตว์ไม่ได้ ใช้เฉพาะสัตว์ที่เคยพบ:", roster)
 	end
-	local YjDsnxK, xfTlPGa = rpcotye(function()
-		local yCZetyqz = FNmZGkb(CudpSd and CudpSd:AAZfTWh(string.char(69,100,75,90,102,87,79,87,82)))
-		ClKwQDeQ(type(yCZetyqz) == string.char(99,83,119,88,76,69,97) and type(yCZetyqz.hVOFUca) == string.char(99,83,119,88,76,69,97)
-			and #yCZetyqz.hVOFUca > 0, string.char(3652,3617,3656,3614,3610,3621,3635,3604,3633,3610,3588,3623,3634,3617,3627,3634,3618,3634,3585))
-		local euRAQT = {}
-		for pNRFyzEV, XngYRHxfI in ipairs(yCZetyqz.hVOFUca) do
-			ClKwQDeQ(type(XngYRHxfI) == string.char(90,102,121,101,78,67,120,108,74), string.char(3588,3623,3634,3617,3627,3634,3618,3634,3585,3652,3617,3656,3606,3641,3585,3605,3657,3629,3591))
-			euRAQT[XngYRHxfI] = pNRFyzEV
+	local orderOk, ranks = runIsolated(function()
+		local config = require(shared and shared:FindFirstChild("IndexConfig"))
+		assert(type(config) == "table" and type(config.RarityOrder) == "table"
+			and #config.RarityOrder > 0, "ไม่พบลำดับความหายาก")
+		local result = {}
+		for rank, rarity in ipairs(config.RarityOrder) do
+			assert(type(rarity) == "string", "ความหายากไม่ถูกต้อง")
+			result[rarity] = rank
 		end
-		return euRAQT
+		return result
 	end)
-	if YjDsnxK then SepwJDpnf = xfTlPGa end
+	if orderOk then animalRarityRanks = ranks end
 end
 
-local LkfHfVt, wSHVxrGAR = nil, false
-local function qSpYGM()
-	if wSHVxrGAR then return LkfHfVt end
-	wSHVxrGAR = true
-	local bFlcOb = qOrbpOhtO:AAZfTWh(string.char(89,82,73,67,103,99,113,101,109))
-	local VKmhOeXk = bFlcOb and bFlcOb:AAZfTWh(string.char(113,120,119,108,88,101))
-	local jSQADzZH = VKmhOeXk and VKmhOeXk:AAZfTWh(string.char(83,80,83,78,98,69,66,70,113))
-	local MDyFVWZv = jSQADzZH and jSQADzZH:AAZfTWh(string.char(87,89,119,110,72,85))
-	if not MDyFVWZv then print(string.char(91,80,121,121,81,67,74,122,93,32,3652,3617,3656,3614,3610,32,87,89,119,110,72,85)) return nil end
-	local ZEPElDSr, hOYlNiiph = rpcotye(FNmZGkb, MDyFVWZv)
-	if not ZEPElDSr or type(hOYlNiiph) ~= string.char(99,83,119,88,76,69,97) then
-		print(string.char(91,80,121,121,81,67,74,122,93,32,70,78,109,90,71,107,98,32,87,89,119,110,72,85,32,3652,3617,3656,3652,3604,3657,58), hOYlNiiph)
+local swingCtrl, swingCtrlTried = nil, false
+local function getSwingController()
+	if swingCtrlTried then return swingCtrl end
+	swingCtrlTried = true
+	local ps = player:FindFirstChild("PlayerScripts")
+	local client = ps and ps:FindFirstChild("Client")
+	local ctrls = client and client:FindFirstChild("Controllers")
+	local mod = ctrls and ctrls:FindFirstChild("AutoSwingController")
+	if not mod then print("[FarmHub] ไม่พบ AutoSwingController") return nil end
+	local ok, res = runIsolated(require, mod)
+	if not ok or type(res) ~= "table" then
+		print("[FarmHub] require AutoSwingController ไม่ได้:", res)
 		return nil
 	end
-	local QpopOi = {}
-	for xIySkVlP, nucpOhWeE in pairs(hOYlNiiph) do cSwXLEa.ygebQasKQ(QpopOi, tostring(xIySkVlP) .. string.char(61) .. lcalfNW(nucpOhWeE) .. (type(nucpOhWeE) ~= string.char(102,117,110,99,116,105,111,110) and type(nucpOhWeE) ~= string.char(99,83,119,88,76,69,97) and (string.char(40) .. tostring(nucpOhWeE) .. string.char(41)) or string.char())) end
-	print(string.char(91,80,121,121,81,67,74,122,93,32,87,89,119,110,72,85,58), cSwXLEa.WFAkMJcEp(QpopOi, string.char(44,32)))
-	LkfHfVt = hOYlNiiph
-	return hOYlNiiph
+	local keys = {}
+	for k, v in pairs(res) do table.insert(keys, tostring(k) .. "=" .. typeof(v) .. (type(v) ~= "function" and type(v) ~= "table" and ("(" .. tostring(v) .. ")") or "")) end
+	print("[FarmHub] AutoSwingController:", table.concat(keys, ", "))
+	swingCtrl = res
+	return res
 end
 
-
-local function yPfLonIo()
-	local vLOvlrm = qSpYGM()
-	if not vLOvlrm or type(vLOvlrm.IoLYhOV) ~= string.char(102,117,110,99,116,105,111,110) then return nil end
-	local ZEPElDSr, nucpOhWeE = rpcotye(vLOvlrm.IoLYhOV)
-	if ZEPElDSr and type(nucpOhWeE) == string.char(119,112,99,76,80,107) then return nucpOhWeE end
-	ZEPElDSr, nucpOhWeE = rpcotye(vLOvlrm.IoLYhOV, vLOvlrm)
-	if ZEPElDSr and type(nucpOhWeE) == string.char(119,112,99,76,80,107) then return nucpOhWeE end
+-- สั่งเปิด/ปิดผ่าน AutoSwingController.SetOn(true/false) ของเกม แล้วเช็กด้วย IsOn()
+local function controllerIsOn()
+	local c = getSwingController()
+	if not c or type(c.IsOn) ~= "function" then return nil end
+	local ok, v = runIsolated(c.IsOn)
+	if ok and type(v) == "boolean" then return v end
+	ok, v = runIsolated(c.IsOn, c)
+	if ok and type(v) == "boolean" then return v end
 	return nil
 end
 
-local function emmWDPfc(xSwBVDMV)
-	local vLOvlrm = qSpYGM()
-	if not vLOvlrm or type(vLOvlrm.MKwqUns) ~= string.char(102,117,110,99,116,105,111,110) then return false end
-	rpcotye(vLOvlrm.MKwqUns, xSwBVDMV)
-	if yPfLonIo() == xSwBVDMV then return true end
-	rpcotye(vLOvlrm.MKwqUns, vLOvlrm, xSwBVDMV)
-	return yPfLonIo() == xSwBVDMV
+local function controllerSetSwing(on)
+	local c = getSwingController()
+	if not c or type(c.SetOn) ~= "function" then return false end
+	runIsolated(c.SetOn, on)
+	if controllerIsOn() == on then return true end
+	runIsolated(c.SetOn, c, on)
+	return controllerIsOn() == on
 end
 
-
-
-
-
-local function NBXZIVt()
-	local XviqpPQ = {}
-	local lBPjDDZc = leWCDdwba:AAZfTWh(string.char(111,102,85,85,106,72,83,79))
-	local ZJdKGiNoL = lBPjDDZc and lBPjDDZc:AAZfTWh(string.char(100,66,102,98,106,113,112,122,98))
-	if not ZJdKGiNoL then return XviqpPQ end
-	for NRzHjvyk, eiitQOm in ipairs(ZJdKGiNoL:gcHLLE()) do
-		local xKAEUQov = (eiitQOm:AEHHlgP(string.char(98,72,69,70,79,104,68,100)) or eiitQOm:AEHHlgP(string.char(83,106,86,74,80,90,106,120,122))) and eiitQOm.YVxbtIES
-			or (eiitQOm:AEHHlgP(string.char(100,118,97,114,109,66,100)) or eiitQOm:AEHHlgP(string.char(76,88,100,116,102,75,115))) and eiitQOm.LXdtfKs
-			or eiitQOm:AEHHlgP(string.char(120,75,85,90,73,70,97)) and eiitQOm.TJxsRg
-		if xKAEUQov and xKAEUQov ~= string.char() then
-			local hxMWBdXnd = eiitQOm.YDRUhpuYE:BSUREGh()
-			if hxMWBdXnd:tFMdevRWc(string.char(109,81,100,90,111,98,68,89)) or hxMWBdXnd:tFMdevRWc(string.char(72,122,66,68,112,67,115)) or hxMWBdXnd:tFMdevRWc(string.char(85,109,116,84,100,105,71,67)) or hxMWBdXnd:tFMdevRWc(string.char(105,102,112,66,78,104,69,76,101)) then
-				XviqpPQ[xKAEUQov] = false
-			elseif hxMWBdXnd:tFMdevRWc(string.char(120,83,119,66,86,68,77,86)) or hxMWBdXnd:tFMdevRWc(string.char(78,81,88,83,67,119,105,117,100)) or hxMWBdXnd:tFMdevRWc(string.char(84,81,73,122,114,102,116,122)) or hxMWBdXnd:tFMdevRWc(string.char(65,121,105,70,108,112,121,90,108)) then
-				XviqpPQ[xKAEUQov] = true
+-- สถานะ Auto Swing: เขียว = เปิด, แดง = ปิด
+-- 1) ถ้าปุ่มใช้รูปจาก ReplicatedStorage.Assets.AutoSwingState ดูจากชื่อรูป (On/Off ฯลฯ)
+-- 2) ไม่งั้นดูจากสี (เขียวมากกว่า = เปิด)
+-- คืนค่า true = เปิด, false = ปิด, nil = ดูไม่ออก
+local function swingStateImages()
+	local map = {}
+	local assets = ReplicatedStorage:FindFirstChild("Assets")
+	local folder = assets and assets:FindFirstChild("AutoSwingState")
+	if not folder then return map end
+	for _, d in ipairs(folder:GetDescendants()) do
+		local id = (d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.Image
+			or (d:IsA("Decal") or d:IsA("Texture")) and d.Texture
+			or d:IsA("StringValue") and d.Value
+		if id and id ~= "" then
+			local n = d.Name:lower()
+			if n:find("off") or n:find("disable") or n:find("inactive") or n:find("red") then
+				map[id] = false
+			elseif n:find("on") or n:find("enable") or n:find("active") or n:find("green") then
+				map[id] = true
 			end
 		end
 	end
-	return XviqpPQ
+	return map
 end
 
-local function UZQcSw(ulXTCNm)
-	local gbEuOJn = yPfLonIo()   
-	if gbEuOJn ~= nil then return gbEuOJn end
-	
-	local jANzuyb = ulXTCNm:AAZfTWh(string.char(71,112,74,121,88,70,100))
-	if jANzuyb and jANzuyb:AEHHlgP(string.char(108,110,101,76,76,87,108)) then
-		return jANzuyb.TJxsRg > 0.05
+local function autoSwingIsOn(btn)
+	local byCtrl = controllerIsOn()   -- อ่านจากโค้ดเกมก่อน แม่นที่สุด
+	if byCtrl ~= nil then return byCtrl end
+	-- เกมเก็บสถานะใน AutoSwingColorAlpha: 0 = ปิด (แดง), มากกว่า 0 = เปิด (เขียว / กำลังกะพริบ)
+	local alpha = btn:FindFirstChild("AutoSwingColorAlpha")
+	if alpha and alpha:IsA("NumberValue") then
+		return alpha.Value > 0.05
 	end
-	local hPALxDEK = ulXTCNm:gcHLLE()
-	cSwXLEa.ygebQasKQ(hPALxDEK, ulXTCNm)
-	local CHoxFMY = NBXZIVt()
-	for NRzHjvyk, eiitQOm in ipairs(hPALxDEK) do
-		if (eiitQOm:AEHHlgP(string.char(98,72,69,70,79,104,68,100)) or eiitQOm:AEHHlgP(string.char(83,106,86,74,80,90,106,120,122))) and eiitQOm.bCuISnY and CHoxFMY[eiitQOm.YVxbtIES] ~= nil then
-			return CHoxFMY[eiitQOm.YVxbtIES]
+	local list = btn:GetDescendants()
+	table.insert(list, btn)
+	local images = swingStateImages()
+	for _, d in ipairs(list) do
+		if (d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.Visible and images[d.Image] ~= nil then
+			return images[d.Image]
 		end
 	end
-	local lAJvyaxQ, RJuSqiJHA = 0, 0
-	local function kSbQsMmT(vLOvlrm)
-		if vLOvlrm.SeuhnipUH - vLOvlrm.wdIAgqUqz > 0.25 then lAJvyaxQ += 1 elseif vLOvlrm.wdIAgqUqz - vLOvlrm.SeuhnipUH > 0.25 then RJuSqiJHA += 1 end
+	local reds, greens = 0, 0
+	local function judge(c)
+		if c.R - c.G > 0.25 then reds += 1 elseif c.G - c.R > 0.25 then greens += 1 end
 	end
-	for NRzHjvyk, eiitQOm in ipairs(hPALxDEK) do
-		if eiitQOm:AEHHlgP(string.char(88,107,77,117,114,102,112,117)) and eiitQOm.bCuISnY then
-			if eiitQOm.xXlpGqBYG < 1 then kSbQsMmT(eiitQOm.aDJTpFP) end
-			if (eiitQOm:AEHHlgP(string.char(98,72,69,70,79,104,68,100)) or eiitQOm:AEHHlgP(string.char(83,106,86,74,80,90,106,120,122))) and eiitQOm.cRdHTj < 1 then kSbQsMmT(eiitQOm.zEISuJsw) end
-			if (eiitQOm:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) or eiitQOm:AEHHlgP(string.char(103,72,89,121,80,77))) and eiitQOm.HpjqiDgoW < 1 then kSbQsMmT(eiitQOm.lgBXrAQI) end
-		elseif eiitQOm:AEHHlgP(string.char(79,72,113,99,97,120)) and eiitQOm.fHRVnE then
-			for NRzHjvyk, xIySkVlP in ipairs(eiitQOm.tvVLnaJJk.JHsrMSJZ) do kSbQsMmT(xIySkVlP.TJxsRg) end
-		elseif eiitQOm:AEHHlgP(string.char(114,112,100,77,70,117,115,120,89)) and eiitQOm.fHRVnE then
-			kSbQsMmT(eiitQOm.tvVLnaJJk)
+	for _, d in ipairs(list) do
+		if d:IsA("GuiObject") and d.Visible then
+			if d.BackgroundTransparency < 1 then judge(d.BackgroundColor3) end
+			if (d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.ImageTransparency < 1 then judge(d.ImageColor3) end
+			if (d:IsA("TextLabel") or d:IsA("TextButton")) and d.TextTransparency < 1 then judge(d.TextColor3) end
+		elseif d:IsA("UIGradient") and d.Enabled then
+			for _, k in ipairs(d.Color.Keypoints) do judge(k.Value) end
+		elseif d:IsA("UIStroke") and d.Enabled then
+			judge(d.Color)
 		end
 	end
-	if RJuSqiJHA > lAJvyaxQ then return true end
-	if lAJvyaxQ > RJuSqiJHA then return false end
+	if greens > reds then return true end
+	if reds > greens then return false end
 	return nil
 end
 
-
-local function GbAqbozdg(ulXTCNm)
-	if not DWCOjTUhQ then return end
-	local IDOkcxd = { string.char(108,100,88,67,118,107,65,32) .. ldXCvkA, string.char(109,76,109,101,67,90,86,90,116,32,61,32) .. tostring(UZQcSw(ulXTCNm)) }
-	local function ZEoYCkITI(vLOvlrm) return ZfyeNCxlJ.uhBgwIhN(string.char(40,37,46,50,102,44,37,46,50,102,44,37,46,50,102,41), vLOvlrm.SeuhnipUH, vLOvlrm.wdIAgqUqz, vLOvlrm.UPJNGkpCX) end
-	local hPALxDEK = ulXTCNm:gcHLLE()
-	cSwXLEa.ygebQasKQ(hPALxDEK, 1, ulXTCNm)
-	for NRzHjvyk, eiitQOm in ipairs(hPALxDEK) do
-		local cRBsGwD = eiitQOm:tbYmzK() .. string.char(32,91) .. eiitQOm.XDLaJSy .. string.char(93)
-		if eiitQOm:AEHHlgP(string.char(88,107,77,117,114,102,112,117)) then cRBsGwD ..= string.char(32,117,89,71,121,85,119,113,113,98,61) .. tostring(eiitQOm.bCuISnY) .. string.char(32,76,84,88,104,102,107,78,117,61) .. ZEoYCkITI(eiitQOm.aDJTpFP) .. string.char(32,69,85,119,81,74,98,61) .. eiitQOm.xXlpGqBYG end
-		if eiitQOm:AEHHlgP(string.char(98,72,69,70,79,104,68,100)) or eiitQOm:AEHHlgP(string.char(83,106,86,74,80,90,106,120,122)) then cRBsGwD ..= string.char(32,120,81,100,73,106,112,77,79,61) .. eiitQOm.YVxbtIES .. string.char(32,80,88,80,97,71,100,61) .. ZEoYCkITI(eiitQOm.zEISuJsw) end
-		if eiitQOm:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) or eiitQOm:AEHHlgP(string.char(103,72,89,121,80,77)) then cRBsGwD ..= string.char(32,81,78,109,106,109,111,70,105,61) .. ZEoYCkITI(eiitQOm.lgBXrAQI) end
-		if eiitQOm:AEHHlgP(string.char(79,72,113,99,97,120)) then
-			local xIySkVlP = {} for NRzHjvyk, SVaexE in ipairs(eiitQOm.tvVLnaJJk.JHsrMSJZ) do xIySkVlP[#xIySkVlP + 1] = ZEoYCkITI(SVaexE.TJxsRg) end
-			cRBsGwD ..= string.char(32,108,106,80,88,71,69,80,61) .. cSwXLEa.WFAkMJcEp(xIySkVlP, string.char(44))
+-- บันทึกโครงสร้างปุ่ม Auto Swing ลงไฟล์ FarmHub_autoswing.txt (ไว้ตรวจว่าเกมแสดงสถานะยังไง)
+local function dumpAutoSwing(btn)
+	if not writefile then return end
+	local out = { "VERSION " .. VERSION, "isOn = " .. tostring(autoSwingIsOn(btn)) }
+	local function c3(c) return string.format("(%.2f,%.2f,%.2f)", c.R, c.G, c.B) end
+	local list = btn:GetDescendants()
+	table.insert(list, 1, btn)
+	for _, d in ipairs(list) do
+		local s = d:GetFullName() .. " [" .. d.ClassName .. "]"
+		if d:IsA("GuiObject") then s ..= " vis=" .. tostring(d.Visible) .. " bg=" .. c3(d.BackgroundColor3) .. " bgT=" .. d.BackgroundTransparency end
+		if d:IsA("ImageLabel") or d:IsA("ImageButton") then s ..= " img=" .. d.Image .. " imgC=" .. c3(d.ImageColor3) end
+		if d:IsA("TextLabel") or d:IsA("TextButton") then s ..= " tc=" .. c3(d.TextColor3) end
+		if d:IsA("UIGradient") then
+			local k = {} for _, p in ipairs(d.Color.Keypoints) do k[#k + 1] = c3(p.Value) end
+			s ..= " grad=" .. table.concat(k, ",")
 		end
-		if eiitQOm:AEHHlgP(string.char(114,112,100,77,70,117,115,120,89)) then cRBsGwD ..= string.char(32,121,117,119,77,87,119,61) .. ZEoYCkITI(eiitQOm.tvVLnaJJk) end
-		if eiitQOm:AEHHlgP(string.char(115,89,107,73,78,88,103,75,74)) then cRBsGwD ..= string.char(32,107,121,118,72,82,107,61) .. tostring(eiitQOm.TJxsRg) end
-		cSwXLEa.ygebQasKQ(IDOkcxd, cRBsGwD)
+		if d:IsA("UIStroke") then s ..= " stroke=" .. c3(d.Color) end
+		if d:IsA("ValueBase") then s ..= " value=" .. tostring(d.Value) end
+		table.insert(out, s)
 	end
-	local lBPjDDZc = leWCDdwba:AAZfTWh(string.char(111,102,85,85,106,72,83,79))
-	local ZJdKGiNoL = lBPjDDZc and lBPjDDZc:AAZfTWh(string.char(100,66,102,98,106,113,112,122,98))
-	cSwXLEa.ygebQasKQ(IDOkcxd, string.char(10,9,105,102,32,90,74,100,75,71,105,78,111,76,32,116,104,101,110,10,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,101,105,105,116,81,79,109,32,105,110,32,105,112,97,105,114,115,40,90,74,100,75,71,105,78,111,76,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,9,108,111,99,97,108,32,99,82,66,115,71,119,68,32,61,32,101,105,105,116,81,79,109,58,116,98,89,109,122,75,40,41,32,46,46,32) [string.char(32,46,46,32,101,105,105,116,81,79,109,46,88,68,76,97,74,83,121,32,46,46,32)]string.char(10,9,9,9,105,102,32,101,105,105,116,81,79,109,58,65,69,72,72,108,103,80,40)bHEFOhDdstring.char(41,32,111,114,32,101,105,105,116,81,79,109,58,65,69,72,72,108,103,80,40)SjVJPZjxzstring.char(41,32,116,104,101,110,32,99,82,66,115,71,119,68,32,46,46,61,32) xQdIjpMO=string.char(32,46,46,32,101,105,105,116,81,79,109,46,89,86,120,98,116,73,69,83,32,101,110,100,10,9,9,9,105,102,32,101,105,105,116,81,79,109,58,65,69,72,72,108,103,80,40)dvarmBdstring.char(41,32,111,114,32,101,105,105,116,81,79,109,58,65,69,72,72,108,103,80,40)LXdtfKsstring.char(41,32,116,104,101,110,32,99,82,66,115,71,119,68,32,46,46,61,32) VssWfFCtD=string.char(32,46,46,32,101,105,105,116,81,79,109,46,76,88,100,116,102,75,115,32,101,110,100,10,9,9,9,105,102,32,101,105,105,116,81,79,109,58,65,69,72,72,108,103,80,40)sYkINXgKJstring.char(41,32,116,104,101,110,32,99,82,66,115,71,119,68,32,46,46,61,32) kyvHRk=string.char(32,46,46,32,116,111,115,116,114,105,110,103,40,101,105,105,116,81,79,109,46,84,74,120,115,82,103,41,32,101,110,100,10,9,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,73,68,79,107,99,120,100,44,32,99,82,66,115,71,119,68,41,10,9,9,101,110,100,10,9,101,110,100,10,9,68,88,67,108,119,119,40,66,101,120,121,66,82,32,111,114,32,68,87,67,79,106,84,85,104,81,44,32)xANImf.DwLiugstring.char(44,32,99,83,119,88,76,69,97,46,87,70,65,107,77,74,99,69,112,40,73,68,79,107,99,120,100,44,32)\hxMWBdXndstring.char(41,32,46,46,32)\hxMWBdXnd\hxMWBdXndstring.char(41,10,101,110,100,10,10,10,10,10,108,111,99,97,108,32,83,88,83,87,72,83,112,101,44,32,89,97,99,82,115,106,90,111,32,61,32)zoexXDXpGstring.char(44,32,48,10,108,111,99,97,108,32,114,71,103,87,67,69,114,44,32,122,118,107,86,87,83,44,32,104,72,110,114,103,122,97,32,61,32,48,44,32,49,44,32,110,105,108,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,108,72,116,117,90,106,40,41,10,9,108,111,99,97,108,32,117,108,88,84,67,78,109,32,61,32,109,66,101,88,110,113,40,41,10,9,105,102,32,110,111,116,32,117,108,88,84,67,78,109,32,111,114,32,110,111,116,32,83,85,84,82,65,115,105,106,40,117,108,88,84,67,78,109,41,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,120,83,119,66,86,68,77,86,32,61,32,85,90,81,99,83,119,40,117,108,88,84,67,78,109,41,10,9,105,102,32,120,83,119,66,86,68,77,86,32,126,61,32,83,88,83,87,72,83,112,101,32,97,110,100,32,89,97,99,82,115,106,90,111,32,60,32,49,50,32,116,104,101,110,32,32,32,10,9,9,83,88,83,87,72,83,112,101,44,32,89,97,99,82,115,106,90,111,32,61,32,120,83,119,66,86,68,77,86,44,32,89,97,99,82,115,106,90,111,32,43,32,49,10,9,9,71,98,65,113,98,111,122,100,103,40,117,108,88,84,67,78,109,41,10,9,101,110,100,10,9,105,102,32,120,83,119,66,86,68,77,86,32,61,61,32,110,105,108,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,105,102,32,120,83,119,66,86,68,77,86,32,61,61,32,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,32,116,104,101,110,32,104,72,110,114,103,122,97,32,61,32,110,105,108,32,114,101,116,117,114,110,32,101,110,100,10,9,10,9,105,102,32,101,109,109,87,68,80,102,99,40,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,41,32,116,104,101,110,32,32,32,10,9,9,79,75,69,88,111,116,69,74,114,40,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,32,97,110,100,32)เปิด XQDGpw iavZqE (MKwqUns)string.char(32,111,114,32)ปิด XQDGpw iavZqE (MKwqUns)string.char(41,10,9,9,104,72,110,114,103,122,97,32,61,32,110,105,108,10,9,9,114,101,116,117,114,110,10,9,101,110,100,10,9,105,102,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,114,71,103,87,67,69,114,32,60,32,86,108,75,105,72,85,104,84,108,46,76,83,119,76,101,101,68,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,105,102,32,104,72,110,114,103,122,97,32,61,61,32,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,32,116,104,101,110,10,9,9,10,9,9,122,118,107,86,87,83,32,61,32,122,118,107,86,87,83,32,37,32,52,32,43,32,49,10,9,9,112,114,105,110,116,40)[PyyQCJz] ปุ่ม XQDGpw iavZqE ไม่ตอบสนอง ลองวิธีกดแบบที่string.char(44,32,122,118,107,86,87,83,41,10,9,101,110,100,10,9,114,71,103,87,67,69,114,44,32,104,72,110,114,103,122,97,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,44,32,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,10,9,79,75,69,88,111,116,69,74,114,40,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,32,97,110,100,32)เปิด XQDGpw iavZqEstring.char(32,111,114,32)ปิด XQDGpw iavZqEstring.char(44,32)วิธีstring.char(44,32,122,118,107,86,87,83,41,10,9,105,102,32,110,111,116,32,79,68,120,119,114,73,122,83,40,117,108,88,84,67,78,109,44,32,122,118,107,86,87,83,41,32,116,104,101,110,32,122,118,107,86,87,83,32,61,32,122,118,107,86,87,83,32,37,32,52,32,43,32,49,32,101,110,100,10,101,110,100,10,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,72,84,101,106,122,89,86,68,40,120,83,119,66,86,68,77,86,41,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,32,126,61,32,120,83,119,66,86,68,77,86,32,116,104,101,110,10,9,9,114,71,103,87,67,69,114,32,61,32,48,10,9,9,67,88,86,117,87,116,120,118,100,46,102,80,73,89,113,77,115,114,32,61,32,120,83,119,66,86,68,77,86,10,9,9,108,111,99,97,108,32,78,118,116,106,101,80,102,116,32,61,32,121,80,102,76,111,110,73,111,40,41,10,9,9,105,102,32,78,118,116,106,101,80,102,116,32,61,61,32,120,83,119,66,86,68,77,86,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,105,102,32,78,118,116,106,101,80,102,116,32,126,61,32,110,105,108,32,97,110,100,32,101,109,109,87,68,80,102,99,40,120,83,119,66,86,68,77,86,41,32,116,104,101,110,10,9,9,9,114,71,103,87,67,69,114,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,9,114,101,116,117,114,110,10,9,9,101,110,100,10,9,101,110,100,10,9,108,72,116,117,90,106,40,41,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,73,87,89,87,77,82,109,40,41,10,9,108,111,99,97,108,32,90,74,100,75,71,105,78,111,76,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)lCxyBxstring.char(41,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,90,74,100,75,71,105,78,111,76,32,111,114,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,65,103,111,74,89,73,104,108,85,32,105,110,32,105,112,97,105,114,115,40,90,74,100,75,71,105,78,111,76,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,105,102,32,65,103,111,74,89,73,104,108,85,58,65,69,72,72,108,103,80,40)JYUGWqecstring.char(41,32,116,104,101,110,10,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,69,82,74,107,84,122,103,65,32,105,110,32,105,112,97,105,114,115,40,65,103,111,74,89,73,104,108,85,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,9,9,105,102,32,69,82,74,107,84,122,103,65,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,116,104,101,110,10,9,9,9,9,9,105,102,32,69,82,74,107,84,122,103,65,58,98,84,73,101,70,120,121,106,99,40,89,116,71,117,65,68,103,106,118,41,32,111,114,32,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,32,60,61,32,49,53,32,116,104,101,110,10,9,9,9,9,9,9,114,101,116,117,114,110,32,65,103,111,74,89,73,104,108,85,10,9,9,9,9,9,101,110,100,10,9,9,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,73,80,72,84,119,107,81,115,32,105,110,32,105,112,97,105,114,115,40,69,82,74,107,84,122,103,65,58,84,103,67,82,108,111,72,70,122,40,116,114,117,101,41,41,32,100,111,10,9,9,9,9,9,9,105,102,32,73,80,72,84,119,107,81,115,58,98,84,73,101,70,120,121,106,99,40,89,116,71,117,65,68,103,106,118,41,32,116,104,101,110,32,114,101,116,117,114,110,32,65,103,111,74,89,73,104,108,85,32,101,110,100,10,9,9,9,9,9,101,110,100,10,9,9,9,9,101,110,100,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,101,110,100,10,101,110,100,10,108,111,99,97,108,32,106,72,73,97,85,76,68,113,73,44,32,75,82,82,85,100,116,116,32,61,32,110,105,108,44,32,48,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,80,104,106,113,69,89,77,40,41,10,9,105,102,32,106,72,73,97,85,76,68,113,73,32,97,110,100,32,106,72,73,97,85,76,68,113,73,46,79,106,81,71,111,66,32,116,104,101,110,32,114,101,116,117,114,110,32,83,85,84,82,65,115,105,106,40,106,72,73,97,85,76,68,113,73,41,32,101,110,100,10,9,105,102,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,60,32,75,82,82,85,100,116,116,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,75,82,82,85,100,116,116,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,43,32,48,46,51,10,9,106,72,73,97,85,76,68,113,73,32,61,32,98,78,106,114,120,69,40)ytaYspqstring.char(44,32,116,114,117,101,41,10,9,114,101,116,117,114,110,32,106,72,73,97,85,76,68,113,73,32,126,61,32,110,105,108,32,97,110,100,32,83,85,84,82,65,115,105,106,40,106,72,73,97,85,76,68,113,73,41,10,101,110,100,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,85,70,72,114,75,110,72,97,40,41,10,9,114,101,116,117,114,110,32,73,87,89,87,77,82,109,40,41,32,126,61,32,110,105,108,32,111,114,32,80,104,106,113,69,89,77,40,41,10,101,110,100,10,10,10,108,111,99,97,108,32,110,103,119,107,110,100,66,68,32,61,32,115,101,116,109,101,116,97,116,97,98,108,101,40,123,125,44,32,123,32,77,85,110,65,85,108,78,32,61,32)xIySkVlPstring.char(32,125,41,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,103,85,102,107,102,107,40,69,82,74,107,84,122,103,65,41,10,9,114,101,116,117,114,110,32,69,82,74,107,84,122,103,65,32,97,110,100,32,69,82,74,107,84,122,103,65,46,79,106,81,71,111,66,32,126,61,32,110,105,108,32,97,110,100,32,110,111,116,32,40,110,103,119,107,110,100,66,68,91,69,82,74,107,84,122,103,65,93,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,110,103,119,107,110,100,66,68,91,69,82,74,107,84,122,103,65,93,32,60,32,53,41,10,9,9,97,110,100,32,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)jKvGvySNpstring.char(41,32,126,61,32,116,114,117,101,10,9,9,97,110,100,32,40,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)fWudsPUHIstring.char(41,32,111,114,32,49,41,32,62,32,48,10,101,110,100,10,10,10,108,111,99,97,108,32,109,69,112,113,89,73,68,119,32,61,32,123,10,9)eItdIustring.char(44,32)pnSaOUAnstring.char(44,32)OEvhtrstring.char(44,32)tTszUHstring.char(44,32)NKigJSEVXstring.char(44,32)ePAOHtstring.char(44,32)idOhGvtTFstring.char(44,32)JdPapIHstring.char(44,10,9)NLtvirfstring.char(44,32)qXguegzoNstring.char(44,32)ifxXisIystring.char(44,32)mWYKoJstring.char(44,32)JIslmYfstring.char(44,32)Nawihdtvastring.char(44,32)tVDYdbIygstring.char(44,32)hngjKvhFstring.char(44,10,125,10,108,111,99,97,108,32,101,76,81,80,99,117,32,61,32,123,125,10,102,111,114,32,120,106,85,117,115,117,122,67,86,44,32,72,103,72,120,107,89,73,98,77,32,105,110,32,105,112,97,105,114,115,40,109,69,112,113,89,73,68,119,41,32,100,111,32,101,76,81,80,99,117,91,72,103,72,120,107,89,73,98,77,93,32,61,32,120,106,85,117,115,117,122,67,86,32,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,77,111,117,103,108,119,82,72,40,88,110,103,89,82,72,120,102,73,41,10,9,105,102,32,116,121,112,101,40,88,110,103,89,82,72,120,102,73,41,32,126,61,32)ZfyeNCxlJstring.char(32,116,104,101,110,32,114,101,116,117,114,110,32,45,98,97,104,80,114,102,75,46,121,74,100,90,107,115,122,32,101,110,100,10,9,114,101,116,117,114,110,32,83,101,112,119,74,68,112,110,102,91,88,110,103,89,82,72,120,102,73,93,32,111,114,32,101,76,81,80,99,117,91,88,110,103,89,82,72,120,102,73,93,32,111,114,32,45,98,97,104,80,114,102,75,46,121,74,100,90,107,115,122,10,101,110,100,10,10,108,111,99,97,108,32,103,77,115,114,88,68,118,44,32,101,90,111,116,70,73,121,99,107,44,32,115,113,107,119,86,65,90,99,32,61,32)ใกล้สุดก่อนstring.char(44,32)หายากสุดก่อนstring.char(44,32)GdydKKxWt สูงสุดก่อนstring.char(10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,77,79,102,70,114,74,40,69,82,74,107,84,122,103,65,41,32,114,101,116,117,114,110,32,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)nPKYyEstring.char(41,32,111,114,32)?string.char(32,101,110,100,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,97,120,76,79,102,117,78,114,40,69,82,74,107,84,122,103,65,41,32,114,101,116,117,114,110,32,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)fMYCGWdnstring.char(41,32,111,114,32,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)GdydKKxWtstring.char(41,32,111,114,32,48,32,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,117,78,68,120,78,112,84,106,40,69,82,74,107,84,122,103,65,41,10,9,105,102,32,110,101,120,116,40,67,88,86,117,87,116,120,118,100,46,65,103,78,115,89,112,109,67,41,32,61,61,32,110,105,108,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,114,101,116,117,114,110,32,67,88,86,117,87,116,120,118,100,46,65,103,78,115,89,112,109,67,91,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)JatlsKstring.char(41,93,32,61,61,32,116,114,117,101,10,101,110,100,10,10,10,108,111,99,97,108,32,81,80,79,90,84,103,77,77,104,32,61,32,116,98,97,102,87,102,89,77,115,58,78,73,109,105,67,113,82,120,105,40)QPOZTgMMhstring.char(41,10,108,111,99,97,108,32,75,98,86,73,104,68,84,32,61,32)PyyBfK.eWlDHxustring.char(10,108,111,99,97,108,32,71,97,101,70,99,77,80,89,32,61,32,123,125,10,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,105,102,32,109,116,119,74,99,73,32,97,110,100,32,109,116,119,74,99,73,40,75,98,86,73,104,68,84,41,32,116,104,101,110,10,9,9,102,111,114,32,102,98,77,107,81,117,78,44,32,110,117,99,112,79,104,87,101,69,32,105,110,32,112,97,105,114,115,40,81,80,79,90,84,103,77,77,104,58,88,104,121,77,116,121,98,108,115,40,104,86,118,101,97,80,87,40,75,98,86,73,104,68,84,41,41,41,32,100,111,10,9,9,9,71,97,101,70,99,77,80,89,91,102,98,77,107,81,117,78,93,32,61,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,110,117,99,112,79,104,87,101,69,91,49,93,44,32,110,117,99,112,79,104,87,101,69,91,50,93,44,32,110,117,99,112,79,104,87,101,69,91,51,93,41,10,9,9,101,110,100,10,9,101,110,100,10,101,110,100,41,10,108,111,99,97,108,32,83,108,122,116,116,79,81,32,61,32,48,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,102,97,100,102,107,69,72,40,87,73,75,101,78,117,114,44,32,80,119,66,88,100,121,88,41,10,9,71,97,101,70,99,77,80,89,91,87,73,75,101,78,117,114,93,32,61,32,80,119,66,88,100,121,88,10,9,105,102,32,68,87,67,79,106,84,85,104,81,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,62,32,83,108,122,116,116,79,81,32,116,104,101,110,10,9,9,83,108,122,116,116,79,81,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,43,32,50,48,10,9,9,108,111,99,97,108,32,101,69,98,103,101,66,32,61,32,123,125,10,9,9,102,111,114,32,104,120,77,87,66,100,88,110,100,44,32,83,86,97,101,120,69,32,105,110,32,112,97,105,114,115,40,71,97,101,70,99,77,80,89,41,32,100,111,32,101,69,98,103,101,66,91,104,120,77,87,66,100,88,110,100,93,32,61,32,123,32,83,86,97,101,120,69,46,100,115,100,100,108,84,70,44,32,83,86,97,101,120,69,46,106,77,108,97,66,86,120,90,122,44,32,83,86,97,101,120,69,46,105,78,100,118,69,87,32,125,32,101,110,100,10,9,9,68,88,67,108,119,119,40,68,87,67,79,106,84,85,104,81,44,32,75,98,86,73,104,68,84,44,32,81,80,79,90,84,103,77,77,104,58,104,108,104,89,87,104,66,120,73,40,101,69,98,103,101,66,41,41,10,9,101,110,100,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,106,107,113,79,82,83,107,114,40,80,119,66,88,100,121,88,41,10,9,108,111,99,97,108,32,121,117,80,73,111,78,44,32,116,116,86,110,77,89,98,10,9,102,111,114,32,102,98,77,107,81,117,78,44,32,83,89,97,88,72,70,65,79,32,105,110,32,112,97,105,114,115,40,71,97,101,70,99,77,80,89,41,32,100,111,10,9,9,108,111,99,97,108,32,116,76,116,83,97,100,70,32,61,32,40,83,89,97,88,72,70,65,79,32,45,32,80,119,66,88,100,121,88,41,46,78,98,103,103,111,78,105,69,10,9,9,105,102,32,110,111,116,32,116,116,86,110,77,89,98,32,111,114,32,116,76,116,83,97,100,70,32,60,32,116,116,86,110,77,89,98,32,116,104,101,110,10,9,9,9,121,117,80,73,111,78,44,32,116,116,86,110,77,89,98,32,61,32,102,98,77,107,81,117,78,44,32,116,76,116,83,97,100,70,10,9,9,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,121,117,80,73,111,78,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,73,70,99,72,74,65,40,41,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,116,104,101,110,32,114,101,116,117,114,110,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,32,101,110,100,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,114,101,116,117,114,110,32,78,77,109,79,84,65,116,106,101,32,97,110,100,32,106,107,113,79,82,83,107,114,40,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,10,101,110,100,10,10,10,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,87,104,97,85,86,78,105,40,87,73,75,101,78,117,114,44,32,87,113,67,106,83,89,44,32,98,83,98,112,109,90,73,84,44,32,108,113,71,104,97,88,79,41,10,9,108,111,99,97,108,32,119,99,66,116,121,90,65,109,84,32,61,32,86,108,75,105,72,85,104,84,108,46,120,90,90,66,65,84,91,87,73,75,101,78,117,114,93,10,9,108,111,99,97,108,32,90,74,100,75,71,105,78,111,76,32,61,32,119,99,66,116,121,90,65,109,84,32,97,110,100,32,119,99,66,116,121,90,65,109,84,58,65,65,90,102,84,87,104,40)AgNsYpmCstring.char(41,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,90,74,100,75,71,105,78,111,76,32,111,114,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,82,80,113,83,69,113,78,79,32,61,32,98,83,98,112,109,90,73,84,32,97,110,100,32,67,88,86,117,87,116,120,118,100,46,100,67,67,70,108,80,82,76,118,32,111,114,32,103,77,115,114,88,68,118,10,9,108,111,99,97,108,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,44,32,103,122,86,100,110,83,101,10,9,108,111,99,97,108,32,65,81,105,80,90,79,44,32,70,69,66,69,121,118,98,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,44,32,48,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,73,99,110,118,98,114,32,105,110,32,105,112,97,105,114,115,40,90,74,100,75,71,105,78,111,76,58,106,115,77,98,111,78,73,72,40,41,41,32,100,111,10,9,9,108,111,99,97,108,32,69,82,74,107,84,122,103,65,32,61,32,73,99,110,118,98,114,58,65,65,90,102,84,87,104,40)WkhAtHkddstring.char(41,10,9,9,105,102,32,69,82,74,107,84,122,103,65,32,97,110,100,32,69,82,74,107,84,122,103,65,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,116,104,101,110,32,65,81,105,80,90,79,32,43,61,32,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,32,70,69,66,69,121,118,98,32,43,61,32,49,32,101,110,100,10,9,9,105,102,32,69,82,74,107,84,122,103,65,32,97,110,100,32,69,82,74,107,84,122,103,65,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,97,110,100,32,103,85,102,107,102,107,40,69,82,74,107,84,122,103,65,41,10,9,9,9,97,110,100,32,40,87,113,67,106,83,89,32,61,61,32,111,113,69,82,116,69,119,76,32,111,114,32,69,82,74,107,84,122,103,65,58,77,67,81,120,117,108,65,74,83,40)JatlsKstring.char(41,32,61,61,32,87,113,67,106,83,89,41,10,9,9,9,97,110,100,32,40,110,111,116,32,98,83,98,112,109,90,73,84,32,111,114,32,117,78,68,120,78,112,84,106,40,69,82,74,107,84,122,103,65,41,41,10,9,9,9,97,110,100,32,40,110,111,116,32,108,113,71,104,97,88,79,32,111,114,32,108,113,71,104,97,88,79,40,69,82,74,107,84,122,103,65,41,41,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,101,105,105,116,81,79,109,32,61,32,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,10,9,9,9,108,111,99,97,108,32,76,81,77,81,70,85,97,109,32,61,32,48,10,9,9,9,105,102,32,82,80,113,83,69,113,78,79,32,61,61,32,101,90,111,116,70,73,121,99,107,32,116,104,101,110,10,9,9,9,9,76,81,77,81,70,85,97,109,32,61,32,101,76,81,80,99,117,91,77,79,102,70,114,74,40,69,82,74,107,84,122,103,65,41,93,32,111,114,32,48,10,9,9,9,101,108,115,101,105,102,32,82,80,113,83,69,113,78,79,32,61,61,32,115,113,107,119,86,65,90,99,32,116,104,101,110,10,9,9,9,9,76,81,77,81,70,85,97,109,32,61,32,97,120,76,79,102,117,78,114,40,69,82,74,107,84,122,103,65,41,10,9,9,9,101,110,100,10,9,9,9,10,9,9,9,105,102,32,110,111,116,32,103,69,118,119,100,109,115,32,111,114,32,76,81,77,81,70,85,97,109,32,62,32,103,122,86,100,110,83,101,32,111,114,32,40,76,81,77,81,70,85,97,109,32,61,61,32,103,122,86,100,110,83,101,32,97,110,100,32,101,105,105,116,81,79,109,32,60,32,81,76,80,74,75,78,108,41,32,116,104,101,110,10,9,9,9,9,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,44,32,103,122,86,100,110,83,101,32,61,32,69,82,74,107,84,122,103,65,44,32,101,105,105,116,81,79,109,44,32,76,81,77,81,70,85,97,109,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,101,110,100,10,9,105,102,32,70,69,66,69,121,118,98,32,62,32,48,32,116,104,101,110,32,102,97,100,102,107,69,72,40,87,73,75,101,78,117,114,44,32,65,81,105,80,90,79,32,47,32,70,69,66,69,121,118,98,41,32,101,110,100,10,9,114,101,116,117,114,110,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,10,101,110,100,10,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,90,97,115,100,70,72,82,82,40,108,113,71,104,97,88,79,41,10,9,108,111,99,97,108,32,116,112,107,87,105,99,118,111,99,44,32,66,119,74,79,87,110,77,103,108,44,32,81,76,80,74,75,78,108,10,9,102,111,114,32,87,73,75,101,78,117,114,32,105,110,32,112,97,105,114,115,40,86,108,75,105,72,85,104,84,108,46,120,90,90,66,65,84,41,32,100,111,10,9,9,108,111,99,97,108,32,77,90,98,78,82,86,106,121,75,44,32,101,105,105,116,81,79,109,32,61,32,87,104,97,85,86,78,105,40,87,73,75,101,78,117,114,44,32,111,113,69,82,116,69,119,76,44,32,102,97,108,115,101,44,32,108,113,71,104,97,88,79,41,10,9,9,105,102,32,77,90,98,78,82,86,106,121,75,32,97,110,100,32,40,110,111,116,32,81,76,80,74,75,78,108,32,111,114,32,101,105,105,116,81,79,109,32,60,32,81,76,80,74,75,78,108,41,32,116,104,101,110,10,9,9,9,116,112,107,87,105,99,118,111,99,44,32,66,119,74,79,87,110,77,103,108,44,32,81,76,80,74,75,78,108,32,61,32,77,90,98,78,82,86,106,121,75,44,32,87,73,75,101,78,117,114,44,32,101,105,105,116,81,79,109,10,9,9,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,116,112,107,87,105,99,118,111,99,44,32,66,119,74,79,87,110,77,103,108,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,67,73,113,121,114,66,40,87,73,75,101,78,117,114,41,10,9,108,111,99,97,108,32,119,99,66,116,121,90,65,109,84,32,61,32,86,108,75,105,72,85,104,84,108,46,120,90,90,66,65,84,91,87,73,75,101,78,117,114,93,10,9,105,102,32,110,111,116,32,119,99,66,116,121,90,65,109,84,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,118,76,79,118,108,114,109,32,105,110,32,105,112,97,105,114,115,40,119,99,66,116,121,90,65,109,84,58,106,115,77,98,111,78,73,72,40,41,41,32,100,111,10,9,9,105,102,32,118,76,79,118,108,114,109,58,65,69,72,72,108,103,80,40)JYUGWqecstring.char(41,32,97,110,100,32,118,76,79,118,108,114,109,58,77,67,81,120,117,108,65,74,83,40)TPxsozwWstring.char(41,32,126,61,32,110,105,108,32,116,104,101,110,32,114,101,116,117,114,110,32,118,76,79,118,108,114,109,32,101,110,100,10,9,101,110,100,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,74,68,121,115,68,69,40,69,75,100,76,98,107,44,32,78,77,109,79,84,65,116,106,101,44,32,71,71,103,119,80,71,41,10,9,108,111,99,97,108,32,72,107,111,105,117,116,108,110,32,61,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,46,100,115,100,100,108,84,70,32,45,32,69,75,100,76,98,107,46,100,115,100,100,108,84,70,44,32,48,44,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,46,105,78,100,118,69,87,32,45,32,69,75,100,76,98,107,46,105,78,100,118,69,87,41,10,9,108,111,99,97,108,32,73,75,87,69,69,73,66,114,32,61,32,72,107,111,105,117,116,108,110,46,78,98,103,103,111,78,105,69,32,62,32,48,46,49,32,97,110,100,32,72,107,111,105,117,116,108,110,46,81,82,113,73,81,88,32,111,114,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,48,44,32,49,41,10,9,108,111,99,97,108,32,80,119,66,88,100,121,88,32,61,32,69,75,100,76,98,107,32,43,32,73,75,87,69,69,73,66,114,32,42,32,71,71,103,119,80,71,10,9,114,101,116,117,114,110,32,122,109,67,69,68,109,88,46,88,107,117,116,72,108,81,82,40,80,119,66,88,100,121,88,44,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,69,75,100,76,98,107,46,100,115,100,100,108,84,70,44,32,80,119,66,88,100,121,88,46,106,77,108,97,66,86,120,90,122,44,32,69,75,100,76,98,107,46,105,78,100,118,69,87,41,41,10,101,110,100,10,10,10,108,111,99,97,108,32,117,117,80,107,114,113,32,61,32,111,103,81,109,112,68,81,81,97,46,118,77,69,104,68,108,40,41,10,117,117,80,107,114,113,46,108,114,79,82,70,66,32,61,32,113,68,99,79,67,75,98,46,103,67,110,81,116,72,81,76,46,69,77,87,120,100,72,74,78,71,10,117,117,80,107,114,113,46,76,85,107,84,120,73,118,32,61,32,116,114,117,101,32,32,32,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,117,106,97,122,120,99,114,40,120,113,104,99,109,98,98,85,87,44,32,99,114,66,111,75,121,41,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,32,61,32,113,79,114,98,112,79,104,116,79,46,97,99,78,71,71,89,121,76,115,10,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,123,32,89,116,71,117,65,68,103,106,118,32,125,10,9,105,102,32,99,114,66,111,75,121,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,99,114,66,111,75,121,41,32,101,110,100,10,9,108,111,99,97,108,32,110,97,80,122,108,98,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)MuofRuVstring.char(41,10,9,105,102,32,110,97,80,122,108,98,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,110,97,80,122,108,98,41,32,101,110,100,10,9,117,117,80,107,114,113,46,69,104,97,90,114,80,32,61,32,104,80,65,76,120,68,69,75,10,9,108,111,99,97,108,32,70,71,108,83,97,85,107,32,61,32,90,111,108,75,77,78,72,100,119,58,98,84,121,115,81,75,40,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,56,44,32,48,41,44,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,45,56,48,44,32,48,41,44,32,117,117,80,107,114,113,41,10,9,105,102,32,110,111,116,32,70,71,108,83,97,85,107,32,116,104,101,110,32,114,101,116,117,114,110,32,120,113,104,99,109,98,98,85,87,32,101,110,100,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,44,32,116,80,78,109,70,77,84,104,32,61,32,68,71,119,79,113,108,85,40,41,10,9,108,111,99,97,108,32,114,114,103,111,70,72,104,32,61,32,51,10,9,105,102,32,116,80,78,109,70,77,84,104,32,97,110,100,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,10,9,9,114,114,103,111,70,72,104,32,61,32,78,77,109,79,84,65,116,106,101,46,82,84,87,97,84,66,65,88,69,46,106,77,108,97,66,86,120,90,122,32,47,32,50,32,43,32,40,116,80,78,109,70,77,84,104,46,115,82,117,121,116,112,78,77,88,32,61,61,32,113,68,99,79,67,75,98,46,110,73,79,71,104,114,80,46,83,116,100,79,77,112,73,32,97,110,100,32,50,32,111,114,32,116,80,78,109,70,77,84,104,46,88,100,85,87,121,72,41,10,9,101,110,100,10,9,114,101,116,117,114,110,32,120,113,104,99,109,98,98,85,87,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,70,71,108,83,97,85,107,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,32,43,32,114,114,103,111,70,72,104,32,45,32,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,44,32,48,41,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,67,109,82,69,89,79,40,77,90,98,78,82,86,106,121,75,44,32,78,77,109,79,84,65,116,106,101,41,10,9,108,111,99,97,108,32,120,113,104,99,109,98,98,85,87,32,61,32,74,68,121,115,68,69,40,77,90,98,78,82,86,106,121,75,46,67,111,97,117,70,68,102,106,44,32,78,77,109,79,84,65,116,106,101,44,32,98,97,104,80,114,102,75,46,71,79,99,99,81,71,40,77,90,98,78,82,86,106,121,75,46,82,84,87,97,84,66,65,88,69,46,100,115,100,100,108,84,70,44,32,77,90,98,78,82,86,106,121,75,46,82,84,87,97,84,66,65,88,69,46,105,78,100,118,69,87,41,32,47,32,50,32,43,32,50,46,53,41,10,9,10,9,108,111,99,97,108,32,76,74,107,117,106,104,97,102,86,32,61,32,77,90,98,78,82,86,106,121,75,46,79,106,81,71,111,66,32,97,110,100,32,77,90,98,78,82,86,106,121,75,46,79,106,81,71,111,66,46,79,106,81,71,111,66,10,9,114,101,116,117,114,110,32,117,106,97,122,120,99,114,40,120,113,104,99,109,98,98,85,87,44,32,76,74,107,117,106,104,97,102,86,41,10,101,110,100,10,10,10,108,111,99,97,108,32,118,89,114,115,104,121,108,44,32,88,86,87,117,105,121,120,32,61,32,110,105,108,44,32,123,125,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,76,74,108,84,85,119,79,104,40,41,10,9,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,61,32,102,97,108,115,101,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,116,72,119,90,111,117,77,110,88,32,105,110,32,105,112,97,105,114,115,40,88,86,87,117,105,121,120,41,32,100,111,32,116,72,119,90,111,117,77,110,88,58,69,98,70,119,78,100,72,122,108,40,41,32,101,110,100,10,9,99,83,119,88,76,69,97,46,70,74,107,117,86,98,40,88,86,87,117,105,121,120,41,10,9,105,102,32,118,89,114,115,104,121,108,32,97,110,100,32,118,89,114,115,104,121,108,46,79,106,81,71,111,66,32,116,104,101,110,32,118,89,114,115,104,121,108,46,111,68,81,112,68,87,32,61,32,102,97,108,115,101,32,101,110,100,10,9,118,89,114,115,104,121,108,32,61,32,110,105,108,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,80,82,103,80,116,88,87,79,67,40,41,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,44,32,78,77,109,79,84,65,116,106,101,44,32,116,80,78,109,70,77,84,104,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,111,114,32,67,88,86,117,87,116,120,118,100,46,86,75,80,87,121,77,87,107,67,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,76,74,108,84,85,119,79,104,40,41,10,9,10,9,108,111,99,97,108,32,120,113,104,99,109,98,98,85,87,32,61,32,117,106,97,122,120,99,114,40,86,108,75,105,72,85,104,84,108,46,89,120,102,116,65,67,110,70,75,44,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)lCxyBxstring.char(41,41,10,9,118,89,114,115,104,121,108,32,61,32,78,77,109,79,84,65,116,106,101,10,9,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,61,32,116,114,117,101,10,9,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,120,113,104,99,109,98,98,85,87,10,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,78,77,109,79,84,65,116,106,101,46,83,106,90,116,120,72,85,111,102,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,78,77,109,79,84,65,116,106,101,46,111,68,81,112,68,87,32,61,32,116,114,117,101,10,9,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,88,86,87,117,105,121,120,44,32,77,82,77,72,80,113,121,46,80,73,75,88,74,73,84,77,58,111,82,108,109,67,81,119,40,76,74,108,84,85,119,79,104,41,41,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,88,86,87,117,105,121,120,44,32,116,80,78,109,70,77,84,104,46,114,75,89,102,121,121,78,58,111,82,108,109,67,81,119,40,76,74,108,84,85,119,79,104,41,41,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,88,86,87,117,105,121,120,44,32,113,79,114,98,112,79,104,116,79,46,103,80,120,99,74,88,58,111,82,108,109,67,81,119,40,76,74,108,84,85,119,79,104,41,41,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,88,86,87,117,105,121,120,44,32,113,79,114,98,112,79,104,116,79,46,90,100,99,89,99,80,106,103,78,58,111,82,108,109,67,81,119,40,76,74,108,84,85,119,79,104,41,41,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,88,86,87,117,105,121,120,44,32,106,85,119,115,101,77,69,71,46,85,76,112,78,78,113,76,118,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,113,79,114,98,112,79,104,116,79,46,97,99,78,71,71,89,121,76,115,32,126,61,32,89,116,71,117,65,68,103,106,118,32,111,114,32,110,111,116,32,78,77,109,79,84,65,116,106,101,46,79,106,81,71,111,66,32,111,114,32,116,80,78,109,70,77,84,104,46,102,87,117,100,115,80,85,72,73,32,60,61,32,48,32,116,104,101,110,10,9,9,9,76,74,108,84,85,119,79,104,40,41,10,9,9,9,114,101,116,117,114,110,10,9,9,101,110,100,10,9,9,10,9,9,105,102,32,116,80,78,109,70,77,84,104,46,76,82,105,118,101,90,80,77,46,78,98,103,103,111,78,105,69,32,62,32,48,46,49,32,116,104,101,110,10,9,9,9,76,74,108,84,85,119,79,104,40,41,10,9,9,9,114,101,116,117,114,110,10,9,9,101,110,100,10,9,9,10,9,9,78,77,109,79,84,65,116,106,101,46,111,68,81,112,68,87,32,61,32,116,114,117,101,10,9,9,105,102,32,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,126,61,32,120,113,104,99,109,98,98,85,87,32,116,104,101,110,32,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,120,113,104,99,109,98,98,85,87,32,101,110,100,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,78,77,109,79,84,65,116,106,101,46,83,106,90,116,120,72,85,111,102,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,101,110,100,41,41,10,9,114,101,116,117,114,110,32,116,114,117,101,10,101,110,100,10,10,10,108,111,99,97,108,32,86,121,122,67,102,85,90,79,77,32,61,32,102,97,108,115,101,32,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,67,89,105,75,70,117,65,75,40,120,113,104,99,109,98,98,85,87,44,32,86,84,97,82,117,98,70,112,75,41,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,108,111,99,97,108,32,85,114,70,68,78,107,32,61,32,40,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,32,45,32,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,32,47,32,86,108,75,105,72,85,104,84,108,46,103,68,116,75,86,83,66,10,9,105,102,32,85,114,70,68,78,107,32,60,32,48,46,48,53,32,116,104,101,110,32,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,120,113,104,99,109,98,98,85,87,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,108,111,99,97,108,32,83,98,69,73,72,113,114,67,88,32,61,32,106,85,119,115,101,77,69,71,46,85,76,112,78,78,113,76,118,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,78,77,109,79,84,65,116,106,101,46,83,106,90,116,120,72,85,111,102,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,101,110,100,41,10,9,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,32,61,32,78,77,109,79,84,65,116,106,101,46,79,106,81,71,111,66,10,9,108,111,99,97,108,32,112,84,98,79,67,74,74,32,61,32,106,85,119,115,101,77,69,71,46,118,113,121,115,121,115,81,109,101,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,83,86,97,101,120,69,32,105,110,32,105,112,97,105,114,115,40,89,116,71,117,65,68,103,106,118,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,9,105,102,32,83,86,97,101,120,69,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,116,104,101,110,32,83,86,97,101,120,69,46,73,119,90,114,105,83,32,61,32,102,97,108,115,101,32,101,110,100,10,9,9,101,110,100,10,9,101,110,100,41,10,9,108,111,99,97,108,32,110,67,90,101,115,88,76,101,32,61,32,87,98,83,98,120,70,115,82,58,109,72,85,105,101,114,74,67,40,78,77,109,79,84,65,116,106,101,44,32,78,102,110,108,114,88,104,89,46,118,77,69,104,68,108,40,85,114,70,68,78,107,44,32,113,68,99,79,67,75,98,46,90,79,72,102,72,78,46,122,111,113,71,72,120,41,44,32,123,32,122,109,67,69,68,109,88,32,61,32,120,113,104,99,109,98,98,85,87,32,125,41,10,9,108,111,99,97,108,32,110,97,65,71,85,118,74,69,32,61,32,102,97,108,115,101,10,9,108,111,99,97,108,32,118,76,79,118,108,114,109,32,61,32,110,67,90,101,115,88,76,101,46,102,88,107,100,99,79,67,108,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,110,97,65,71,85,118,74,69,32,61,32,116,114,117,101,32,101,110,100,41,10,9,86,121,122,67,102,85,90,79,77,32,61,32,116,114,117,101,10,9,110,67,90,101,115,88,76,101,58,100,107,118,113,110,90,99,105,102,40,41,10,9,119,104,105,108,101,32,110,111,116,32,110,97,65,71,85,118,74,69,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,97,110,100,32,110,111,116,32,40,86,84,97,82,117,98,70,112,75,32,97,110,100,32,86,84,97,82,117,98,70,112,75,40,41,41,32,97,110,100,32,78,77,109,79,84,65,116,106,101,46,79,106,81,71,111,66,32,100,111,32,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,32,101,110,100,10,9,105,102,32,110,111,116,32,110,97,65,71,85,118,74,69,32,116,104,101,110,32,110,67,90,101,115,88,76,101,58,116,66,72,103,109,85,89,107,105,40,41,32,101,110,100,10,9,86,121,122,67,102,85,90,79,77,32,61,32,102,97,108,115,101,10,9,118,76,79,118,108,114,109,58,69,98,70,119,78,100,72,122,108,40,41,10,9,83,98,69,73,72,113,114,67,88,58,69,98,70,119,78,100,72,122,108,40,41,10,9,112,84,98,79,67,74,74,58,69,98,70,119,78,100,72,122,108,40,41,10,9,114,101,116,117,114,110,32,110,97,65,71,85,118,74,69,10,101,110,100,10,10,108,111,99,97,108,32,106,73,100,78,90,107,97,32,32,32,32,32,10,108,111,99,97,108,32,109,102,90,116,84,108,100,72,83,32,10,108,111,99,97,108,32,121,90,90,74,120,80,32,32,32,32,32,32,32,32,32,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,84,104,65,88,117,84,114,86,40,41,10,9,114,101,116,117,114,110,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,120,102,89,113,103,76,89,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,70,112,73,101,72,79,71,82,117,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,86,75,80,87,121,77,87,107,67,10,9,9,97,110,100,32,40,110,111,116,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,111,114,32,40,67,88,86,117,87,116,120,118,100,46,111,83,74,90,73,109,110,32,61,61,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,32,97,110,100,32,121,90,90,74,120,80,40,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,41,41,41,10,101,110,100,10,10,10,10,10,10,108,111,99,97,108,32,97,72,72,73,119,117,73,70,85,32,61,32,108,101,87,67,68,100,119,98,97,58,65,65,90,102,84,87,104,40)umIwFBBWKstring.char(41,10,108,111,99,97,108,32,81,67,101,97,87,114,109,75,75,32,61,32,108,101,87,67,68,100,119,98,97,58,65,65,90,102,84,87,104,40)BvQAqnXdPstring.char(41,10,108,111,99,97,108,32,71,74,80,79,85,112,80,44,32,110,84,119,66,85,114,32,61,32,48,44,32,86,108,75,105,72,85,104,84,108,46,114,85,122,104,109,70,10,100,111,10,9,108,111,99,97,108,32,104,78,121,80,79,70,112,32,61,32,108,101,87,67,68,100,119,98,97,58,65,65,90,102,84,87,104,40)KITqxPustring.char(41,10,9,105,102,32,104,78,121,80,79,70,112,32,97,110,100,32,104,78,121,80,79,70,112,58,65,69,72,72,108,103,80,40)GSoCQiIkOstring.char(41,32,116,104,101,110,10,9,9,104,78,121,80,79,70,112,46,75,105,100,83,105,66,86,75,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,77,90,98,78,82,86,106,121,75,44,32,121,106,75,107,68,77,71,44,32,71,116,117,70,80,110,77,41,10,9,9,9,105,102,32,116,121,112,101,40,121,106,75,107,68,77,71,41,32,61,61,32)VVXcsfFtPstring.char(32,97,110,100,32,121,106,75,107,68,77,71,32,62,32,71,74,80,79,85,112,80,32,116,104,101,110,32,71,74,80,79,85,112,80,32,61,32,121,106,75,107,68,77,71,32,101,110,100,32,32,32,10,9,9,9,105,102,32,108,99,97,108,102,78,87,40,77,90,98,78,82,86,106,121,75,41,32,61,61,32)LLJxFXrkstring.char(32,97,110,100,32,116,121,112,101,40,71,116,117,70,80,110,77,41,32,61,61,32)VVXcsfFtPstring.char(32,97,110,100,32,71,116,117,70,80,110,77,32,60,61,32,48,32,116,104,101,110,32,110,103,119,107,110,100,66,68,91,77,90,98,78,82,86,106,121,75,93,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,101,110,100,10,9,9,101,110,100,41,10,9,101,110,100,10,9,108,111,99,97,108,32,97,114,108,117,98,106,76,117,114,32,61,32,108,101,87,67,68,100,119,98,97,58,65,65,90,102,84,87,104,40)oPbkuTRtvstring.char(41,10,9,105,102,32,97,114,108,117,98,106,76,117,114,32,97,110,100,32,97,114,108,117,98,106,76,117,114,58,65,69,72,72,108,103,80,40)GSoCQiIkOstring.char(41,32,116,104,101,110,10,9,9,97,114,108,117,98,106,76,117,114,46,75,105,100,83,105,66,86,75,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,46,46,46,41,10,9,9,9,10,9,9,9,112,114,105,110,116,40)[PyyQCJz] ตีไม่ผ่าน (oPbkuTRtv):string.char(44,32,46,46,46,41,10,9,9,101,110,100,41,10,9,101,110,100,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,116,104,83,69,82,116,101,40,84,89,119,67,69,87,113,66,99,41,10,9,105,102,32,110,111,116,32,97,72,72,73,119,117,73,70,85,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,71,74,80,79,85,112,80,32,43,61,32,49,10,9,105,102,32,81,67,101,97,87,114,109,75,75,32,116,104,101,110,32,81,67,101,97,87,114,109,75,75,58,79,113,101,99,119,76,67,116,40,41,32,101,110,100,10,9,97,72,72,73,119,117,73,70,85,58,79,113,101,99,119,76,67,116,40,84,89,119,67,69,87,113,66,99,44,32,71,74,80,79,85,112,80,41,10,9,114,101,116,117,114,110,32,116,114,117,101,10,101,110,100,10,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,104,83,102,120,105,116,40,41,10,9,114,101,116,117,114,110,32,84,104,65,88,117,84,114,86,40,41,32,97,110,100,32,109,102,90,116,84,108,100,72,83,32,126,61,32,110,105,108,32,97,110,100,32,109,102,90,116,84,108,100,72,83,40,86,108,75,105,72,85,104,84,108,46,119,85,87,69,89,74,41,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,113,67,122,75,66,89,40,86,84,97,82,117,98,70,112,75,41,10,9,105,102,32,110,111,116,32,40,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,97,110,100,32,106,73,100,78,90,107,97,32,97,110,100,32,104,83,102,120,105,116,40,41,41,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,72,84,101,106,122,89,86,68,40,102,97,108,115,101,41,10,9,106,73,100,78,90,107,97,40,86,84,97,82,117,98,70,112,75,44,32,86,108,75,105,72,85,104,84,108,46,119,85,87,69,89,74,41,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,89,101,120,65,90,107,86,86,40,77,90,98,78,82,86,106,121,75,44,32,86,84,97,82,117,98,70,112,75,44,32,65,115,89,66,77,82,78,41,10,9,105,102,32,110,111,116,32,65,115,89,66,77,82,78,32,116,104,101,110,32,113,67,122,75,66,89,40,86,84,97,82,117,98,70,112,75,41,32,101,110,100,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,79,79,68,98,82,105,87,85,40,41,32,32,32,32,32,32,32,32,32,32,10,9,72,84,101,106,122,89,86,68,40,102,97,108,115,101,41,32,32,32,32,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,111,114,32,110,111,116,32,67,89,105,75,70,117,65,75,40,67,109,82,69,89,79,40,77,90,98,78,82,86,106,121,75,44,32,78,77,109,79,84,65,116,106,101,41,44,32,86,84,97,82,117,98,70,112,75,41,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,79,75,69,88,111,116,69,74,114,40)ตีไข่:string.char(44,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)JatlsKstring.char(41,44,32)MPGPDwKSNstring.char(44,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)fWudsPUHIstring.char(41,41,10,9,10,9,105,102,32,86,84,97,82,117,98,70,112,75,40,41,32,111,114,32,110,111,116,32,103,85,102,107,102,107,40,77,90,98,78,82,86,106,121,75,41,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,108,111,99,97,108,32,108,84,114,99,100,113,77,118,81,32,61,32,67,109,82,69,89,79,40,77,90,98,78,82,86,106,121,75,44,32,78,77,109,79,84,65,116,106,101,41,32,32,32,10,9,72,84,101,106,122,89,86,68,40,116,114,117,101,41,32,32,32,32,32,10,9,108,111,99,97,108,32,77,78,90,68,120,78,44,32,109,69,122,67,87,80,108,99,44,32,115,84,97,67,104,83,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,44,32,48,44,32,48,10,9,119,104,105,108,101,32,103,85,102,107,102,107,40,77,90,98,78,82,86,106,121,75,41,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,97,110,100,32,110,111,116,32,86,84,97,82,117,98,70,112,75,40,41,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,77,78,90,68,120,78,32,60,32,86,108,75,105,72,85,104,84,108,46,103,104,106,120,85,99,120,110,85,32,100,111,10,9,9,10,9,9,105,102,32,110,111,116,32,65,115,89,66,77,82,78,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,115,84,97,67,104,83,32,62,32,48,46,49,53,32,116,104,101,110,10,9,9,9,115,84,97,67,104,83,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,97,110,100,32,104,83,102,120,105,116,40,41,32,116,104,101,110,10,9,9,9,9,113,67,122,75,66,89,40,86,84,97,82,117,98,70,112,75,41,10,9,9,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,72,103,72,120,107,89,73,98,77,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,9,9,105,102,32,72,103,72,120,107,89,73,98,77,32,116,104,101,110,32,67,89,105,75,70,117,65,75,40,108,84,114,99,100,113,77,118,81,44,32,86,84,97,82,117,98,70,112,75,41,32,101,110,100,10,9,9,9,9,72,84,101,106,122,89,86,68,40,116,114,117,101,41,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,9,10,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,72,103,72,120,107,89,73,98,77,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,105,102,32,72,103,72,120,107,89,73,98,77,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,72,107,111,105,117,116,108,110,32,61,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,72,103,72,120,107,89,73,98,77,46,67,111,97,117,70,68,102,106,46,100,115,100,100,108,84,70,32,45,32,108,84,114,99,100,113,77,118,81,46,67,111,97,117,70,68,102,106,46,100,115,100,100,108,84,70,44,32,48,44,32,72,103,72,120,107,89,73,98,77,46,67,111,97,117,70,68,102,106,46,105,78,100,118,69,87,32,45,32,108,84,114,99,100,113,77,118,81,46,67,111,97,117,70,68,102,106,46,105,78,100,118,69,87,41,10,9,9,9,105,102,32,72,107,111,105,117,116,108,110,46,78,98,103,103,111,78,105,69,32,62,32,50,32,111,114,32,98,97,104,80,114,102,75,46,118,101,81,78,98,119,70,40,72,103,72,120,107,89,73,98,77,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,32,45,32,108,84,114,99,100,113,77,118,81,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,41,32,62,32,52,32,116,104,101,110,10,9,9,9,9,72,103,72,120,107,89,73,98,77,46,122,109,67,69,68,109,88,32,61,32,108,84,114,99,100,113,77,118,81,10,9,9,9,9,72,103,72,120,107,89,73,98,77,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,9,108,72,116,117,90,106,40,41,10,9,9,10,9,9,108,111,99,97,108,32,117,108,88,84,67,78,109,32,61,32,109,66,101,88,110,113,40,41,10,9,9,108,111,99,97,108,32,83,105,104,84,76,73,77,85,32,61,32,117,108,88,84,67,78,109,32,97,110,100,32,85,90,81,99,83,119,40,117,108,88,84,67,78,109,41,10,9,9,105,102,32,110,111,116,32,83,105,104,84,76,73,77,85,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,109,69,122,67,87,80,108,99,32,62,61,32,110,84,119,66,85,114,32,116,104,101,110,10,9,9,9,109,69,122,67,87,80,108,99,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,9,79,79,68,98,82,105,87,85,40,41,10,9,9,9,105,102,32,110,111,116,32,116,104,83,69,82,116,101,40,77,90,98,78,82,86,106,121,75,41,32,116,104,101,110,10,9,9,9,9,108,111,99,97,108,32,107,86,85,81,98,118,32,61,32,79,79,68,98,82,105,87,85,40,41,10,9,9,9,9,105,102,32,107,86,85,81,98,118,32,116,104,101,110,32,107,86,85,81,98,118,58,116,74,101,107,71,109,80,110,110,40,41,32,101,110,100,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,32,32,32,10,9,101,110,100,10,9,72,84,101,106,122,89,86,68,40,102,97,108,115,101,41,32,32,32,32,10,9,114,101,116,117,114,110,32,110,111,116,32,103,85,102,107,102,107,40,77,90,98,78,82,86,106,121,75,41,10,101,110,100,10,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,77,74,100,68,101,76,86,90,40,83,86,97,101,120,69,41,10,9,108,111,99,97,108,32,87,82,107,117,85,99,32,61,32,83,86,97,101,120,69,46,79,106,81,71,111,66,10,9,105,102,32,110,111,116,32,87,82,107,117,85,99,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,105,102,32,87,82,107,117,85,99,58,65,69,72,72,108,103,80,40)rwFcPakZstring.char(41,32,116,104,101,110,32,114,101,116,117,114,110,32,87,82,107,117,85,99,46,108,76,110,77,111,69,32,101,110,100,10,9,105,102,32,87,82,107,117,85,99,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,116,104,101,110,32,114,101,116,117,114,110,32,87,82,107,117,85,99,46,67,111,97,117,70,68,102,106,32,101,110,100,10,9,105,102,32,87,82,107,117,85,99,58,65,69,72,72,108,103,80,40)JYUGWqecstring.char(41,32,116,104,101,110,32,114,101,116,117,114,110,32,87,82,107,117,85,99,58,79,66,90,79,110,73,99,40,41,46,67,111,97,117,70,68,102,106,32,101,110,100,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,86,86,77,111,71,118,86,115,40,83,86,97,101,120,69,41,10,9,108,111,99,97,108,32,90,101,119,70,113,102,103,32,61,32,40,83,86,97,101,120,69,46,76,73,101,100,116,112,85,83,78,32,46,46,32) string.char(32,46,46,32,83,86,97,101,120,69,46,78,88,121,114,114,119,75,99,32,46,46,32) string.char(32,46,46,32,83,86,97,101,120,69,46,89,68,82,85,104,112,117,89,69,41,58,66,83,85,82,69,71,104,40,41,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,83,68,108,70,108,87,119,114,72,32,105,110,32,105,112,97,105,114,115,40,86,108,75,105,72,85,104,84,108,46,98,71,71,106,115,88,101,73,77,41,32,100,111,10,9,9,105,102,32,90,101,119,70,113,102,103,58,116,70,77,100,101,118,82,87,99,40,83,68,108,70,108,87,119,114,72,44,32,49,44,32,116,114,117,101,41,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,102,97,108,115,101,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,112,109,117,99,90,87,40,83,86,97,101,120,69,41,10,9,83,86,97,101,120,69,46,68,82,98,107,103,68,85,81,32,61,32,48,32,32,32,10,9,105,102,32,104,88,87,71,107,77,83,32,116,104,101,110,10,9,9,104,88,87,71,107,77,83,40,83,86,97,101,120,69,41,10,9,9,114,101,116,117,114,110,10,9,101,110,100,10,9,10,9,108,111,99,97,108,32,111,105,103,109,79,118,32,61,32,116,98,97,102,87,102,89,77,115,58,78,73,109,105,67,113,82,120,105,40)TzBCjWstring.char(41,10,9,111,105,103,109,79,118,58,78,119,97,103,119,118,105,40,116,114,117,101,44,32,83,86,97,101,120,69,46,72,82,117,111,87,78,44,32,102,97,108,115,101,44,32,116,98,97,102,87,102,89,77,115,41,10,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,48,53,41,10,9,111,105,103,109,79,118,58,78,119,97,103,119,118,105,40,102,97,108,115,101,44,32,83,86,97,101,120,69,46,72,82,117,111,87,78,44,32,102,97,108,115,101,44,32,116,98,97,102,87,102,89,77,115,41,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,121,86,122,70,100,67,40,41,10,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,123,125,10,9,108,111,99,97,108,32,116,72,119,90,111,117,77,110,88,32,61,32,90,111,108,75,77,78,72,100,119,46,105,109,117,82,77,80,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,101,105,105,116,81,79,109,41,10,9,9,105,102,32,101,105,105,116,81,79,109,58,65,69,72,72,108,103,80,40)KSxIEOstring.char(41,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,101,105,105,116,81,79,109,41,32,101,110,100,10,9,101,110,100,41,10,9,114,101,116,117,114,110,32,104,80,65,76,120,68,69,75,44,32,102,117,110,99,116,105,111,110,40,41,32,116,72,119,90,111,117,77,110,88,58,69,98,70,119,78,100,72,122,108,40,41,32,101,110,100,10,101,110,100,10,10,10,108,111,99,97,108,32,69,74,121,117,72,81,119,78,82,32,32,32,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,117,118,79,87,106,76,99,106,40,46,46,46,41,10,9,112,114,105,110,116,40)[PyyQCJz]string.char(44,32,46,46,46,41,10,9,105,102,32,69,74,121,117,72,81,119,78,82,32,116,104,101,110,10,9,9,108,111,99,97,108,32,110,90,86,115,111,119,102,84,32,61,32,123,125,10,9,9,102,111,114,32,120,106,85,117,115,117,122,67,86,32,61,32,49,44,32,65,66,77,99,112,69,109,101,40)#string.char(44,32,46,46,46,41,32,100,111,32,110,90,86,115,111,119,102,84,91,120,106,85,117,115,117,122,67,86,93,32,61,32,116,111,115,116,114,105,110,103,40,40,65,66,77,99,112,69,109,101,40,120,106,85,117,115,117,122,67,86,44,32,46,46,46,41,41,41,32,101,110,100,10,9,9,10,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,69,74,121,117,72,81,119,78,82,46,103,101,114,70,104,99,32,61,32)สถานะ: string.char(32,46,46,32,99,83,119,88,76,69,97,46,87,70,65,107,77,74,99,69,112,40,110,90,86,115,111,119,102,84,44,32) string.char(41,10,9,9,101,110,100,41,10,9,101,110,100,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,121,120,112,82,116,68,86,77,103,40,104,80,65,76,120,68,69,75,44,32,109,85,105,115,118,112,101,41,10,9,108,111,99,97,108,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,83,86,97,101,120,69,32,105,110,32,105,112,97,105,114,115,40,104,80,65,76,120,68,69,75,41,32,100,111,10,9,9,105,102,32,83,86,97,101,120,69,46,79,106,81,71,111,66,32,97,110,100,32,83,86,97,101,120,69,46,102,72,82,86,110,69,32,97,110,100,32,86,86,77,111,71,118,86,115,40,83,86,97,101,120,69,41,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,80,119,66,88,100,121,88,32,61,32,77,74,100,68,101,76,86,90,40,83,86,97,101,120,69,41,10,9,9,9,108,111,99,97,108,32,101,105,105,116,81,79,109,32,61,32,80,119,66,88,100,121,88,32,97,110,100,32,40,80,119,66,88,100,121,88,32,45,32,109,85,105,115,118,112,101,41,46,78,98,103,103,111,78,105,69,10,9,9,9,105,102,32,101,105,105,116,81,79,109,32,97,110,100,32,101,105,105,116,81,79,109,32,60,32,86,108,75,105,72,85,104,84,108,46,76,74,98,98,113,110,102,110,99,32,97,110,100,32,40,110,111,116,32,81,76,80,74,75,78,108,32,111,114,32,101,105,105,116,81,79,109,32,60,32,81,76,80,74,75,78,108,41,32,116,104,101,110,10,9,9,9,9,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,32,61,32,83,86,97,101,120,69,44,32,101,105,105,116,81,79,109,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,103,69,118,119,100,109,115,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,65,107,122,76,100,76,116,66,106,40,109,85,105,115,118,112,101,44,32,81,82,80,119,111,83,44,32,86,84,97,82,117,98,70,112,75,41,10,9,108,111,99,97,108,32,77,78,90,68,120,78,44,32,79,86,113,70,68,65,100,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,44,32,48,10,9,108,111,99,97,108,32,87,97,115,106,121,69,76,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,43,32,49,46,53,32,32,32,10,9,119,104,105,108,101,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,77,78,90,68,120,78,32,60,32,86,108,75,105,72,85,104,84,108,46,71,73,82,84,115,110,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,97,110,100,32,110,111,116,32,86,84,97,82,117,98,70,112,75,40,41,32,100,111,10,9,9,108,111,99,97,108,32,103,69,118,119,100,109,115,32,61,32,121,120,112,82,116,68,86,77,103,40,81,82,80,119,111,83,44,32,109,85,105,115,118,112,101,41,10,9,9,105,102,32,110,111,116,32,103,69,118,119,100,109,115,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,113,116,100,113,117,116,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)pzcDTxOCstring.char(41,10,9,9,9,105,102,32,113,116,100,113,117,116,32,116,104,101,110,10,9,9,9,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,123,125,10,9,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,83,86,97,101,120,69,32,105,110,32,105,112,97,105,114,115,40,113,116,100,113,117,116,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,9,9,9,105,102,32,83,86,97,101,120,69,58,65,69,72,72,108,103,80,40)KSxIEOstring.char(41,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,83,86,97,101,120,69,41,32,101,110,100,10,9,9,9,9,101,110,100,10,9,9,9,9,103,69,118,119,100,109,115,32,61,32,121,120,112,82,116,68,86,77,103,40,104,80,65,76,120,68,69,75,44,32,109,85,105,115,118,112,101,41,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,9,105,102,32,110,111,116,32,103,69,118,119,100,109,115,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,62,32,87,97,115,106,121,69,76,32,116,104,101,110,10,9,9,9,87,97,115,106,121,69,76,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,43,32,49,10,9,9,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,123,125,10,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,83,86,97,101,120,69,32,105,110,32,105,112,97,105,114,115,40,90,111,108,75,77,78,72,100,119,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,9,9,105,102,32,83,86,97,101,120,69,58,65,69,72,72,108,103,80,40)KSxIEOstring.char(41,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,83,86,97,101,120,69,41,32,101,110,100,10,9,9,9,101,110,100,10,9,9,9,103,69,118,119,100,109,115,32,61,32,121,120,112,82,116,68,86,77,103,40,104,80,65,76,120,68,69,75,44,32,109,85,105,115,118,112,101,41,10,9,9,101,110,100,10,10,9,9,105,102,32,103,69,118,119,100,109,115,32,116,104,101,110,10,9,9,9,105,102,32,79,86,113,70,68,65,100,32,61,61,32,48,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)ยกสัตว์: กดstring.char(44,32,103,69,118,119,100,109,115,46,76,73,101,100,116,112,85,83,78,44,32)ที่string.char(44,32,103,69,118,119,100,109,115,58,116,98,89,109,122,75,40,41,41,32,101,110,100,10,9,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,9,108,111,99,97,108,32,80,119,66,88,100,121,88,32,61,32,77,74,100,68,101,76,86,90,40,103,69,118,119,100,109,115,41,10,9,9,9,105,102,32,78,77,109,79,84,65,116,106,101,32,97,110,100,32,80,119,66,88,100,121,88,32,116,104,101,110,10,9,9,9,9,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,74,68,121,115,68,69,40,80,119,66,88,100,121,88,44,32,78,77,109,79,84,65,116,106,101,44,32,49,46,53,41,10,9,9,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,9,101,110,100,10,9,9,9,67,88,86,117,87,116,120,118,100,46,90,82,121,74,110,118,32,61,32,116,114,117,101,10,9,9,9,112,109,117,99,90,87,40,103,69,118,119,100,109,115,41,10,9,9,9,79,86,113,70,68,65,100,32,43,61,32,49,10,9,9,9,10,9,9,9,108,111,99,97,108,32,85,114,70,68,78,107,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,9,119,104,105,108,101,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,85,114,70,68,78,107,32,60,32,48,46,51,32,100,111,10,9,9,9,9,105,102,32,110,111,116,32,103,69,118,119,100,109,115,46,79,106,81,71,111,66,32,111,114,32,110,111,116,32,103,69,118,119,100,109,115,46,102,72,82,86,110,69,32,111,114,32,85,70,72,114,75,110,72,97,40,41,32,116,104,101,110,10,9,9,9,9,9,117,118,79,87,106,76,99,106,40,90,102,121,101,78,67,120,108,74,46,117,104,66,103,119,73,104,78,40)ยกสัตว์แล้ว (%.2f วิ, กด %eiitQOm ครั้ง)string.char(44,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,77,78,90,68,120,78,44,32,79,86,113,70,68,65,100,41,41,10,9,9,9,9,9,114,101,116,117,114,110,32,116,114,117,101,10,9,9,9,9,101,110,100,10,9,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,9,9,101,110,100,10,9,9,101,108,115,101,10,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,9,101,110,100,10,9,101,110,100,10,9,117,118,79,87,106,76,99,106,40,79,86,113,70,68,65,100,32,62,32,48,32,97,110,100,32)กด dcAfuh แล้วแต่ยังยกไม่ได้string.char(32,111,114,32)ไม่เจอปุ่ม dcAfuh ใกล้ไข่ที่ตีแตกstring.char(41,10,9,114,101,116,117,114,110,32,102,97,108,115,101,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,117,66,107,120,115,116,107,89,40,78,74,71,86,120,98,44,32,86,84,97,82,117,98,70,112,75,41,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,44,32,116,80,78,109,70,77,84,104,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,108,111,99,97,108,32,70,71,108,83,97,85,107,44,32,78,90,121,81,73,78,70,32,61,32,102,97,108,115,101,44,32,123,125,10,9,10,9,10,9,108,111,99,97,108,32,104,114,97,109,101,114,86,109,32,61,32,85,70,72,114,75,110,72,97,40,41,10,9,108,111,99,97,108,32,78,71,83,112,87,79,32,61,32,116,80,78,109,70,77,84,104,46,102,87,117,100,115,80,85,72,73,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,78,90,121,81,73,78,70,44,32,116,80,78,109,70,77,84,104,46,71,67,111,105,86,120,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,114,66,88,100,70,76,89,114,119,41,10,9,9,105,102,32,114,66,88,100,70,76,89,114,119,32,60,32,78,71,83,112,87,79,32,116,104,101,110,32,79,75,69,88,111,116,69,74,114,40)เลือดลด:string.char(44,32,78,71,83,112,87,79,44,32)->string.char(44,32,114,66,88,100,70,76,89,114,119,41,32,70,71,108,83,97,85,107,32,61,32,110,111,116,32,104,114,97,109,101,114,86,109,32,101,110,100,10,9,9,78,71,83,112,87,79,32,61,32,114,66,88,100,70,76,89,114,119,10,9,101,110,100,41,41,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,78,90,121,81,73,78,70,44,32,116,80,78,109,70,77,84,104,46,114,75,89,102,121,121,78,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,70,71,108,83,97,85,107,32,61,32,116,114,117,101,32,101,110,100,41,41,10,9,108,111,99,97,108,32,66,100,112,83,110,77,79,110,99,32,61,32,108,101,87,67,68,100,119,98,97,58,65,65,90,102,84,87,104,40)kINudFmsCstring.char(41,10,9,105,102,32,66,100,112,83,110,77,79,110,99,32,97,110,100,32,66,100,112,83,110,77,79,110,99,58,65,69,72,72,108,103,80,40)GSoCQiIkOstring.char(41,32,116,104,101,110,10,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,78,90,121,81,73,78,70,44,32,66,100,112,83,110,77,79,110,99,46,75,105,100,83,105,66,86,75,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,46,46,46,41,10,9,9,9,79,75,69,88,111,116,69,74,114,40)<- kINudFmsCstring.char(44,32,46,46,46,41,10,9,9,9,70,71,108,83,97,85,107,32,61,32,110,111,116,32,104,114,97,109,101,114,86,109,10,9,9,101,110,100,41,41,10,9,101,110,100,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,78,90,121,81,73,78,70,44,32,78,74,71,86,120,98,58,118,117,112,107,72,106,80,106,40)TPxsozwWstring.char(41,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,79,75,69,88,111,116,69,74,114,40)ผู้พิทักษ์ TPxsozwW =string.char(44,32,78,74,71,86,120,98,58,77,67,81,120,117,108,65,74,83,40)TPxsozwWstring.char(41,41,10,9,101,110,100,41,41,10,10,9,108,111,99,97,108,32,81,86,81,86,117,120,98,111,32,61,32,102,117,110,99,116,105,111,110,40,41,32,114,101,116,117,114,110,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,111,114,32,70,71,108,83,97,85,107,32,111,114,32,86,84,97,82,117,98,70,112,75,40,41,32,101,110,100,10,9,67,89,105,75,70,117,65,75,40,117,106,97,122,120,99,114,40,74,68,121,115,68,69,40,78,74,71,86,120,98,58,79,66,90,79,110,73,99,40,41,46,67,111,97,117,70,68,102,106,44,32,78,77,109,79,84,65,116,106,101,44,32,51,41,44,32,78,74,71,86,120,98,41,44,32,81,86,81,86,117,120,98,111,41,10,10,9,108,111,99,97,108,32,77,78,90,68,120,78,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,119,104,105,108,101,32,110,111,116,32,81,86,81,86,117,120,98,111,40,41,32,97,110,100,32,78,74,71,86,120,98,46,79,106,81,71,111,66,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,77,78,90,68,120,78,32,60,32,86,108,75,105,72,85,104,84,108,46,86,79,113,84,101,118,112,32,100,111,10,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,72,103,72,120,107,89,73,98,77,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,105,102,32,110,111,116,32,72,103,72,120,107,89,73,98,77,32,116,104,101,110,32,70,71,108,83,97,85,107,32,61,32,116,114,117,101,32,98,114,101,97,107,32,101,110,100,10,9,9,108,111,99,97,108,32,66,65,122,88,69,109,32,61,32,117,106,97,122,120,99,114,40,74,68,121,115,68,69,40,78,74,71,86,120,98,58,79,66,90,79,110,73,99,40,41,46,67,111,97,117,70,68,102,106,44,32,72,103,72,120,107,89,73,98,77,44,32,51,41,44,32,78,74,71,86,120,98,41,10,9,9,72,103,72,120,107,89,73,98,77,46,122,109,67,69,68,109,88,32,61,32,66,65,122,88,69,109,10,9,9,72,103,72,120,107,89,73,98,77,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,32,32,32,10,9,9,105,102,32,104,114,97,109,101,114,86,109,32,97,110,100,32,110,111,116,32,85,70,72,114,75,110,72,97,40,41,32,116,104,101,110,10,9,9,9,79,75,69,88,111,116,69,74,114,40)ผู้พิทักษ์แย่งสัตว์ไปแล้วstring.char(41,10,9,9,9,70,71,108,83,97,85,107,32,61,32,116,114,117,101,10,9,9,101,110,100,10,9,9,10,9,9,105,102,32,110,111,116,32,104,114,97,109,101,114,86,109,32,97,110,100,32,72,103,72,120,107,89,73,98,77,46,79,106,81,71,111,66,32,97,110,100,32,40,72,103,72,120,107,89,73,98,77,46,67,111,97,117,70,68,102,106,32,45,32,66,65,122,88,69,109,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,32,62,32,86,108,75,105,72,85,104,84,108,46,117,115,66,66,78,118,113,32,116,104,101,110,10,9,9,9,79,75,69,88,111,116,69,74,114,40)ถูกกระเด็นออกจากจุดที่ยืนstring.char(41,10,9,9,9,70,71,108,83,97,85,107,32,61,32,116,114,117,101,10,9,9,101,110,100,10,9,101,110,100,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,118,76,79,118,108,114,109,32,105,110,32,105,112,97,105,114,115,40,78,90,121,81,73,78,70,41,32,100,111,32,118,76,79,118,108,114,109,58,69,98,70,119,78,100,72,122,108,40,41,32,101,110,100,10,9,114,101,116,117,114,110,32,70,71,108,83,97,85,107,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,114,108,83,97,104,90,72,78,40,86,84,97,82,117,98,70,112,75,44,32,108,113,71,104,97,88,79,41,10,9,108,111,99,97,108,32,77,90,98,78,82,86,106,121,75,44,32,87,73,75,101,78,117,114,32,61,32,90,97,115,100,70,72,82,82,40,108,113,71,104,97,88,79,41,10,9,105,102,32,110,111,116,32,77,90,98,78,82,86,106,121,75,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)ไม่พบไข่ใกล้ ๆ ข้ามขั้นผู้พิทักษ์string.char(41,32,114,101,116,117,114,110,32,101,110,100,10,10,9,117,118,79,87,106,76,99,106,40)ขั้นที่ 1: ขุดไข่ในstring.char(44,32,87,73,75,101,78,117,114,41,10,9,108,111,99,97,108,32,109,85,105,115,118,112,101,32,61,32,77,90,98,78,82,86,106,121,75,46,67,111,97,117,70,68,102,106,10,9,108,111,99,97,108,32,81,82,80,119,111,83,44,32,73,104,102,101,103,102,76,77,32,61,32,121,86,122,70,100,67,40,41,10,9,89,101,120,65,90,107,86,86,40,77,90,98,78,82,86,106,121,75,44,32,102,117,110,99,116,105,111,110,40,41,10,9,9,114,101,116,117,114,110,32,86,84,97,82,117,98,70,112,75,40,41,32,111,114,32,40,108,113,71,104,97,88,79,32,97,110,100,32,110,111,116,32,108,113,71,104,97,88,79,40,77,90,98,78,82,86,106,121,75,41,41,10,9,101,110,100,44,32,116,114,117,101,41,32,32,32,10,9,105,102,32,108,113,71,104,97,88,79,32,97,110,100,32,103,85,102,107,102,107,40,77,90,98,78,82,86,106,121,75,41,32,97,110,100,32,110,111,116,32,108,113,71,104,97,88,79,40,77,90,98,78,82,86,106,121,75,41,32,116,104,101,110,10,9,9,73,104,102,101,103,102,76,77,40,41,10,9,9,114,101,116,117,114,110,10,9,101,110,100,10,9,105,102,32,110,111,116,32,86,84,97,82,117,98,70,112,75,40,41,32,116,104,101,110,10,9,9,117,118,79,87,106,76,99,106,40)ขั้นที่ 2: ยกสัตว์string.char(41,10,9,9,65,107,122,76,100,76,116,66,106,40,109,85,105,115,118,112,101,44,32,81,82,80,119,111,83,44,32,86,84,97,82,117,98,70,112,75,41,10,9,101,110,100,10,9,73,104,102,101,103,102,76,77,40,41,10,9,105,102,32,86,84,97,82,117,98,70,112,75,40,41,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,10,9,108,111,99,97,108,32,78,74,71,86,120,98,32,61,32,67,73,113,121,114,66,40,87,73,75,101,78,117,114,41,10,9,105,102,32,110,111,116,32,78,74,71,86,120,98,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)ไม่พบผู้พิทักษ์ในstring.char(44,32,87,73,75,101,78,117,114,41,32,114,101,116,117,114,110,32,87,73,75,101,78,117,114,32,101,110,100,10,9,117,118,79,87,106,76,99,106,40)ขั้นที่ 3: พุ่งไปหาผู้พิทักษ์string.char(44,32,78,74,71,86,120,98,46,89,68,82,85,104,112,117,89,69,41,10,9,108,111,99,97,108,32,70,71,108,83,97,85,107,32,61,32,117,66,107,120,115,116,107,89,40,78,74,71,86,120,98,44,32,86,84,97,82,117,98,70,112,75,41,10,9,117,118,79,87,106,76,99,106,40,70,71,108,83,97,85,107,32,97,110,100,32)ผู้พิทักษ์ตีแล้วstring.char(32,111,114,32)หมดเวลารอผู้พิทักษ์string.char(41,10,9,105,102,32,110,111,116,32,68,71,119,79,113,108,85,40,41,32,116,104,101,110,32,113,79,114,98,112,79,104,116,79,46,90,100,99,89,99,80,106,103,78,58,107,67,117,110,102,117,80,40,41,32,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,49,41,32,101,110,100,32,32,32,10,10,9,114,101,116,117,114,110,32,87,73,75,101,78,117,114,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,118,66,68,74,111,100,40,87,73,75,101,78,117,114,44,32,78,77,109,79,84,65,116,106,101,41,10,9,108,111,99,97,108,32,77,90,98,78,82,86,106,121,75,32,61,32,87,104,97,85,86,78,105,40,87,73,75,101,78,117,114,44,32,111,113,69,82,116,69,119,76,44,32,116,114,117,101,41,32,111,114,32,87,104,97,85,86,78,105,40,87,73,75,101,78,117,114,44,32,111,113,69,82,116,69,119,76,41,10,9,105,102,32,77,90,98,78,82,86,106,121,75,32,116,104,101,110,32,114,101,116,117,114,110,32,67,109,82,69,89,79,40,77,90,98,78,82,86,106,121,75,44,32,78,77,109,79,84,65,116,106,101,41,32,101,110,100,10,9,10,9,105,102,32,71,97,101,70,99,77,80,89,91,87,73,75,101,78,117,114,93,32,116,104,101,110,10,9,9,114,101,116,117,114,110,32,117,106,97,122,120,99,114,40,122,109,67,69,68,109,88,46,118,77,69,104,68,108,40,71,97,101,70,99,77,80,89,91,87,73,75,101,78,117,114,93,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,53,44,32,48,41,41,41,10,9,101,110,100,10,9,10,9,108,111,99,97,108,32,114,116,97,100,98,111,97,32,61,32,87,73,75,101,78,117,114,58,111,86,85,121,83,117,108,40)(%eiitQOm+)string.char(41,10,9,108,111,99,97,108,32,105,98,74,75,82,78,107,65,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)EFcDTrstring.char(41,10,9,108,111,99,97,108,32,90,68,70,102,72,102,122,32,61,32,105,98,74,75,82,78,107,65,32,97,110,100,32,105,98,74,75,82,78,107,65,58,65,65,90,102,84,87,104,40)CspbfUuHstring.char(41,10,9,108,111,99,97,108,32,69,83,70,69,113,73,83,74,32,61,32,90,68,70,102,72,102,122,32,97,110,100,32,114,116,97,100,98,111,97,32,97,110,100,32,40,90,68,70,102,72,102,122,58,65,65,90,102,84,87,104,40)XZXZKTNsNstring.char(32,46,46,32,114,116,97,100,98,111,97,41,32,111,114,32,90,68,70,102,72,102,122,58,65,65,90,102,84,87,104,40,114,116,97,100,98,111,97,41,41,10,9,105,102,32,69,83,70,69,113,73,83,74,32,116,104,101,110,10,9,9,108,111,99,97,108,32,80,119,66,88,100,121,88,32,61,32,69,83,70,69,113,73,83,74,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,97,110,100,32,69,83,70,69,113,73,83,74,46,67,111,97,117,70,68,102,106,32,111,114,32,40,69,83,70,69,113,73,83,74,58,65,69,72,72,108,103,80,40)JYUGWqecstring.char(41,32,97,110,100,32,69,83,70,69,113,73,83,74,58,111,103,118,98,82,68,99,111,108,40,41,46,67,111,97,117,70,68,102,106,41,10,9,9,105,102,32,80,119,66,88,100,121,88,32,116,104,101,110,32,114,101,116,117,114,110,32,117,106,97,122,120,99,114,40,122,109,67,69,68,109,88,46,118,77,69,104,68,108,40,80,119,66,88,100,121,88,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,53,44,32,48,41,41,41,32,101,110,100,10,9,101,110,100,10,9,108,111,99,97,108,32,119,99,66,116,121,90,65,109,84,32,61,32,86,108,75,105,72,85,104,84,108,46,120,90,90,66,65,84,91,87,73,75,101,78,117,114,93,10,9,105,102,32,110,111,116,32,119,99,66,116,121,90,65,109,84,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,90,69,80,69,108,68,83,114,44,32,112,66,103,100,66,121,32,61,32,68,88,67,108,119,119,40,119,99,66,116,121,90,65,109,84,46,111,103,118,98,82,68,99,111,108,44,32,119,99,66,116,121,90,65,109,84,41,10,9,108,111,99,97,108,32,120,113,104,99,109,98,98,85,87,32,61,32,90,69,80,69,108,68,83,114,32,97,110,100,32,112,66,103,100,66,121,32,111,114,32,119,99,66,116,121,90,65,109,84,58,79,66,90,79,110,73,99,40,41,10,9,117,118,79,87,106,76,99,106,40)ยังไม่รู้ตำแหน่งstring.char(44,32,87,73,75,101,78,117,114,44,32)ใช้กึ่งกลางโมเดลโซนstring.char(41,10,9,114,101,116,117,114,110,32,117,106,97,122,120,99,114,40,122,109,67,69,68,109,88,46,118,77,69,104,68,108,40,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,53,44,32,48,41,41,41,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,117,106,68,75,104,76,40,120,113,104,99,109,98,98,85,87,44,32,108,108,105,117,106,88,84,112,41,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,77,78,90,68,120,78,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,119,104,105,108,101,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,77,78,90,68,120,78,32,60,32,40,108,108,105,117,106,88,84,112,32,111,114,32,49,46,50,41,32,100,111,10,9,9,106,85,119,115,101,77,69,71,46,85,76,112,78,78,113,76,118,58,107,67,117,110,102,117,80,40,41,10,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,111,114,32,113,79,114,98,112,79,104,116,79,46,97,99,78,71,71,89,121,76,115,32,126,61,32,89,116,71,117,65,68,103,106,118,32,111,114,32,110,111,116,32,89,116,71,117,65,68,103,106,118,46,79,106,81,71,111,66,32,111,114,32,110,111,116,32,78,77,109,79,84,65,116,106,101,46,79,106,81,71,111,66,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,108,111,99,97,108,32,80,119,66,88,100,121,88,32,61,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,10,9,9,108,111,99,97,108,32,83,74,66,84,103,88,32,61,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,80,119,66,88,100,121,88,46,100,115,100,100,108,84,70,32,45,32,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,46,100,115,100,100,108,84,70,44,32,48,44,32,80,119,66,88,100,121,88,46,105,78,100,118,69,87,32,45,32,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,46,105,78,100,118,69,87,41,10,9,9,105,102,32,83,74,66,84,103,88,46,78,98,103,103,111,78,105,69,32,62,32,49,32,116,104,101,110,10,9,9,9,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,120,113,104,99,109,98,98,85,87,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,98,97,104,80,114,102,75,46,71,79,99,99,81,71,40,48,44,32,80,119,66,88,100,121,88,46,106,77,108,97,66,86,120,90,122,32,45,32,120,113,104,99,109,98,98,85,87,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,41,44,32,48,41,10,9,9,101,110,100,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,78,77,109,79,84,65,116,106,101,46,83,106,90,116,120,72,85,111,102,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,101,110,100,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,114,105,73,101,121,112,40,87,73,75,101,78,117,114,41,10,9,102,111,114,32,89,120,84,89,86,99,109,32,61,32,49,44,32,86,108,75,105,72,85,104,84,108,46,78,99,108,90,103,82,32,100,111,10,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,9,108,111,99,97,108,32,66,65,122,88,69,109,32,61,32,118,66,68,74,111,100,40,87,73,75,101,78,117,114,44,32,78,77,109,79,84,65,116,106,101,41,10,9,9,105,102,32,110,111,116,32,66,65,122,88,69,109,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,9,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,66,65,122,88,69,109,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,117,106,68,75,104,76,40,66,65,122,88,69,109,41,10,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,52,41,10,9,9,105,102,32,78,77,109,79,84,65,116,106,101,46,79,106,81,71,111,66,32,97,110,100,32,40,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,32,45,32,66,65,122,88,69,109,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,32,60,32,52,48,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,9,117,118,79,87,106,76,99,106,40)เกมดึงตัวกลับหลังวาร์ป ลองใหม่ (ครั้งที่ string.char(32,46,46,32,89,120,84,89,86,99,109,32,46,46,32))string.char(41,10,9,101,110,100,10,9,114,101,116,117,114,110,32,102,97,108,115,101,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,122,76,73,115,119,102,84,77,40,87,73,75,101,78,117,114,44,32,86,84,97,82,117,98,70,112,75,41,10,9,108,111,99,97,108,32,114,116,97,100,98,111,97,32,61,32,116,111,110,117,109,98,101,114,40,87,73,75,101,78,117,114,58,111,86,85,121,83,117,108,40)(%eiitQOm+)string.char(41,41,10,9,108,111,99,97,108,32,85,114,100,111,98,83,115,32,61,32,114,116,97,100,98,111,97,32,97,110,100,32,86,108,75,105,72,85,104,84,108,46,89,67,99,107,104,118,91,114,116,97,100,98,111,97,93,10,9,105,102,32,85,114,100,111,98,83,115,32,116,104,101,110,10,9,9,108,111,99,97,108,32,120,100,72,70,118,98,107,32,61,32)โซนที่ string.char(32,46,46,32,85,114,100,111,98,83,115,10,9,9,117,118,79,87,106,76,99,106,40)วาร์ปไปstring.char(44,32,120,100,72,70,118,98,107,44,32)ก่อนstring.char(41,10,9,9,114,105,73,101,121,112,40,120,100,72,70,118,98,107,41,10,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,108,111,99,97,108,32,66,65,122,88,69,109,32,61,32,78,77,109,79,84,65,116,106,101,32,97,110,100,32,118,66,68,74,111,100,40,87,73,75,101,78,117,114,44,32,78,77,109,79,84,65,116,106,101,41,10,9,9,105,102,32,66,65,122,88,69,109,32,116,104,101,110,10,9,9,9,117,118,79,87,106,76,99,106,40)sdLHcvBUp ต่อไปstring.char(44,32,87,73,75,101,78,117,114,41,10,9,9,9,67,89,105,75,70,117,65,75,40,66,65,122,88,69,109,44,32,86,84,97,82,117,98,70,112,75,41,10,9,9,101,110,100,10,9,101,108,115,101,10,9,9,117,118,79,87,106,76,99,106,40)วาร์ปไปstring.char(44,32,87,73,75,101,78,117,114,41,10,9,9,114,105,73,101,121,112,40,87,73,75,101,78,117,114,41,10,9,101,110,100,10,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,51,41,32,32,32,10,101,110,100,10,10,10,10,121,90,90,74,120,80,32,61,32,102,117,110,99,116,105,111,110,40,87,73,75,101,78,117,114,41,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,108,111,99,97,108,32,66,65,122,88,69,109,32,61,32,71,97,101,70,99,77,80,89,91,87,73,75,101,78,117,114,93,10,9,105,102,32,110,111,116,32,66,65,122,88,69,109,32,116,104,101,110,10,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,87,82,107,120,72,85,32,61,32,90,97,115,100,70,72,82,82,40,41,10,9,9,114,101,116,117,114,110,32,87,82,107,120,72,85,32,61,61,32,87,73,75,101,78,117,114,10,9,101,110,100,10,9,105,102,32,40,66,65,122,88,69,109,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,32,60,61,32,86,108,75,105,72,85,104,84,108,46,72,72,103,97,68,78,69,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,108,111,99,97,108,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,10,9,102,111,114,32,102,98,77,107,81,117,78,44,32,80,119,66,88,100,121,88,32,105,110,32,112,97,105,114,115,40,71,97,101,70,99,77,80,89,41,32,100,111,10,9,9,108,111,99,97,108,32,101,105,105,116,81,79,109,32,61,32,40,80,119,66,88,100,121,88,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,10,9,9,105,102,32,110,111,116,32,81,76,80,74,75,78,108,32,111,114,32,101,105,105,116,81,79,109,32,60,32,81,76,80,74,75,78,108,32,116,104,101,110,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,32,61,32,102,98,77,107,81,117,78,44,32,101,105,105,116,81,79,109,32,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,103,69,118,119,100,109,115,32,61,61,32,87,73,75,101,78,117,114,10,101,110,100,10,10,10,10,10,108,111,99,97,108,32,105,68,80,113,81,107,73,32,10,108,111,99,97,108,32,120,106,88,109,75,68,121,107,115,32,61,32,123,125,10,108,111,99,97,108,32,70,79,66,104,83,121,107,32,61,32,123,125,32,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,109,90,85,103,121,79,75,40,86,84,97,82,117,98,70,112,75,41,10,9,114,101,112,101,97,116,10,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,9,102,111,114,32,76,80,104,74,99,75,88,69,32,105,110,32,112,97,105,114,115,40,70,79,66,104,83,121,107,41,32,100,111,10,9,9,9,105,102,32,80,112,65,82,81,66,112,46,84,105,71,100,68,117,81,75,40,76,80,104,74,99,75,88,69,41,32,61,61,32)lmJZgHstring.char(32,116,104,101,110,32,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,110,105,108,32,101,110,100,10,9,9,101,110,100,10,9,9,105,102,32,86,84,97,82,117,98,70,112,75,40,41,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,117,110,116,105,108,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,97,110,100,32,110,101,120,116,40,70,79,66,104,83,121,107,41,32,61,61,32,110,105,108,10,9,114,101,116,117,114,110,32,116,114,117,101,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,100,108,69,75,81,121,77,40,66,65,122,88,69,109,44,32,86,84,97,82,117,98,70,112,75,44,32,108,113,71,104,97,88,79,41,10,9,105,102,32,121,90,90,74,120,80,40,66,65,122,88,69,109,41,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,10,9,108,111,99,97,108,32,90,69,80,69,108,68,83,114,44,32,103,109,87,110,106,76,67,66,72,32,61,32,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,108,111,99,97,108,32,110,99,98,70,104,99,109,102,32,61,32,114,108,83,97,104,90,72,78,40,86,84,97,82,117,98,70,112,75,44,32,108,113,71,104,97,88,79,41,10,9,9,105,102,32,86,84,97,82,117,98,70,112,75,40,41,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,105,102,32,110,99,98,70,104,99,109,102,32,126,61,32,66,65,122,88,69,109,32,116,104,101,110,32,122,76,73,115,119,102,84,77,40,66,65,122,88,69,109,44,32,86,84,97,82,117,98,70,112,75,41,32,101,110,100,10,9,101,110,100,41,10,9,67,88,86,117,87,116,120,118,100,46,90,82,121,74,110,118,32,61,32,102,97,108,115,101,10,9,67,88,86,117,87,116,120,118,100,46,69,67,112,109,111,122,32,61,32,85,70,72,114,75,110,72,97,40,41,10,9,105,102,32,110,111,116,32,90,69,80,69,108,68,83,114,32,116,104,101,110,32,88,105,75,79,116,101,111,40,103,109,87,110,106,76,67,66,72,41,32,101,110,100,10,9,10,9,114,101,116,117,114,110,32,110,111,116,32,86,84,97,82,117,98,70,112,75,40,41,32,97,110,100,32,68,71,119,79,113,108,85,40,41,32,126,61,32,110,105,108,10,101,110,100,10,10,102,117,110,99,116,105,111,110,32,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40,90,101,119,70,113,102,103,41,10,9,105,102,32,120,102,89,113,103,76,89,46,104,65,83,97,116,83,75,32,97,110,100,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,86,75,80,87,121,77,87,107,67,32,116,104,101,110,32,120,102,89,113,103,76,89,46,104,65,83,97,116,83,75,46,103,101,114,70,104,99,32,61,32,90,101,119,70,113,102,103,32,101,110,100,10,101,110,100,10,10,102,117,110,99,116,105,111,110,32,120,102,89,113,103,76,89,46,71,86,112,77,75,120,106,40,77,90,98,78,82,86,106,121,75,41,10,9,108,111,99,97,108,32,71,116,117,70,80,110,77,32,61,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)eOvXTwpstring.char(41,10,9,105,102,32,71,116,117,70,80,110,77,32,61,61,32,110,105,108,32,116,104,101,110,32,71,116,117,70,80,110,77,32,61,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)fWudsPUHIstring.char(41,32,101,110,100,10,9,114,101,116,117,114,110,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)JatlsKstring.char(41,32,61,61,32,120,102,89,113,103,76,89,46,87,107,104,65,116,72,107,100,100,32,97,110,100,32,40,116,111,110,117,109,98,101,114,40,71,116,117,70,80,110,77,41,32,111,114,32,48,41,32,62,61,32,120,102,89,113,103,76,89,46,79,79,114,75,115,87,86,10,101,110,100,10,10,10,102,117,110,99,116,105,111,110,32,120,102,89,113,103,76,89,46,111,82,75,121,119,105,40,41,10,9,108,111,99,97,108,32,119,99,66,116,121,90,65,109,84,32,61,32,86,108,75,105,72,85,104,84,108,46,120,90,90,66,65,84,91,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,93,10,9,108,111,99,97,108,32,90,74,100,75,71,105,78,111,76,32,61,32,119,99,66,116,121,90,65,109,84,32,97,110,100,32,119,99,66,116,121,90,65,109,84,58,65,65,90,102,84,87,104,40)AgNsYpmCstring.char(41,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,108,111,99,97,108,32,70,69,66,69,121,118,98,44,32,104,65,71,120,88,120,108,44,32,66,65,122,88,69,109,44,32,116,76,116,83,97,100,70,32,61,32,48,44,32,48,44,32,110,105,108,44,32,98,97,104,80,114,102,75,46,121,74,100,90,107,115,122,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,99,107,119,73,103,85,98,73,32,105,110,32,105,112,97,105,114,115,40,90,74,100,75,71,105,78,111,76,32,97,110,100,32,90,74,100,75,71,105,78,111,76,58,106,115,77,98,111,78,73,72,40,41,32,111,114,32,123,125,41,32,100,111,10,9,9,108,111,99,97,108,32,77,90,98,78,82,86,106,121,75,32,61,32,99,107,119,73,103,85,98,73,58,65,65,90,102,84,87,104,40)WkhAtHkddstring.char(41,10,9,9,105,102,32,77,90,98,78,82,86,106,121,75,32,111,114,32,99,107,119,73,103,85,98,73,46,89,68,82,85,104,112,117,89,69,58,111,86,85,121,83,117,108,40)^%eiitQOm+:string.char(41,32,116,104,101,110,32,70,69,66,69,121,118,98,32,43,61,32,49,32,101,110,100,10,9,9,105,102,32,77,90,98,78,82,86,106,121,75,32,97,110,100,32,77,90,98,78,82,86,106,121,75,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,97,110,100,32,103,85,102,107,102,107,40,77,90,98,78,82,86,106,121,75,41,32,116,104,101,110,10,9,9,9,105,102,32,120,102,89,113,103,76,89,46,71,86,112,77,75,120,106,40,77,90,98,78,82,86,106,121,75,41,32,116,104,101,110,32,104,65,71,120,88,120,108,32,43,61,32,49,10,9,9,9,101,108,115,101,105,102,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,10,9,9,9,9,108,111,99,97,108,32,101,105,105,116,81,79,109,32,61,32,40,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,32,45,32,77,90,98,78,82,86,106,121,75,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,10,9,9,9,9,105,102,32,101,105,105,116,81,79,109,32,60,32,116,76,116,83,97,100,70,32,116,104,101,110,32,66,65,122,88,69,109,44,32,116,76,116,83,97,100,70,32,61,32,77,90,98,78,82,86,106,121,75,44,32,101,105,105,116,81,79,109,32,101,110,100,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,101,110,100,10,9,108,111,99,97,108,32,122,90,78,87,66,111,119,70,32,61,32,98,97,104,80,114,102,75,46,71,79,99,99,81,71,40,120,102,89,113,103,76,89,46,85,104,71,72,117,115,121,102,70,91,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,93,32,111,114,32,48,44,32,70,69,66,69,121,118,98,41,10,9,120,102,89,113,103,76,89,46,85,104,71,72,117,115,121,102,70,91,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,93,32,61,32,122,90,78,87,66,111,119,70,10,9,114,101,116,117,114,110,32,66,65,122,88,69,109,44,32,104,65,71,120,88,120,108,44,32,122,90,78,87,66,111,119,70,10,101,110,100,10,10,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,120,102,89,113,103,76,89,40,120,83,119,66,86,68,77,86,41,10,9,105,102,32,120,83,119,66,86,68,77,86,32,97,110,100,32,40,110,111,116,32,120,102,89,113,103,76,89,46,87,107,104,65,116,72,107,100,100,32,111,114,32,67,88,86,117,87,116,120,118,100,46,70,112,73,101,72,79,71,82,117,32,111,114,32,67,88,86,117,87,116,120,118,100,46,86,75,80,87,121,77,87,107,67,41,32,116,104,101,110,10,9,9,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40)กรุณาเลือกไข่ก่อนเริ่มทำสวนstring.char(41,10,9,9,87,97,78,72,120,67,106,120,46,117,86,111,89,82,70,99,65,119,40,102,97,108,115,101,41,10,9,9,114,101,116,117,114,110,10,9,101,110,100,10,9,67,88,86,117,87,116,120,118,100,46,120,102,89,113,103,76,89,32,61,32,120,83,119,66,86,68,77,86,10,9,67,88,86,117,87,116,120,118,100,46,99,100,78,110,88,102,106,117,32,43,61,32,49,10,9,120,102,89,113,103,76,89,46,111,83,74,90,73,109,110,32,61,32,110,105,108,10,9,108,111,99,97,108,32,77,107,67,70,70,111,70,109,99,32,61,32,67,88,86,117,87,116,120,118,100,46,99,100,78,110,88,102,106,117,10,9,105,102,32,110,111,116,32,120,83,119,66,86,68,77,86,32,116,104,101,110,10,9,9,105,68,80,113,81,107,73,32,61,32,110,105,108,10,9,9,72,84,101,106,122,89,86,68,40,102,97,108,115,101,41,10,9,9,114,101,116,117,114,110,10,9,101,110,100,10,9,76,74,108,84,85,119,79,104,40,41,10,9,120,102,89,113,103,76,89,46,111,82,75,121,119,105,40,41,32,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,102,114,104,97,118,69,104,113,107,40,41,10,9,9,114,101,116,117,114,110,32,67,88,86,117,87,116,120,118,100,46,86,75,80,87,121,77,87,107,67,32,111,114,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,111,114,32,67,88,86,117,87,116,120,118,100,46,70,112,73,101,72,79,71,82,117,10,9,9,9,111,114,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,120,102,89,113,103,76,89,32,111,114,32,67,88,86,117,87,116,120,118,100,46,99,100,78,110,88,102,106,117,32,126,61,32,77,107,67,70,70,111,70,109,99,10,9,101,110,100,10,9,100,105,115,73,88,114,100,84,46,117,86,111,89,82,70,99,65,119,40,102,97,108,115,101,41,10,9,105,109,83,75,97,77,108,83,111,46,117,86,111,89,82,70,99,65,119,40,102,97,108,115,101,41,10,9,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40)กำลังหยุดฟาร์มและเพชรstring.char(41,10,9,105,102,32,110,111,116,32,109,90,85,103,121,79,75,40,102,114,104,97,118,69,104,113,107,41,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,76,80,104,74,99,75,88,69,32,61,32,80,112,65,82,81,66,112,46,76,70,74,77,84,104,90,40,41,10,9,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,116,114,117,101,10,9,108,111,99,97,108,32,76,100,107,80,71,84,32,61,32,113,79,114,98,112,79,104,116,79,46,90,100,99,89,99,80,106,103,78,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,116,104,101,110,32,120,102,89,113,103,76,89,46,111,83,74,90,73,109,110,32,61,32,110,105,108,32,101,110,100,10,9,101,110,100,41,10,9,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,102,117,110,99,116,105,111,110,40,41,10,9,9,119,104,105,108,101,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,100,111,10,9,9,9,105,102,32,110,111,116,32,85,70,72,114,75,110,72,97,40,41,32,116,104,101,110,32,79,79,68,98,82,105,87,85,40,41,32,101,110,100,10,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,50,41,10,9,9,101,110,100,10,9,101,110,100,41,10,9,108,111,99,97,108,32,73,113,116,99,83,101,90,104,77,44,32,102,99,70,88,67,66,86,116,109,32,61,32,102,97,108,115,101,44,32,110,105,108,10,9,108,111,99,97,108,32,90,69,80,69,108,68,83,114,44,32,103,109,87,110,106,76,67,66,72,32,61,32,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,119,104,105,108,101,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,100,111,10,9,9,9,105,102,32,110,111,116,32,68,71,119,79,113,108,85,40,41,32,116,104,101,110,10,9,9,9,9,120,102,89,113,103,76,89,46,111,83,74,90,73,109,110,32,61,32,110,105,108,10,9,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,53,41,10,9,9,9,101,108,115,101,105,102,32,120,102,89,113,103,76,89,46,111,83,74,90,73,109,110,32,126,61,32,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,32,116,104,101,110,10,9,9,9,9,108,111,99,97,108,32,119,99,66,116,121,90,65,109,84,32,61,32,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,10,9,9,9,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,66,66,82,117,67,106,97,106,102,40,41,10,9,9,9,9,9,114,101,116,117,114,110,32,102,114,104,97,118,69,104,113,107,40,41,32,111,114,32,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,32,126,61,32,119,99,66,116,121,90,65,109,84,10,9,9,9,9,101,110,100,10,9,9,9,9,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40)กำลังเดินทางไป string.char(32,46,46,32,119,99,66,116,121,90,65,109,84,41,10,9,9,9,9,10,9,9,9,9,105,102,32,100,108,69,75,81,121,77,40,119,99,66,116,121,90,65,109,84,44,32,66,66,82,117,67,106,97,106,102,44,32,102,117,110,99,116,105,111,110,40,77,90,98,78,82,86,106,121,75,41,32,114,101,116,117,114,110,32,110,111,116,32,120,102,89,113,103,76,89,46,71,86,112,77,75,120,106,40,77,90,98,78,82,86,106,121,75,41,32,101,110,100,41,32,116,104,101,110,10,9,9,9,9,9,120,102,89,113,103,76,89,46,111,83,74,90,73,109,110,32,61,32,119,99,66,116,121,90,65,109,84,10,9,9,9,9,101,110,100,10,9,9,9,101,108,115,101,10,9,9,9,9,108,111,99,97,108,32,77,90,98,78,82,86,106,121,75,44,32,104,65,71,120,88,120,108,44,32,122,90,78,87,66,111,119,70,32,61,32,120,102,89,113,103,76,89,46,111,82,75,121,119,105,40,41,10,9,9,9,9,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40)ตรง string.char(32,46,46,32,104,65,71,120,88,120,108,32,46,46,32)/string.char(32,46,46,32,122,90,78,87,66,111,119,70,32,46,46,32) ฟองstring.char(41,10,9,9,9,9,105,102,32,122,90,78,87,66,111,119,70,32,62,32,48,32,97,110,100,32,104,65,71,120,88,120,108,32,61,61,32,122,90,78,87,66,111,119,70,32,116,104,101,110,10,9,9,9,9,9,10,9,9,9,9,9,102,99,70,88,67,66,86,116,109,32,61,32,102,99,70,88,67,66,86,116,109,32,111,114,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,9,9,9,105,102,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,102,99,70,88,67,66,86,116,109,32,62,61,32,53,32,97,110,100,32,110,111,116,32,105,68,80,113,81,107,73,32,116,104,101,110,32,73,113,116,99,83,101,90,104,77,32,61,32,116,114,117,101,32,98,114,101,97,107,32,101,110,100,10,9,9,9,9,101,108,115,101,32,102,99,70,88,67,66,86,116,109,32,61,32,110,105,108,32,101,110,100,10,9,9,9,9,105,102,32,77,90,98,78,82,86,106,121,75,32,97,110,100,32,110,111,116,32,85,70,72,114,75,110,72,97,40,41,32,116,104,101,110,10,9,9,9,9,9,108,111,99,97,108,32,119,99,66,116,121,90,65,109,84,44,32,74,86,70,122,73,72,32,61,32,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,44,32,113,79,114,98,112,79,104,116,79,46,97,99,78,71,71,89,121,76,115,10,9,9,9,9,9,89,101,120,65,90,107,86,86,40,77,90,98,78,82,86,106,121,75,44,32,102,117,110,99,116,105,111,110,40,41,10,9,9,9,9,9,9,114,101,116,117,114,110,32,102,114,104,97,118,69,104,113,107,40,41,32,111,114,32,120,102,89,113,103,76,89,46,88,90,88,90,75,84,78,115,78,32,126,61,32,119,99,66,116,121,90,65,109,84,32,111,114,32,120,102,89,113,103,76,89,46,111,83,74,90,73,109,110,32,126,61,32,119,99,66,116,121,90,65,109,84,10,9,9,9,9,9,9,9,111,114,32,113,79,114,98,112,79,104,116,79,46,97,99,78,71,71,89,121,76,115,32,126,61,32,74,86,70,122,73,72,32,111,114,32,110,111,116,32,68,71,119,79,113,108,85,40,41,10,9,9,9,9,9,9,9,111,114,32,85,70,72,114,75,110,72,97,40,41,32,111,114,32,120,102,89,113,103,76,89,46,71,86,112,77,75,120,106,40,77,90,98,78,82,86,106,121,75,41,10,9,9,9,9,9,101,110,100,44,32,116,114,117,101,41,10,9,9,9,9,101,108,115,101,32,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,51,41,32,101,110,100,10,9,9,9,101,110,100,10,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,9,101,110,100,10,9,101,110,100,41,10,9,76,100,107,80,71,84,58,69,98,70,119,78,100,72,122,108,40,41,10,9,72,84,101,106,122,89,86,68,40,102,97,108,115,101,41,10,9,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,110,105,108,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,99,100,78,110,88,102,106,117,32,61,61,32,77,107,67,70,70,111,70,109,99,32,116,104,101,110,10,9,9,87,97,78,72,120,67,106,120,46,117,86,111,89,82,70,99,65,119,40,102,97,108,115,101,41,10,9,9,105,102,32,73,113,116,99,83,101,90,104,77,32,116,104,101,110,32,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40)สวนเสร็จแล้วstring.char(41,10,9,9,101,108,115,101,105,102,32,110,111,116,32,90,69,80,69,108,68,83,114,32,116,104,101,110,32,120,102,89,113,103,76,89,46,115,72,110,89,99,70,40)สวนหยุด: string.char(32,46,46,32,116,111,115,116,114,105,110,103,40,103,109,87,110,106,76,67,66,72,41,41,32,101,110,100,10,9,101,110,100,10,101,110,100,10,10,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,85,112,98,78,97,105,117,40,119,99,66,116,121,90,65,109,84,41,10,9,79,75,69,88,111,116,69,74,114,40)เลือกโซน:string.char(44,32,119,99,66,116,121,90,65,109,84,41,10,101,110,100,10,10,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,102,108,83,118,115,84,66,76,40,77,90,98,78,82,86,106,121,75,41,10,9,79,75,69,88,111,116,69,74,114,40)เลือกไข่:string.char(44,32,77,90,98,78,82,86,106,121,75,41,10,101,110,100,10,10,10,10,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,65,85,86,79,87,71,118,79,40,120,83,119,66,86,68,77,86,41,10,9,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,61,32,120,83,119,66,86,68,77,86,10,9,67,88,86,117,87,116,120,118,100,46,71,86,118,104,75,115,122,89,66,32,43,61,32,49,10,9,67,88,86,117,87,116,120,118,100,46,111,83,74,90,73,109,110,32,61,32,110,105,108,10,9,105,102,32,110,111,116,32,120,83,119,66,86,68,77,86,32,116,104,101,110,32,105,102,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,120,102,89,113,103,76,89,32,116,104,101,110,32,105,68,80,113,81,107,73,32,61,32,110,105,108,32,101,110,100,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,76,80,104,74,99,75,88,69,32,61,32,80,112,65,82,81,66,112,46,76,70,74,77,84,104,90,40,41,10,9,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,116,114,117,101,10,9,108,111,99,97,108,32,77,107,67,70,70,111,70,109,99,32,61,32,67,88,86,117,87,116,120,118,100,46,71,86,118,104,75,115,122,89,66,10,9,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,102,117,110,99,116,105,111,110,40,41,10,9,9,119,104,105,108,101,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,97,110,100,32,67,88,86,117,87,116,120,118,100,46,71,86,118,104,75,115,122,89,66,32,61,61,32,77,107,67,70,70,111,70,109,99,32,100,111,10,9,9,9,105,102,32,110,111,116,32,85,70,72,114,75,110,72,97,40,41,32,116,104,101,110,32,79,79,68,98,82,105,87,85,40,41,32,101,110,100,10,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,50,41,10,9,9,101,110,100,10,9,101,110,100,41,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,102,114,104,97,118,69,104,113,107,40,41,32,114,101,116,117,114,110,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,111,114,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,111,114,32,67,88,86,117,87,116,120,118,100,46,71,86,118,104,75,115,122,89,66,32,126,61,32,77,107,67,70,70,111,70,109,99,32,101,110,100,10,9,10,9,108,111,99,97,108,32,76,100,107,80,71,84,32,61,32,113,79,114,98,112,79,104,116,79,46,90,100,99,89,99,80,106,103,78,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)ตัวละครเกิดใหม่ เริ่มรอบใหม่string.char(41,32,67,88,86,117,87,116,120,118,100,46,111,83,74,90,73,109,110,32,61,32,110,105,108,32,101,110,100,10,9,101,110,100,41,10,9,108,111,99,97,108,32,104,81,112,84,71,80,89,32,61,32,116,114,117,101,10,10,9,119,104,105,108,101,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,100,111,10,9,9,105,102,32,110,111,116,32,68,71,119,79,113,108,85,40,41,32,116,104,101,110,10,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,53,41,10,9,9,101,108,115,101,105,102,32,67,88,86,117,87,116,120,118,100,46,111,83,74,90,73,109,110,32,126,61,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,66,65,122,88,69,109,32,61,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,10,9,9,9,105,102,32,100,108,69,75,81,121,77,40,66,65,122,88,69,109,44,32,102,117,110,99,116,105,111,110,40,41,10,9,9,9,9,114,101,116,117,114,110,32,102,114,104,97,118,69,104,113,107,40,41,32,111,114,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,32,126,61,32,66,65,122,88,69,109,10,9,9,9,101,110,100,41,32,116,104,101,110,32,67,88,86,117,87,116,120,118,100,46,111,83,74,90,73,109,110,32,61,32,66,65,122,88,69,109,32,101,110,100,10,9,9,101,108,115,101,10,9,9,9,108,111,99,97,108,32,77,90,98,78,82,86,106,121,75,32,61,32,87,104,97,85,86,78,105,40,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,44,32,111,113,69,82,116,69,119,76,44,32,116,114,117,101,41,10,9,9,9,105,102,32,77,90,98,78,82,86,106,121,75,32,116,104,101,110,10,9,9,9,9,105,102,32,104,81,112,84,71,80,89,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)ตีไข่:string.char(44,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)JatlsKstring.char(41,44,32,77,90,98,78,82,86,106,121,75,58,77,67,81,120,117,108,65,74,83,40)nPKYyEstring.char(41,41,32,104,81,112,84,71,80,89,32,61,32,102,97,108,115,101,32,101,110,100,10,9,9,9,9,89,101,120,65,90,107,86,86,40,77,90,98,78,82,86,106,121,75,44,32,102,117,110,99,116,105,111,110,40,41,32,114,101,116,117,114,110,32,102,114,104,97,118,69,104,113,107,40,41,32,111,114,32,67,88,86,117,87,116,120,118,100,46,111,83,74,90,73,109,110,32,126,61,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,32,101,110,100,41,10,9,9,9,101,108,115,101,10,9,9,9,9,105,102,32,110,111,116,32,104,81,112,84,71,80,89,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)ไม่มีไข่ตามตัวกรองในstring.char(44,32,67,88,86,117,87,116,120,118,100,46,88,90,88,90,75,84,78,115,78,44,32)รอไข่เกิดstring.char(41,32,104,81,112,84,71,80,89,32,61,32,116,114,117,101,32,101,110,100,10,9,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,53,41,32,32,32,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,101,110,100,10,9,76,100,107,80,71,84,58,69,98,70,119,78,100,72,122,108,40,41,10,9,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,110,105,108,10,101,110,100,10,10,10,10,108,111,99,97,108,32,117,105,118,98,90,101,32,61,32,102,97,108,115,101,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,81,112,108,88,73,90,103,40,106,111,115,121,72,89,41,10,9,105,102,32,106,111,115,121,72,89,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,116,104,101,110,32,114,101,116,117,114,110,32,106,111,115,121,72,89,32,101,110,100,10,9,114,101,116,117,114,110,32,106,111,115,121,72,89,58,76,102,83,86,111,86,122,118,40)MtkIkrMSSstring.char(44,32,116,114,117,101,41,10,101,110,100,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,121,67,86,86,97,84,79,40,106,111,115,121,72,89,41,10,9,108,111,99,97,108,32,84,69,80,75,115,73,83,72,44,32,76,111,70,106,81,109,32,61,32,123,125,44,32,123,125,10,9,102,111,114,32,120,73,121,83,107,86,108,80,44,32,110,117,99,112,79,104,87,101,69,32,105,110,32,112,97,105,114,115,40,106,111,115,121,72,89,58,85,87,83,112,88,66,111,103,120,40,41,41,32,100,111,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,84,69,80,75,115,73,83,72,44,32,120,73,121,83,107,86,108,80,32,46,46,32)=string.char(32,46,46,32,116,111,115,116,114,105,110,103,40,110,117,99,112,79,104,87,101,69,41,41,32,101,110,100,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,101,105,105,116,81,79,109,32,105,110,32,105,112,97,105,114,115,40,106,111,115,121,72,89,58,103,99,72,76,76,69,40,41,41,32,100,111,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,76,111,70,106,81,109,44,32,101,105,105,116,81,79,109,46,89,68,82,85,104,112,117,89,69,32,46,46,32)[string.char(32,46,46,32,101,105,105,116,81,79,109,46,88,68,76,97,74,83,121,32,46,46,32)]string.char(41,32,101,110,100,10,9,117,118,79,87,106,76,99,106,40)เพชร:string.char(44,32,106,111,115,121,72,89,58,116,98,89,109,122,75,40,41,44,32,106,111,115,121,72,89,46,88,68,76,97,74,83,121,44,10,9,9)| TEPKsISH:string.char(44,32,99,83,119,88,76,69,97,46,87,70,65,107,77,74,99,69,112,40,84,69,80,75,115,73,83,72,44,32), string.char(41,44,10,9,9)| ข้างใน:string.char(44,32,99,83,119,88,76,69,97,46,87,70,65,107,77,74,99,69,112,40,76,111,70,106,81,109,44,32), string.char(41,41,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,76,117,79,115,98,103,109,121,113,40,78,77,109,79,84,65,116,106,101,44,32,69,115,112,72,116,116,76,41,10,9,108,111,99,97,108,32,90,74,100,75,71,105,78,111,76,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)MuofRuVstring.char(41,10,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,123,125,10,9,105,102,32,110,111,116,32,90,74,100,75,71,105,78,111,76,32,116,104,101,110,32,114,101,116,117,114,110,32,104,80,65,76,120,68,69,75,32,101,110,100,10,9,108,111,99,97,108,32,82,88,71,121,108,69,72,32,61,32,73,70,99,72,74,65,40,41,10,9,108,111,99,97,108,32,77,80,88,74,103,121,32,61,32,110,101,120,116,40,71,97,101,70,99,77,80,89,41,32,126,61,32,110,105,108,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,106,111,115,121,72,89,32,105,110,32,105,112,97,105,114,115,40,90,74,100,75,71,105,78,111,76,58,106,115,77,98,111,78,73,72,40,41,41,32,100,111,10,9,9,108,111,99,97,108,32,69,82,74,107,84,122,103,65,32,61,32,81,112,108,88,73,90,103,40,106,111,115,121,72,89,41,10,9,9,105,102,32,69,82,74,107,84,122,103,65,32,97,110,100,32,40,40,77,80,88,74,103,121,32,97,110,100,32,106,107,113,79,82,83,107,114,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,41,32,61,61,32,82,88,71,121,108,69,72,41,10,9,9,9,111,114,32,40,110,111,116,32,77,80,88,74,103,121,32,97,110,100,32,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,32,60,61,32,40,69,115,112,72,116,116,76,32,111,114,32,86,108,75,105,72,85,104,84,108,46,119,85,87,69,89,74,41,41,41,32,116,104,101,110,10,9,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,106,111,115,121,72,89,41,10,9,9,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,104,80,65,76,120,68,69,75,10,101,110,100,10,10,10,108,111,99,97,108,32,118,76,86,117,81,78,32,61,32,115,101,116,109,101,116,97,116,97,98,108,101,40,123,125,44,32,123,32,77,85,110,65,85,108,78,32,61,32)xIySkVlPstring.char(32,125,41,32,32,32,10,10,109,102,90,116,84,108,100,72,83,32,61,32,102,117,110,99,116,105,111,110,40,69,115,112,72,116,116,76,41,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,114,101,116,117,114,110,32,102,97,108,115,101,32,101,110,100,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,106,111,115,121,72,89,32,105,110,32,105,112,97,105,114,115,40,76,117,79,115,98,103,109,121,113,40,78,77,109,79,84,65,116,106,101,44,32,69,115,112,72,116,116,76,41,41,32,100,111,10,9,9,105,102,32,110,111,116,32,40,118,76,86,117,81,78,91,106,111,115,121,72,89,93,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,60,32,118,76,86,117,81,78,91,106,111,115,121,72,89,93,41,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,101,110,100,10,9,114,101,116,117,114,110,32,102,97,108,115,101,10,101,110,100,10,106,73,100,78,90,107,97,32,61,32,102,117,110,99,116,105,111,110,40,86,84,97,82,117,98,70,112,75,44,32,69,115,112,72,116,116,76,41,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,102,114,104,97,118,69,104,113,107,40,41,10,9,9,114,101,116,117,114,110,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,111,114,32,110,111,116,32,84,104,65,88,117,84,114,86,40,41,32,111,114,32,40,86,84,97,82,117,98,70,112,75,32,97,110,100,32,86,84,97,82,117,98,70,112,75,40,41,41,10,9,101,110,100,10,9,108,111,99,97,108,32,101,104,109,79,121,118,111,98,82,32,61,32,48,10,9,119,104,105,108,101,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,100,111,10,9,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,77,109,79,84,65,116,106,101,32,61,32,68,71,119,79,113,108,85,40,41,10,9,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,116,104,101,110,32,98,114,101,97,107,32,101,110,100,10,9,9,10,9,9,108,111,99,97,108,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,10,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,106,111,115,121,72,89,32,105,110,32,105,112,97,105,114,115,40,76,117,79,115,98,103,109,121,113,40,78,77,109,79,84,65,116,106,101,44,32,69,115,112,72,116,116,76,41,41,32,100,111,10,9,9,9,108,111,99,97,108,32,69,82,74,107,84,122,103,65,32,61,32,81,112,108,88,73,90,103,40,106,111,115,121,72,89,41,10,9,9,9,105,102,32,69,82,74,107,84,122,103,65,32,97,110,100,32,110,111,116,32,40,118,76,86,117,81,78,91,106,111,115,121,72,89,93,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,60,32,118,76,86,117,81,78,91,106,111,115,121,72,89,93,41,32,116,104,101,110,10,9,9,9,9,108,111,99,97,108,32,101,105,105,116,81,79,109,32,61,32,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,41,46,78,98,103,103,111,78,105,69,10,9,9,9,9,105,102,32,110,111,116,32,81,76,80,74,75,78,108,32,111,114,32,101,105,105,116,81,79,109,32,60,32,81,76,80,74,75,78,108,32,116,104,101,110,32,103,69,118,119,100,109,115,44,32,81,76,80,74,75,78,108,32,61,32,106,111,115,121,72,89,44,32,101,105,105,116,81,79,109,32,101,110,100,10,9,9,9,101,110,100,10,9,9,101,110,100,10,9,9,105,102,32,110,111,116,32,103,69,118,119,100,109,115,32,116,104,101,110,32,98,114,101,97,107,32,101,110,100,10,10,9,9,108,111,99,97,108,32,69,82,74,107,84,122,103,65,32,61,32,81,112,108,88,73,90,103,40,103,69,118,119,100,109,115,41,10,9,9,105,102,32,110,111,116,32,117,105,118,98,90,101,32,116,104,101,110,32,117,105,118,98,90,101,32,61,32,116,114,117,101,32,121,67,86,86,97,84,79,40,103,69,118,119,100,109,115,41,32,101,110,100,10,9,9,105,102,32,101,104,109,79,121,118,111,98,82,32,61,61,32,48,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)เก็บเพชร: ไปหาเพชรที่ตกstring.char(41,32,101,110,100,10,9,9,105,102,32,110,111,116,32,67,89,105,75,70,117,65,75,40,117,106,97,122,120,99,114,40,122,109,67,69,68,109,88,46,118,77,69,104,68,108,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,41,41,44,32,102,114,104,97,118,69,104,113,107,41,32,111,114,32,102,114,104,97,118,69,104,113,107,40,41,32,116,104,101,110,32,98,114,101,97,107,32,101,110,100,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,9,105,102,32,80,74,68,75,97,114,32,97,110,100,32,69,82,74,107,84,122,103,65,46,79,106,81,71,111,66,32,116,104,101,110,10,9,9,9,80,74,68,75,97,114,40,78,77,109,79,84,65,116,106,101,44,32,69,82,74,107,84,122,103,65,44,32,48,41,10,9,9,9,80,74,68,75,97,114,40,78,77,109,79,84,65,116,106,101,44,32,69,82,74,107,84,122,103,65,44,32,49,41,10,9,9,101,110,100,10,9,9,108,111,99,97,108,32,102,97,108,104,83,84,75,90,84,32,61,32,103,69,118,119,100,109,115,58,76,102,83,86,111,86,122,118,40)KSxIEOstring.char(44,32,116,114,117,101,41,10,9,9,105,102,32,102,97,108,104,83,84,75,90,84,32,116,104,101,110,32,112,109,117,99,90,87,40,102,97,108,104,83,84,75,90,84,41,32,101,110,100,10,9,9,10,9,9,108,111,99,97,108,32,85,114,70,68,78,107,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,119,104,105,108,101,32,103,69,118,119,100,109,115,46,79,106,81,71,111,66,32,97,110,100,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,45,32,85,114,70,68,78,107,32,60,32,86,108,75,105,72,85,104,84,108,46,114,99,78,79,71,88,113,71,122,32,97,110,100,32,110,111,116,32,102,114,104,97,118,69,104,113,107,40,41,32,100,111,10,9,9,9,105,102,32,69,82,74,107,84,122,103,65,46,79,106,81,71,111,66,32,116,104,101,110,32,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,117,106,97,122,120,99,114,40,122,109,67,69,68,109,88,46,118,77,69,104,68,108,40,69,82,74,107,84,122,103,65,46,67,111,97,117,70,68,102,106,41,41,32,101,110,100,10,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,9,101,110,100,10,9,9,105,102,32,103,69,118,119,100,109,115,46,79,106,81,71,111,66,32,116,104,101,110,10,9,9,9,118,76,86,117,81,78,91,103,69,118,119,100,109,115,93,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,32,43,32,51,48,32,32,32,10,9,9,101,108,115,101,10,9,9,9,101,104,109,79,121,118,111,98,82,32,43,61,32,49,10,9,9,101,110,100,10,9,101,110,100,10,9,105,102,32,101,104,109,79,121,118,111,98,82,32,62,32,48,32,116,104,101,110,32,117,118,79,87,106,76,99,106,40)เก็บเพชรได้string.char(44,32,101,104,109,79,121,118,111,98,82,44,32)เม็ดstring.char(41,32,101,110,100,10,101,110,100,10,10,10,10,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,120,83,120,70,112,68,85,40,120,83,119,66,86,68,77,86,41,10,9,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,61,32,120,83,119,66,86,68,77,86,10,9,67,88,86,117,87,116,120,118,100,46,75,68,84,120,72,104,32,43,61,32,49,10,9,105,102,32,110,111,116,32,120,83,119,66,86,68,77,86,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,76,80,104,74,99,75,88,69,32,61,32,80,112,65,82,81,66,112,46,76,70,74,77,84,104,90,40,41,10,9,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,116,114,117,101,10,9,108,111,99,97,108,32,77,107,67,70,70,111,70,109,99,32,61,32,67,88,86,117,87,116,120,118,100,46,75,68,84,120,72,104,10,9,117,118,79,87,106,76,99,106,40)เปิดเก็บเพชรในโซนที่ฟาร์ม (ถ้าไม่ได้ฟาร์ม ใช้โซนที่ตัวละครอยู่)string.char(41,10,9,119,104,105,108,101,32,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,97,110,100,32,67,88,86,117,87,116,120,118,100,46,75,68,84,120,72,104,32,61,61,32,77,107,67,70,70,111,70,109,99,32,100,111,10,9,9,105,102,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,97,110,100,32,84,104,65,88,117,84,114,86,40,41,32,116,104,101,110,32,106,73,100,78,90,107,97,40,102,117,110,99,116,105,111,110,40,41,32,114,101,116,117,114,110,32,110,111,116,32,67,88,86,117,87,116,120,118,100,46,120,83,120,70,112,68,85,32,111,114,32,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,101,110,100,41,32,101,110,100,10,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,48,46,50,41,10,9,101,110,100,10,9,70,79,66,104,83,121,107,91,76,80,104,74,99,75,88,69,93,32,61,32,110,105,108,10,101,110,100,10,10,10,108,111,99,97,108,32,71,109,75,103,68,81,32,61,32,102,97,108,115,101,10,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,102,109,120,82,116,109,68,120,72,40,120,83,119,66,86,68,77,86,41,10,9,67,88,86,117,87,116,120,118,100,46,102,109,120,82,116,109,68,120,72,32,61,32,120,83,119,66,86,68,77,86,10,9,105,102,32,110,111,116,32,120,83,119,66,86,68,77,86,32,111,114,32,71,109,75,103,68,81,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,71,109,75,103,68,81,32,61,32,116,114,117,101,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,102,98,77,107,81,117,78,32,105,110,32,105,112,97,105,114,115,40,123,32)oFQbJSbYhstring.char(44,32)KITqxPustring.char(44,32)oPbkuTRtvstring.char(44,32)HRzVUSgJxstring.char(32,125,41,32,100,111,10,9,9,108,111,99,97,108,32,72,103,72,120,107,89,73,98,77,32,61,32,108,101,87,67,68,100,119,98,97,58,65,65,90,102,84,87,104,40,102,98,77,107,81,117,78,41,10,9,9,105,102,32,72,103,72,120,107,89,73,98,77,32,97,110,100,32,72,103,72,120,107,89,73,98,77,58,65,69,72,72,108,103,80,40)GSoCQiIkOstring.char(41,32,116,104,101,110,10,9,9,9,72,103,72,120,107,89,73,98,77,46,75,105,100,83,105,66,86,75,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,46,46,46,41,10,9,9,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,102,109,120,82,116,109,68,120,72,32,116,104,101,110,32,112,114,105,110,116,40)[PyyQCJz] <-string.char(44,32,102,98,77,107,81,117,78,44,32,46,46,46,41,32,101,110,100,10,9,9,9,101,110,100,41,10,9,9,101,110,100,10,9,101,110,100,10,9,105,102,32,104,111,88,67,113,104,32,97,110,100,32,84,119,82,70,116,70,106,81,72,32,116,104,101,110,10,9,9,108,111,99,97,108,32,99,70,105,69,71,67,32,61,32,123,32,117,109,73,119,70,66,66,87,75,32,61,32,116,114,117,101,44,32,67,106,80,81,86,100,71,65,66,32,61,32,116,114,117,101,44,32,66,118,81,65,113,110,88,100,80,32,61,32,116,114,117,101,32,125,10,9,9,108,111,99,97,108,32,102,121,106,109,112,116,112,65,89,10,9,9,102,121,106,109,112,116,112,65,89,32,61,32,104,111,88,67,113,104,40,116,98,97,102,87,102,89,77,115,44,32)IVUCDIUSHstring.char(44,32,102,117,110,99,116,105,111,110,40,112,120,68,102,66,84,44,32,46,46,46,41,10,9,9,9,105,102,32,67,88,86,117,87,116,120,118,100,46,102,109,120,82,116,109,68,120,72,32,97,110,100,32,84,119,82,70,116,70,106,81,72,40,41,32,61,61,32)OqecwLCtstring.char(10,9,9,9,9,97,110,100,32,108,99,97,108,102,78,87,40,112,120,68,102,66,84,41,32,61,61,32)LLJxFXrkstring.char(32,97,110,100,32,99,70,105,69,71,67,91,112,120,68,102,66,84,46,89,68,82,85,104,112,117,89,69,93,32,116,104,101,110,10,9,9,9,9,112,114,105,110,116,40)[PyyQCJz] ->string.char(44,32,112,120,68,102,66,84,46,89,68,82,85,104,112,117,89,69,44,32,46,46,46,41,10,9,9,9,101,110,100,10,9,9,9,114,101,116,117,114,110,32,102,121,106,109,112,116,112,65,89,40,112,120,68,102,66,84,44,32,46,46,46,41,10,9,9,101,110,100,41,10,9,101,110,100,10,101,110,100,10,10,10,108,111,99,97,108,32,84,70,105,121,115,68,102,97,32,61,32,123,32,105,119,108,85,76,119,99,102,108,32,61,32,102,97,108,115,101,44,32,100,108,90,74,98,68,71,32,61,32,102,97,108,115,101,44,32,116,84,115,71,90,78,105,32,61,32,116,114,117,101,44,32,121,107,103,77,73,121,32,61,32,123,125,32,125,10,100,111,10,9,108,111,99,97,108,32,87,121,116,74,77,113,32,61,32,115,101,116,109,101,116,97,116,97,98,108,101,40,123,125,44,32,123,32,77,85,110,65,85,108,78,32,61,32)xIySkVlPstring.char(32,125,41,10,9,108,111,99,97,108,32,66,67,121,75,65,106,84,118,32,61,32,123,125,10,9,108,111,99,97,108,32,122,65,73,113,103,107,32,61,32,48,10,9,108,111,99,97,108,32,100,111,115,115,84,99,107,100,114,32,61,32,116,98,97,102,87,102,89,77,115,58,78,73,109,105,67,113,82,120,105,40)QPOZTgMMhstring.char(41,10,9,108,111,99,97,108,32,121,113,89,114,83,98,77,97,32,61,32)rMRxDj.eWlDHxustring.char(10,10,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,108,111,99,97,108,32,101,69,98,103,101,66,32,61,32,100,111,115,115,84,99,107,100,114,58,88,104,121,77,116,121,98,108,115,40,104,86,118,101,97,80,87,40,121,113,89,114,83,98,77,97,41,41,10,9,9,105,102,32,116,121,112,101,40,101,69,98,103,101,66,41,32,61,61,32)cSwXLEastring.char(32,116,104,101,110,10,9,9,9,84,70,105,121,115,68,102,97,46,121,107,103,77,73,121,46,105,119,108,85,76,119,99,102,108,32,61,32,101,69,98,103,101,66,46,105,119,108,85,76,119,99,102,108,32,61,61,32,116,114,117,101,10,9,9,9,84,70,105,121,115,68,102,97,46,121,107,103,77,73,121,46,100,108,90,74,98,68,71,32,61,32,101,69,98,103,101,66,46,100,108,90,74,98,68,71,32,61,61,32,116,114,117,101,10,9,9,101,110,100,10,9,101,110,100,41,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,70,72,69,84,70,82,98,85,74,40,41,10,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,68,87,67,79,106,84,85,104,81,40,121,113,89,114,83,98,77,97,44,32,100,111,115,115,84,99,107,100,114,58,104,108,104,89,87,104,66,120,73,40,123,32,105,119,108,85,76,119,99,102,108,32,61,32,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,44,32,100,108,90,74,98,68,71,32,61,32,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,32,125,41,41,10,9,9,101,110,100,41,10,9,101,110,100,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32,101,101,70,101,122,121,73,101,99,44,32,107,121,118,72,82,107,41,10,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,108,111,99,97,108,32,102,121,106,109,112,116,112,65,89,32,61,32,86,76,110,110,80,100,91,101,101,70,101,122,121,73,101,99,93,10,9,9,9,105,102,32,102,121,106,109,112,116,112,65,89,32,61,61,32,107,121,118,72,82,107,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,9,108,111,99,97,108,32,121,107,103,77,73,121,32,61,32,87,121,116,74,77,113,91,86,76,110,110,80,100,93,10,9,9,9,105,102,32,110,111,116,32,121,107,103,77,73,121,32,116,104,101,110,10,9,9,9,9,121,107,103,77,73,121,32,61,32,123,125,10,9,9,9,9,87,121,116,74,77,113,91,86,76,110,110,80,100,93,32,61,32,121,107,103,77,73,121,10,9,9,9,101,110,100,10,9,9,9,105,102,32,121,107,103,77,73,121,91,101,101,70,101,122,121,73,101,99,93,32,61,61,32,110,105,108,32,116,104,101,110,32,121,107,103,77,73,121,91,101,101,70,101,122,121,73,101,99,93,32,61,32,102,121,106,109,112,116,112,65,89,32,101,110,100,10,9,9,9,86,76,110,110,80,100,91,101,101,70,101,122,121,73,101,99,93,32,61,32,107,121,118,72,82,107,10,9,9,101,110,100,41,10,9,101,110,100,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,80,84,116,87,90,89,40,86,76,110,110,80,100,41,10,9,9,108,111,99,97,108,32,121,107,103,77,73,121,32,61,32,87,121,116,74,77,113,91,86,76,110,110,80,100,93,10,9,9,105,102,32,110,111,116,32,121,107,103,77,73,121,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,102,111,114,32,101,101,70,101,122,121,73,101,99,44,32,107,121,118,72,82,107,32,105,110,32,112,97,105,114,115,40,121,107,103,77,73,121,41,32,100,111,10,9,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,32,86,76,110,110,80,100,91,101,101,70,101,122,121,73,101,99,93,32,61,32,107,121,118,72,82,107,32,101,110,100,41,10,9,9,101,110,100,10,9,9,87,121,116,74,77,113,91,86,76,110,110,80,100,93,32,61,32,110,105,108,10,9,101,110,100,10,10,9,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,97,103,77,74,87,89,68,88,40,86,76,110,110,80,100,41,10,9,9,108,111,99,97,108,32,79,84,109,102,79,74,32,61,32,86,76,110,110,80,100,10,9,9,119,104,105,108,101,32,79,84,109,102,79,74,32,97,110,100,32,79,84,109,102,79,74,32,126,61,32,90,111,108,75,77,78,72,100,119,32,97,110,100,32,79,84,109,102,79,74,32,126,61,32,119,83,84,74,118,72,84,82,106,32,100,111,10,9,9,9,105,102,32,79,84,109,102,79,74,58,65,69,72,72,108,103,80,40)XRfjbxgPstring.char(41,32,111,114,32,79,84,109,102,79,74,58,65,69,72,72,108,103,80,40)XkMurfpustring.char(41,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,9,9,79,84,109,102,79,74,32,61,32,79,84,109,102,79,74,46,79,106,81,71,111,66,10,9,9,101,110,100,10,9,9,114,101,116,117,114,110,32,102,97,108,115,101,10,9,101,110,100,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,69,106,77,82,90,118,40,86,76,110,110,80,100,44,32,82,119,86,89,105,71,83,75,72,41,10,9,9,108,111,99,97,108,32,79,84,109,102,79,74,32,61,32,86,76,110,110,80,100,10,9,9,119,104,105,108,101,32,79,84,109,102,79,74,32,97,110,100,32,79,84,109,102,79,74,32,126,61,32,90,111,108,75,77,78,72,100,119,32,100,111,10,9,9,9,105,102,32,79,84,109,102,79,74,46,89,68,82,85,104,112,117,89,69,32,61,61,32)pzcDTxOCstring.char(32,111,114,32,79,84,109,102,79,74,46,89,68,82,85,104,112,117,89,69,32,61,61,32)lCxyBxstring.char(10,9,9,9,9,111,114,32,40,82,119,86,89,105,71,83,75,72,32,97,110,100,32,79,84,109,102,79,74,46,89,68,82,85,104,112,117,89,69,32,61,61,32)AgNsYpmCstring.char(41,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,9,9,105,102,32,79,84,109,102,79,74,58,65,69,72,72,108,103,80,40)JYUGWqecstring.char(41,32,116,104,101,110,10,9,9,9,9,10,9,9,9,9,105,102,32,79,84,109,102,79,74,58,101,76,65,69,70,88,40)uRUjRPyrOstring.char(41,32,111,114,32,118,107,71,107,117,108,111,120,58,75,112,82,74,112,77,40,79,84,109,102,79,74,41,32,116,104,101,110,32,114,101,116,117,114,110,32,116,114,117,101,32,101,110,100,10,9,9,9,101,110,100,10,9,9,9,79,84,109,102,79,74,32,61,32,79,84,109,102,79,74,46,79,106,81,71,111,66,10,9,9,101,110,100,10,9,9,114,101,116,117,114,110,32,102,97,108,115,101,10,9,101,110,100,10,10,9,108,111,99,97,108,32,84,71,79,111,101,104,104,32,61,32,123,10,9,9,83,104,119,111,108,106,79,32,61,32,116,114,117,101,44,32,119,81,120,104,98,108,110,72,32,61,32,116,114,117,101,44,32,97,72,90,98,104,101,97,32,61,32,116,114,117,101,44,10,9,9,114,83,81,112,69,77,73,121,32,61,32,116,114,117,101,44,32,81,111,99,122,103,107,32,61,32,116,114,117,101,44,10,9,125,10,9,108,111,99,97,108,32,106,81,86,109,110,105,113,32,61,32,123,10,9,9,105,120,83,116,110,67,97,74,32,61,32,116,114,117,101,44,32,78,67,73,114,115,112,32,61,32,116,114,117,101,44,32,69,85,69,81,83,86,65,32,61,32,116,114,117,101,44,10,9,9,109,66,114,71,115,117,119,112,32,61,32,116,114,117,101,44,32,90,120,90,111,105,65,118,70,79,32,61,32,116,114,117,101,44,32,115,116,97,99,108,105,114,68,32,61,32,116,114,117,101,44,10,9,125,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,65,87,90,72,121,68,118,99,115,40,86,76,110,110,80,100,41,10,9,9,105,102,32,110,111,116,32,84,70,105,121,115,68,102,97,46,116,84,115,71,90,78,105,32,111,114,32,110,111,116,32,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,32,111,114,32,97,103,77,74,87,89,68,88,40,86,76,110,110,80,100,41,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,105,102,32,84,71,79,111,101,104,104,91,86,76,110,110,80,100,46,88,68,76,97,74,83,121,93,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,118,108,77,116,104,116,105,115,32,61,32,90,111,108,75,77,78,72,100,119,46,101,84,73,83,90,106,10,9,9,9,105,102,32,86,76,110,110,80,100,58,98,84,73,101,70,120,121,106,99,40,119,83,84,74,118,72,84,82,106,41,32,111,114,32,40,118,108,77,116,104,116,105,115,32,97,110,100,32,86,76,110,110,80,100,58,98,84,73,101,70,120,121,106,99,40,118,108,77,116,104,116,105,115,41,41,32,116,104,101,110,10,9,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)fHRVnEstring.char(44,32,102,97,108,115,101,41,10,9,9,9,101,110,100,10,9,9,101,108,115,101,105,102,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)BipXPrstring.char(41,32,116,104,101,110,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)cyWkBXMnvstring.char(44,32,48,41,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)eRfilVstring.char(44,32,48,41,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)bOECoRJstring.char(44,32,48,41,10,9,9,101,108,115,101,105,102,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)aTjOctkhHstring.char(41,32,97,110,100,32,86,76,110,110,80,100,46,79,106,81,71,111,66,32,61,61,32,90,111,108,75,77,78,72,100,119,46,73,72,72,84,109,89,32,116,104,101,110,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)fHRVnEstring.char(44,32,102,97,108,115,101,41,10,9,9,101,108,115,101,105,102,32,106,81,86,109,110,105,113,91,86,76,110,110,80,100,46,88,68,76,97,74,83,121,93,32,116,104,101,110,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)fHRVnEstring.char(44,32,102,97,108,115,101,41,10,9,9,101,108,115,101,105,102,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)andjgoIqstring.char(41,32,116,104,101,110,10,9,9,9,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)bCuISnYstring.char(44,32,102,97,108,115,101,41,10,9,9,101,108,115,101,105,102,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,97,110,100,32,110,111,116,32,69,106,77,82,90,118,40,86,76,110,110,80,100,44,32,102,97,108,115,101,41,32,116,104,101,110,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)TWyqtUstring.char(44,32,102,97,108,115,101,41,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)iHnJyhMyOstring.char(44,32,113,68,99,79,67,75,98,46,105,72,110,74,121,104,77,121,79,46,112,104,122,112,66,107,41,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)aUSfWJNrstring.char(44,32,48,41,10,9,9,101,108,115,101,105,102,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)dvarmBdstring.char(41,32,111,114,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)LXdtfKsstring.char(41,32,116,104,101,110,10,9,9,9,105,102,32,86,76,110,110,80,100,46,79,106,81,71,111,66,32,97,110,100,32,86,76,110,110,80,100,46,79,106,81,71,111,66,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,97,110,100,32,110,111,116,32,69,106,77,82,90,118,40,86,76,110,110,80,100,44,32,116,114,117,101,41,32,116,104,101,110,10,9,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)GebsvFTWTstring.char(44,32,49,41,10,9,9,9,101,110,100,10,9,9,101,108,115,101,105,102,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)gnEFZXNJstring.char(41,32,111,114,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)ZsHntnjstring.char(41,32,111,114,32,86,76,110,110,80,100,58,65,69,72,72,108,103,80,40)QldFNZstring.char(41,32,116,104,101,110,10,9,9,9,79,122,83,108,117,71,121,87,90,40,86,76,110,110,80,100,44,32)TAMPSxWJVstring.char(44,32,102,97,108,115,101,41,10,9,9,101,110,100,10,9,101,110,100,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,84,65,104,113,117,74,119,68,89,40,41,10,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,77,65,84,86,112,111,32,105,110,32,105,112,97,105,114,115,40,66,67,121,75,65,106,84,118,41,32,100,111,32,77,65,84,86,112,111,58,69,98,70,119,78,100,72,122,108,40,41,32,101,110,100,10,9,9,99,83,119,88,76,69,97,46,70,74,107,117,86,98,40,66,67,121,75,65,106,84,118,41,10,9,101,110,100,10,10,9,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,109,117,72,106,118,74,113,40,120,83,119,66,86,68,77,86,41,10,9,9,105,102,32,110,111,116,32,84,70,105,121,115,68,102,97,46,116,84,115,71,90,78,105,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,120,83,119,66,86,68,77,86,32,61,32,120,83,119,66,86,68,77,86,32,61,61,32,116,114,117,101,10,9,9,105,102,32,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,32,61,61,32,120,83,119,66,86,68,77,86,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,32,61,32,120,83,119,66,86,68,77,86,10,9,9,122,65,73,113,103,107,32,61,32,122,65,73,113,103,107,32,43,32,49,10,9,9,84,65,104,113,117,74,119,68,89,40,41,10,9,9,70,72,69,84,70,82,98,85,74,40,41,10,9,9,105,102,32,110,111,116,32,120,83,119,66,86,68,77,86,32,116,104,101,110,10,9,9,9,102,111,114,32,86,76,110,110,80,100,32,105,110,32,112,97,105,114,115,40,87,121,116,74,77,113,41,32,100,111,32,80,84,116,87,90,89,40,86,76,110,110,80,100,41,32,101,110,100,10,9,9,9,114,101,116,117,114,110,10,9,9,101,110,100,10,10,9,9,79,122,83,108,117,71,121,87,90,40,119,83,84,74,118,72,84,82,106,44,32)ITffIrbCYstring.char(44,32,102,97,108,115,101,41,10,9,9,79,122,83,108,117,71,121,87,90,40,119,83,84,74,118,72,84,82,106,44,32)iJAQvWBGYstring.char(44,32,49,101,57,41,10,9,9,79,122,83,108,117,71,121,87,90,40,119,83,84,74,118,72,84,82,106,44,32)aFQdbulstring.char(44,32,48,41,10,9,9,79,122,83,108,117,71,121,87,90,40,119,83,84,74,118,72,84,82,106,44,32)PxVzWoqDhstring.char(44,32,48,41,10,9,9,79,122,83,108,117,71,121,87,90,40,119,83,84,74,118,72,84,82,106,44,32)dXMCHRtNystring.char(44,32,48,41,10,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,32,79,122,83,108,117,71,121,87,90,40,82,67,70,66,102,116,99,119,40,41,46,87,66,104,80,69,85,110,74,44,32)tzACPsUKstring.char(44,32,113,68,99,79,67,75,98,46,116,122,65,67,80,115,85,75,46,108,104,90,76,85,102,120,115,41,32,101,110,100,41,10,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,79,122,83,108,117,71,121,87,90,40,101,79,70,110,117,69,80,115,119,40,41,58,78,73,109,105,67,113,82,120,105,40)HyqvGUgXcstring.char(41,44,32)KKXywQRpstring.char(44,32,113,68,99,79,67,75,98,46,85,87,112,69,76,72,104,98,71,46,112,81,79,117,120,78,89,41,10,9,9,101,110,100,41,10,9,9,108,111,99,97,108,32,73,90,77,67,68,83,99,86,32,61,32,90,111,108,75,77,78,72,100,119,46,73,72,72,84,109,89,10,9,9,79,122,83,108,117,71,121,87,90,40,73,90,77,67,68,83,99,86,44,32)OOPCUKstring.char(44,32,48,41,10,9,9,79,122,83,108,117,71,121,87,90,40,73,90,77,67,68,83,99,86,44,32)weLuvBstring.char(44,32,48,41,10,9,9,79,122,83,108,117,71,121,87,90,40,73,90,77,67,68,83,99,86,44,32)VDgvUYUJstring.char(44,32,48,41,10,9,9,79,122,83,108,117,71,121,87,90,40,73,90,77,67,68,83,99,86,44,32)nXxKktstring.char(44,32,102,97,108,115,101,41,10,10,9,9,10,9,9,108,111,99,97,108,32,99,78,89,68,107,121,110,113,32,61,32,122,65,73,113,103,107,10,9,9,108,111,99,97,108,32,79,87,122,69,97,113,83,44,32,71,120,102,98,109,86,86,89,32,61,32,123,125,44,32,115,101,116,109,101,116,97,116,97,98,108,101,40,123,125,44,32,123,32,77,85,110,65,85,108,78,32,61,32)xIySkVlPstring.char(32,125,41,10,9,9,108,111,99,97,108,32,74,116,121,88,116,105,74,110,44,32,76,71,66,72,79,65,100,32,61,32,49,44,32,48,10,9,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,70,97,68,72,98,99,40,86,76,110,110,80,100,41,10,9,9,9,105,102,32,71,120,102,98,109,86,86,89,91,86,76,110,110,80,100,93,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,9,71,120,102,98,109,86,86,89,91,86,76,110,110,80,100,93,32,61,32,116,114,117,101,10,9,9,9,76,71,66,72,79,65,100,32,61,32,76,71,66,72,79,65,100,32,43,32,49,10,9,9,9,79,87,122,69,97,113,83,91,76,71,66,72,79,65,100,93,32,61,32,86,76,110,110,80,100,10,9,9,101,110,100,10,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,66,67,121,75,65,106,84,118,44,32,90,111,108,75,77,78,72,100,119,46,105,109,117,82,77,80,58,111,82,108,109,67,81,119,40,70,97,68,72,98,99,41,41,10,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,66,67,121,75,65,106,84,118,44,32,119,83,84,74,118,72,84,82,106,46,115,110,97,110,90,72,58,111,82,108,109,67,81,119,40,70,97,68,72,98,99,41,41,10,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,66,67,121,75,65,106,84,118,44,32,119,83,84,74,118,72,84,82,106,46,105,109,117,82,77,80,58,111,82,108,109,67,81,119,40,70,97,68,72,98,99,41,41,10,9,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,66,67,121,75,65,106,84,118,44,32,90,111,108,75,77,78,72,100,119,58,110,117,119,83,86,103,65,88,109,40)eTISZjstring.char(41,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,108,111,99,97,108,32,118,108,77,116,104,116,105,115,32,61,32,90,111,108,75,77,78,72,100,119,46,101,84,73,83,90,106,10,9,9,9,105,102,32,118,108,77,116,104,116,105,115,32,116,104,101,110,10,9,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,86,76,110,110,80,100,32,105,110,32,105,112,97,105,114,115,40,118,108,77,116,104,116,105,115,58,103,99,72,76,76,69,40,41,41,32,100,111,32,70,97,68,72,98,99,40,86,76,110,110,80,100,41,32,101,110,100,10,9,9,9,101,110,100,10,9,9,101,110,100,41,41,10,9,9,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,86,76,110,110,80,100,32,105,110,32,105,112,97,105,114,115,40,90,111,108,75,77,78,72,100,119,58,103,99,72,76,76,69,40,41,41,32,100,111,32,70,97,68,72,98,99,40,86,76,110,110,80,100,41,32,101,110,100,10,9,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,86,76,110,110,80,100,32,105,110,32,105,112,97,105,114,115,40,119,83,84,74,118,72,84,82,106,58,103,99,72,76,76,69,40,41,41,32,100,111,32,70,97,68,72,98,99,40,86,76,110,110,80,100,41,32,101,110,100,10,9,9,9,119,104,105,108,101,32,84,70,105,121,115,68,102,97,46,116,84,115,71,90,78,105,32,97,110,100,32,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,32,97,110,100,32,99,78,89,68,107,121,110,113,32,61,61,32,122,65,73,113,103,107,32,100,111,10,9,9,9,9,108,111,99,97,108,32,107,87,88,108,97,81,67,78,32,61,32,98,97,104,80,114,102,75,46,110,68,109,74,103,71,115,40,74,116,121,88,116,105,74,110,32,43,32,51,57,57,44,32,76,71,66,72,79,65,100,41,10,9,9,9,9,119,104,105,108,101,32,74,116,121,88,116,105,74,110,32,60,61,32,107,87,88,108,97,81,67,78,32,100,111,10,9,9,9,9,9,108,111,99,97,108,32,86,76,110,110,80,100,32,61,32,79,87,122,69,97,113,83,91,74,116,121,88,116,105,74,110,93,10,9,9,9,9,9,79,87,122,69,97,113,83,91,74,116,121,88,116,105,74,110,93,32,61,32,110,105,108,10,9,9,9,9,9,74,116,121,88,116,105,74,110,32,61,32,74,116,121,88,116,105,74,110,32,43,32,49,10,9,9,9,9,9,71,120,102,98,109,86,86,89,91,86,76,110,110,80,100,93,32,61,32,110,105,108,10,9,9,9,9,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,9,9,9,105,102,32,86,76,110,110,80,100,58,98,84,73,101,70,120,121,106,99,40,90,111,108,75,77,78,72,100,119,41,32,111,114,32,86,76,110,110,80,100,58,98,84,73,101,70,120,121,106,99,40,119,83,84,74,118,72,84,82,106,41,32,116,104,101,110,32,65,87,90,72,121,68,118,99,115,40,86,76,110,110,80,100,41,32,101,110,100,10,9,9,9,9,9,101,110,100,41,10,9,9,9,9,101,110,100,10,9,9,9,9,105,102,32,74,116,121,88,116,105,74,110,32,62,32,76,71,66,72,79,65,100,32,116,104,101,110,32,74,116,121,88,116,105,74,110,44,32,76,71,66,72,79,65,100,32,61,32,49,44,32,48,32,101,110,100,10,9,9,9,9,83,114,89,69,81,90,119,46,89,86,112,111,108,114,65,75,40,41,10,9,9,9,101,110,100,10,9,9,101,110,100,41,10,9,101,110,100,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,86,114,112,121,102,69,69,40,120,83,119,66,86,68,77,86,41,10,9,9,105,102,32,116,121,112,101,40,73,100,122,83,78,111,68,41,32,126,61,32)functionstring.char(32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,105,102,32,120,83,119,66,86,68,77,86,32,116,104,101,110,10,9,9,9,108,111,99,97,108,32,90,69,80,69,108,68,83,114,32,61,32,68,88,67,108,119,119,40,73,100,122,83,78,111,68,44,32,48,41,10,9,9,9,105,102,32,110,111,116,32,90,69,80,69,108,68,83,114,32,116,104,101,110,32,68,88,67,108,119,119,40,73,100,122,83,78,111,68,44,32,57,57,57,41,32,101,110,100,10,9,9,101,108,115,101,10,9,9,9,68,88,67,108,119,119,40,73,100,122,83,78,111,68,44,32,54,48,41,10,9,9,101,110,100,10,9,101,110,100,10,10,9,102,117,110,99,116,105,111,110,32,120,106,88,109,75,68,121,107,115,46,73,68,116,116,117,122,40,120,83,119,66,86,68,77,86,41,10,9,9,105,102,32,110,111,116,32,84,70,105,121,115,68,102,97,46,116,84,115,71,90,78,105,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,9,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,32,61,32,120,83,119,66,86,68,77,86,32,61,61,32,116,114,117,101,10,9,9,86,114,112,121,102,69,69,40,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,41,10,9,9,70,72,69,84,70,82,98,85,74,40,41,10,9,101,110,100,10,10,9,102,117,110,99,116,105,111,110,32,84,70,105,121,115,68,102,97,46,74,87,101,67,90,90,102,97,40,82,70,66,121,115,89,112,41,10,9,9,10,9,9,108,111,99,97,108,32,83,105,97,72,111,101,88,103,44,32,74,116,121,88,116,105,74,110,44,32,76,71,66,72,79,65,100,32,61,32,123,125,44,32,49,44,32,48,10,9,9,108,111,99,97,108,32,77,78,90,68,120,78,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,108,111,99,97,108,32,75,67,104,76,111,73,44,32,68,107,82,102,113,119,44,32,117,74,78,66,102,83,81,32,61,32,77,78,90,68,120,78,44,32,77,78,90,68,120,78,44,32,77,78,90,68,120,78,10,9,9,84,70,105,121,115,68,102,97,46,104,79,116,117,101,101,110,32,61,32,106,85,119,115,101,77,69,71,46,116,120,67,121,86,69,118,99,72,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,9,108,111,99,97,108,32,68,87,119,113,115,83,67,89,32,61,32,81,105,119,100,69,78,72,79,46,122,78,80,103,87,120,78,40,41,10,9,9,9,76,71,66,72,79,65,100,32,61,32,76,71,66,72,79,65,100,32,43,32,49,10,9,9,9,83,105,97,72,111,101,88,103,91,76,71,66,72,79,65,100,93,32,61,32,68,87,119,113,115,83,67,89,10,9,9,9,119,104,105,108,101,32,74,116,121,88,116,105,74,110,32,60,61,32,76,71,66,72,79,65,100,32,97,110,100,32,83,105,97,72,111,101,88,103,91,74,116,121,88,116,105,74,110,93,32,60,61,32,68,87,119,113,115,83,67,89,32,45,32,49,32,100,111,10,9,9,9,9,83,105,97,72,111,101,88,103,91,74,116,121,88,116,105,74,110,93,32,61,32,110,105,108,10,9,9,9,9,74,116,121,88,116,105,74,110,32,61,32,74,116,121,88,116,105,74,110,32,43,32,49,10,9,9,9,101,110,100,10,9,9,9,105,102,32,68,87,119,113,115,83,67,89,32,45,32,75,67,104,76,111,73,32,62,61,32,48,46,53,32,116,104,101,110,10,9,9,9,9,108,111,99,97,108,32,70,69,66,69,121,118,98,32,61,32,76,71,66,72,79,65,100,32,45,32,74,116,121,88,116,105,74,110,32,43,32,49,10,9,9,9,9,84,70,105,121,115,68,102,97,46,107,121,118,72,82,107,32,61,32,98,97,104,80,114,102,75,46,113,101,116,99,90,81,101,113,40,70,69,66,69,121,118,98,32,47,32,98,97,104,80,114,102,75,46,110,68,109,74,103,71,115,40,68,87,119,113,115,83,67,89,32,45,32,77,78,90,68,120,78,44,32,49,41,32,43,32,48,46,53,41,10,9,9,9,9,82,70,66,121,115,89,112,46,103,101,114,70,104,99,32,61,32)PrEupHF: string.char(32,46,46,32,84,70,105,121,115,68,102,97,46,107,121,118,72,82,107,10,9,9,9,9,75,67,104,76,111,73,32,61,32,68,87,119,113,115,83,67,89,10,9,9,9,9,108,111,99,97,108,32,72,120,69,121,104,82,74,106,32,61,32,123,125,10,9,9,9,9,102,111,114,32,120,106,85,117,115,117,122,67,86,32,61,32,74,116,121,88,116,105,74,110,44,32,76,71,66,72,79,65,100,32,100,111,32,72,120,69,121,104,82,74,106,91,35,72,120,69,121,104,82,74,106,32,43,32,49,93,32,61,32,83,105,97,72,111,101,88,103,91,120,106,85,117,115,117,122,67,86,93,32,101,110,100,10,9,9,9,9,83,105,97,72,111,101,88,103,44,32,74,116,121,88,116,105,74,110,44,32,76,71,66,72,79,65,100,32,61,32,72,120,69,121,104,82,74,106,44,32,49,44,32,35,72,120,69,121,104,82,74,106,10,9,9,9,101,110,100,10,9,9,9,105,102,32,68,87,119,113,115,83,67,89,32,45,32,117,74,78,66,102,83,81,32,62,61,32,53,32,116,104,101,110,10,9,9,9,9,105,102,32,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,32,116,104,101,110,32,86,114,112,121,102,69,69,40,116,114,117,101,41,32,101,110,100,10,9,9,9,9,117,74,78,66,102,83,81,32,61,32,68,87,119,113,115,83,67,89,10,9,9,9,101,110,100,10,9,9,9,105,102,32,68,87,119,113,115,83,67,89,32,45,32,68,107,82,102,113,119,32,62,61,32,49,48,32,116,104,101,110,10,9,9,9,9,105,102,32,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,32,111,114,32,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,32,116,104,101,110,32,112,114,105,110,116,40)[PyyQCJz] PrEupHF: string.char(32,46,46,32,40,84,70,105,121,115,68,102,97,46,107,121,118,72,82,107,32,111,114,32,48,41,41,32,101,110,100,10,9,9,9,9,68,107,82,102,113,119,32,61,32,68,87,119,113,115,83,67,89,10,9,9,9,101,110,100,10,9,9,101,110,100,41,10,9,9,10,9,9,105,102,32,84,70,105,121,115,68,102,97,46,121,107,103,77,73,121,46,105,119,108,85,76,119,99,102,108,32,116,104,101,110,32,120,106,88,109,75,68,121,107,115,46,109,117,72,106,118,74,113,40,116,114,117,101,41,32,101,110,100,10,9,9,105,102,32,84,70,105,121,115,68,102,97,46,121,107,103,77,73,121,46,100,108,90,74,98,68,71,32,116,104,101,110,32,120,106,88,109,75,68,121,107,115,46,73,68,116,116,117,122,40,116,114,117,101,41,32,101,110,100,10,9,101,110,100,10,10,9,102,117,110,99,116,105,111,110,32,84,70,105,121,115,68,102,97,46,74,85,83,114,108,87,40,41,10,9,9,122,65,73,113,103,107,32,61,32,122,65,73,113,103,107,32,43,32,49,10,9,9,84,65,104,113,117,74,119,68,89,40,41,10,9,9,105,102,32,84,70,105,121,115,68,102,97,46,104,79,116,117,101,101,110,32,116,104,101,110,32,84,70,105,121,115,68,102,97,46,104,79,116,117,101,101,110,58,69,98,70,119,78,100,72,122,108,40,41,32,101,110,100,10,9,9,102,111,114,32,86,76,110,110,80,100,32,105,110,32,112,97,105,114,115,40,87,121,116,74,77,113,41,32,100,111,32,80,84,116,87,90,89,40,86,76,110,110,80,100,41,32,101,110,100,10,9,9,105,102,32,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,32,116,104,101,110,32,86,114,112,121,102,69,69,40,102,97,108,115,101,41,32,101,110,100,10,9,9,84,70,105,121,115,68,102,97,46,105,119,108,85,76,119,99,102,108,44,32,84,70,105,121,115,68,102,97,46,100,108,90,74,98,68,71,44,32,84,70,105,121,115,68,102,97,46,116,84,115,71,90,78,105,32,61,32,102,97,108,115,101,44,32,102,97,108,115,101,44,32,102,97,108,115,101,10,9,9,10,9,101,110,100,10,101,110,100,10,10,10,10,10,108,111,99,97,108,32,79,102,68,88,105,85,69,99,76,32,61,32,123,10,9,10,9,110,66,100,99,115,84,32,32,32,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,51,56,44,32,50,56,44,32,50,52,41,44,10,9,70,73,75,113,68,76,32,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,51,50,44,32,50,51,44,32,50,48,41,44,10,9,70,79,121,115,115,121,76,97,32,32,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,52,56,44,32,51,54,44,32,51,49,41,44,10,9,84,103,114,116,108,115,113,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,54,54,44,32,53,48,44,32,52,51,41,44,10,9,104,117,77,78,98,105,110,87,77,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,50,52,53,44,32,49,52,54,44,32,52,48,41,44,32,32,32,10,9,90,69,73,101,77,90,32,32,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,57,54,44,32,55,56,44,32,55,48,41,44,10,9,110,114,122,71,77,89,32,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,51,53,44,32,50,50,44,32,49,54,41,44,10,9,103,101,114,70,104,99,32,32,32,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,50,53,48,44,32,50,52,48,44,32,50,50,56,41,44,10,9,121,114,116,112,76,68,76,85,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,50,48,53,44,32,49,56,53,44,32,49,55,48,41,44,10,125,10,108,111,99,97,108,32,86,75,65,73,79,85,85,68,32,61,32,113,68,99,79,67,75,98,46,68,111,77,67,81,80,115,107,46,114,105,77,70,90,113,107,69,10,10,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,85,86,68,98,78,65,108,65,67,40,84,113,106,113,74,66,68,111,90,44,32,66,103,85,119,117,66,110,41,10,9,108,111,99,97,108,32,115,83,116,111,78,70,115,32,61,32,76,76,74,120,70,88,114,107,46,118,77,69,104,68,108,40,84,113,106,113,74,66,68,111,90,41,10,9,108,111,99,97,108,32,79,84,109,102,79,74,32,61,32,66,103,85,119,117,66,110,46,79,106,81,71,111,66,10,9,66,103,85,119,117,66,110,46,79,106,81,71,111,66,32,61,32,110,105,108,10,9,102,111,114,32,120,73,121,83,107,86,108,80,44,32,110,117,99,112,79,104,87,101,69,32,105,110,32,112,97,105,114,115,40,66,103,85,119,117,66,110,41,32,100,111,32,115,83,116,111,78,70,115,91,120,73,121,83,107,86,108,80,93,32,61,32,110,117,99,112,79,104,87,101,69,32,101,110,100,10,9,115,83,116,111,78,70,115,46,79,106,81,71,111,66,32,61,32,79,84,109,102,79,74,10,9,114,101,116,117,114,110,32,115,83,116,111,78,70,115,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,107,108,118,80,90,65,79,67,40,115,83,116,111,78,70,115,44,32,72,103,72,120,107,89,73,98,77,41,10,9,85,86,68,98,78,65,108,65,67,40)LUpSDmEBstring.char(44,32,123,32,73,99,74,88,86,109,121,114,32,61,32,115,101,83,109,119,98,117,99,46,118,77,69,104,68,108,40,48,44,32,72,103,72,120,107,89,73,98,77,32,111,114,32,56,41,44,32,79,106,81,71,111,66,32,61,32,115,83,116,111,78,70,115,32,125,41,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,110,67,90,101,115,88,76,101,40,115,83,116,111,78,70,115,44,32,120,114,79,109,119,84,75,44,32,85,114,70,68,78,107,41,10,9,87,98,83,98,120,70,115,82,58,109,72,85,105,101,114,74,67,40,115,83,116,111,78,70,115,44,32,78,102,110,108,114,88,104,89,46,118,77,69,104,68,108,40,85,114,70,68,78,107,32,111,114,32,48,46,49,56,44,32,113,68,99,79,67,75,98,46,90,79,72,102,72,78,46,105,122,81,98,117,66,122,89,41,44,32,120,114,79,109,119,84,75,41,58,100,107,118,113,110,90,99,105,102,40,41,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,116,119,66,84,86,108,89,40,79,84,109,102,79,74,44,32,90,101,119,70,113,102,103,44,32,66,103,85,119,117,66,110,41,10,9,108,111,99,97,108,32,83,86,97,101,120,69,32,61,32,123,10,9,9,120,88,108,112,71,113,66,89,71,32,61,32,49,44,10,9,9,68,111,77,67,81,80,115,107,32,61,32,86,75,65,73,79,85,85,68,44,32,103,101,114,70,104,99,32,61,32,90,101,119,70,113,102,103,44,32,117,82,68,112,110,77,32,61,32,49,54,44,10,9,9,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,103,101,114,70,104,99,44,10,9,9,86,108,73,82,90,85,77,122,32,61,32,113,68,99,79,67,75,98,46,86,108,73,82,90,85,77,122,46,83,105,118,84,114,83,112,44,10,9,9,79,106,81,71,111,66,32,61,32,79,84,109,102,79,74,44,10,9,125,10,9,102,111,114,32,120,73,121,83,107,86,108,80,44,32,110,117,99,112,79,104,87,101,69,32,105,110,32,112,97,105,114,115,40,66,103,85,119,117,66,110,32,111,114,32,123,125,41,32,100,111,32,83,86,97,101,120,69,91,120,73,121,83,107,86,108,80,93,32,61,32,110,117,99,112,79,104,87,101,69,32,101,110,100,10,9,114,101,116,117,114,110,32,85,86,68,98,78,65,108,65,67,40)urAltfLPsstring.char(44,32,83,86,97,101,120,69,41,10,101,110,100,10,10,10,10,10,108,111,99,97,108,32,87,104,85,118,76,108,66,32,61,32,40,112,83,83,79,82,107,77,83,116,32,97,110,100,32,112,83,83,79,82,107,77,83,116,40,41,41,32,111,114,32,113,79,114,98,112,79,104,116,79,58,87,102,119,87,84,97,84,67,83,40)doWxnustring.char(41,10,108,111,99,97,108,32,102,121,106,109,112,116,112,65,89,32,61,32,87,104,85,118,76,108,66,58,65,65,90,102,84,87,104,40)PXclvqOstring.char(41,10,105,102,32,102,121,106,109,112,116,112,65,89,32,116,104,101,110,32,102,121,106,109,112,116,112,65,89,58,88,75,83,102,110,71,113,83,106,40,41,32,101,110,100,10,10,108,111,99,97,108,32,79,89,121,103,110,102,75,32,61,32,85,86,68,98,78,65,108,65,67,40)YJaxHZgFJstring.char(44,32,123,10,9,89,68,82,85,104,112,117,89,69,32,61,32)PXclvqOstring.char(44,32,118,112,75,88,69,113,79,32,61,32,102,97,108,115,101,44,10,9,86,119,105,65,115,80,78,106,32,61,32,113,68,99,79,67,75,98,46,86,119,105,65,115,80,78,106,46,100,105,100,66,118,65,65,44,10,9,79,106,81,71,111,66,32,61,32,87,104,85,118,76,108,66,44,10,125,41,10,10,108,111,99,97,108,32,66,116,98,112,74,105,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,48,46,53,44,32,48,46,53,41,44,10,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,98,74,74,65,75,82,40,48,46,53,44,32,48,46,53,41,44,10,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,53,56,48,44,32,51,54,48,41,44,10,9,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,110,66,100,99,115,84,44,32,73,106,98,81,99,88,73,82,32,61,32,116,114,117,101,44,10,9,79,106,81,71,111,66,32,61,32,79,89,121,103,110,102,75,44,10,125,41,10,107,108,118,80,90,65,79,67,40,66,116,98,112,74,105,44,32,49,50,41,10,85,86,68,98,78,65,108,65,67,40)rpdMFusxYstring.char(44,32,123,32,116,118,86,76,110,97,74,74,107,32,61,32,79,102,68,88,105,85,69,99,76,46,84,103,114,116,108,115,113,44,32,115,79,88,103,88,84,73,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,66,116,98,112,74,105,32,125,41,10,10,10,108,111,99,97,108,32,115,121,106,118,121,72,118,117,99,32,61,32,85,86,68,98,78,65,108,65,67,40)bHEFOhDdstring.char(44,32,123,10,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,98,74,74,65,75,82,40,49,44,32,49,41,44,32,120,88,108,112,71,113,66,89,71,32,61,32,49,44,10,9,73,65,119,66,67,71,81,32,61,32,113,68,99,79,67,75,98,46,73,65,119,66,67,71,81,46,83,107,82,77,100,83,44,32,99,82,100,72,84,106,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,66,116,98,112,74,105,44,10,125,41,10,107,108,118,80,90,65,79,67,40,115,121,106,118,121,72,118,117,99,44,32,49,50,41,10,10,108,111,99,97,108,32,97,119,87,122,110,121,116,85,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,98,74,74,65,75,82,40,49,44,32,49,41,44,32,97,68,74,84,112,70,80,32,61,32,69,80,114,65,83,75,46,106,115,116,112,69,120,80,40,52,48,44,32,50,50,44,32,49,52,41,44,10,9,120,88,108,112,71,113,66,89,71,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,66,116,98,112,74,105,44,10,125,41,10,107,108,118,80,90,65,79,67,40,97,119,87,122,110,121,116,85,44,32,49,50,41,10,108,111,99,97,108,32,98,85,111,65,121,101,69,87,75,32,10,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,102,117,110,99,116,105,111,110,40,41,10,9,108,111,99,97,108,32,105,71,71,69,82,66,65,74,66,32,61,32)lwMqKOXnA.ZgRAVGJwstring.char(10,9,108,111,99,97,108,32,119,74,105,72,80,72,32,61,32)PSSAfeY://nxHMNgB.RAEnok.QzfEvkE/FOSaxmX/puEKbPedB/BtbpJi/lBPjDDZc/ykmkROOH.ZgRAVGJwstring.char(10,9,108,111,99,97,108,32,113,101,80,86,105,112,88,110,32,61,32,66,78,106,71,67,114,102,80,32,111,114,32,88,73,104,82,65,122,106,10,9,105,102,32,116,121,112,101,40,113,101,80,86,105,112,88,110,41,32,126,61,32)functionstring.char(32,111,114,32,110,111,116,32,68,87,67,79,106,84,85,104,81,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,90,69,80,69,108,68,83,114,32,61,32,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,110,111,116,32,40,109,116,119,74,99,73,32,97,110,100,32,109,116,119,74,99,73,40,105,71,71,69,82,66,65,74,66,41,41,32,116,104,101,110,32,68,87,67,79,106,84,85,104,81,40,105,71,71,69,82,66,65,74,66,44,32,116,98,97,102,87,102,89,77,115,58,89,122,112,79,106,104,99,40,119,74,105,72,80,72,41,41,32,101,110,100,10,9,9,115,121,106,118,121,72,118,117,99,46,89,86,120,98,116,73,69,83,32,61,32,113,101,80,86,105,112,88,110,40,105,71,71,69,82,66,65,74,66,41,10,9,101,110,100,41,10,9,105,102,32,90,69,80,69,108,68,83,114,32,116,104,101,110,10,9,9,115,121,106,118,121,72,118,117,99,46,99,82,100,72,84,106,32,61,32,48,10,9,9,66,116,98,112,74,105,46,120,88,108,112,71,113,66,89,71,32,61,32,49,10,9,9,97,119,87,122,110,121,116,85,46,120,88,108,112,71,113,66,89,71,32,61,32,48,46,52,53,10,9,9,105,102,32,98,85,111,65,121,101,69,87,75,32,116,104,101,110,32,98,85,111,65,121,101,69,87,75,46,120,88,108,112,71,113,66,89,71,32,61,32,48,46,51,32,101,110,100,10,9,101,108,115,101,10,9,9,112,114,105,110,116,40)[PyyQCJz] โหลดรูปพื้นหลังไม่ได้ ใช้พื้นสีเดิมstring.char(41,10,9,101,110,100,10,101,110,100,41,10,10,10,98,85,111,65,121,101,69,87,75,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,44,32,49,53,48,44,32,49,44,32,48,41,44,32,120,88,108,112,71,113,66,89,71,32,61,32,48,46,51,44,10,9,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,70,73,75,113,68,76,44,32,79,106,81,71,111,66,32,61,32,66,116,98,112,74,105,44,10,125,41,10,107,108,118,80,90,65,79,67,40,98,85,111,65,121,101,69,87,75,44,32,49,50,41,10,10,116,119,66,84,86,108,89,40,98,85,111,65,121,101,69,87,75,44,32,86,108,75,105,72,85,104,84,108,46,90,71,122,121,66,80,44,32,123,10,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,52,44,32,49,48,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,50,56,44,32,48,44,32,51,48,41,44,10,9,117,82,68,112,110,77,32,61,32,49,56,44,32,68,111,77,67,81,80,115,107,32,61,32,113,68,99,79,67,75,98,46,68,111,77,67,81,80,115,107,46,106,72,117,121,73,68,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,44,10,125,41,10,116,119,66,84,86,108,89,40,98,85,111,65,121,101,69,87,75,44,32)nucpOhWeE string.char(32,46,46,32,108,100,88,67,118,107,65,44,32,123,10,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,48,44,32,49,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,44,32,49,52,44,32,49,44,32,45,56,41,44,10,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,50,56,44,32,48,44,32,49,54,41,44,32,117,82,68,112,110,77,32,61,32,49,49,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,121,114,116,112,76,68,76,85,44,10,125,41,10,112,114,105,110,116,40)[PyyQCJz] โหลดเวอร์ชันstring.char(44,32,108,100,88,67,118,107,65,41,10,10,108,111,99,97,108,32,85,88,71,82,72,98,122,101,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,48,44,32,53,50,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,50,48,44,32,49,44,32,45,54,50,41,44,10,9,120,88,108,112,71,113,66,89,71,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,98,85,111,65,121,101,69,87,75,44,10,125,41,10,85,86,68,98,78,65,108,65,67,40)YMwkosvfRstring.char(44,32,123,32,102,65,78,76,80,104,68,103,32,61,32,115,101,83,109,119,98,117,99,46,118,77,69,104,68,108,40,48,44,32,56,41,44,32,83,75,78,106,72,110,32,61,32,113,68,99,79,67,75,98,46,83,75,78,106,72,110,46,108,84,99,118,102,87,76,79,105,44,32,79,106,81,71,111,66,32,61,32,85,88,71,82,72,98,122,101,32,125,41,10,10,10,108,111,99,97,108,32,119,90,113,106,110,75,89,105,81,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,53,48,44,32,48,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,49,53,48,44,32,49,44,32,48,41,44,10,9,120,88,108,112,71,113,66,89,71,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,66,116,98,112,74,105,44,10,125,41,10,10,108,111,99,97,108,32,112,68,72,76,97,109,85,32,61,32,116,119,66,84,86,108,89,40,119,90,113,106,110,75,89,105,81,44,32)string.char(44,32,123,10,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,56,44,32,49,52,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,49,50,48,44,32,48,44,32,50,56,41,44,10,9,117,82,68,112,110,77,32,61,32,50,48,44,32,68,111,77,67,81,80,115,107,32,61,32,113,68,99,79,67,75,98,46,68,111,77,67,81,80,115,107,46,106,72,117,121,73,68,44,10,125,41,10,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,120,104,71,110,117,67,65,40,79,84,109,102,79,74,44,32,77,122,106,98,69,121,89,99,44,32,66,103,85,119,117,66,110,41,10,9,108,111,99,97,108,32,83,86,97,101,120,69,32,61,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,77,122,106,98,69,121,89,99,44,32,77,122,106,98,69,121,89,99,41,44,32,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,70,79,121,115,115,121,76,97,44,10,9,9,89,86,120,98,116,73,69,83,32,61,32,86,108,75,105,72,85,104,84,108,46,105,84,69,73,122,120,44,32,108,103,97,76,90,102,32,61,32,102,97,108,115,101,44,32,79,106,81,71,111,66,32,61,32,79,84,109,102,79,74,44,10,9,125,10,9,102,111,114,32,120,73,121,83,107,86,108,80,44,32,110,117,99,112,79,104,87,101,69,32,105,110,32,112,97,105,114,115,40,66,103,85,119,117,66,110,32,111,114,32,123,125,41,32,100,111,32,83,86,97,101,120,69,91,120,73,121,83,107,86,108,80,93,32,61,32,110,117,99,112,79,104,87,101,69,32,101,110,100,10,9,108,111,99,97,108,32,120,100,66,98,98,66,90,118,102,32,61,32,85,86,68,98,78,65,108,65,67,40)SjVJPZjxzstring.char(44,32,83,86,97,101,120,69,41,10,9,107,108,118,80,90,65,79,67,40,120,100,66,98,98,66,90,118,102,44,32,77,122,106,98,69,121,89,99,32,47,32,50,41,10,9,108,111,99,97,108,32,121,117,119,77,87,119,32,61,32,85,86,68,98,78,65,108,65,67,40)rpdMFusxYstring.char(44,32,123,32,116,118,86,76,110,97,74,74,107,32,61,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,44,32,115,79,88,103,88,84,73,32,61,32,50,44,32,79,106,81,71,111,66,32,61,32,120,100,66,98,98,66,90,118,102,32,125,41,10,9,105,102,32,86,108,75,105,72,85,104,84,108,46,105,84,69,73,122,120,32,61,61,32)string.char(32,116,104,101,110,10,9,9,116,119,66,84,86,108,89,40,120,100,66,98,98,66,90,118,102,44,32)WmAONCzvstring.char(44,32,123,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,98,74,74,65,75,82,40,49,44,32,49,41,44,32,86,108,73,82,90,85,77,122,32,61,32,113,68,99,79,67,75,98,46,86,108,73,82,90,85,77,122,46,104,110,116,97,101,115,100,44,32,117,82,68,112,110,77,32,61,32,49,52,32,125,41,10,9,101,110,100,10,9,120,100,66,98,98,66,90,118,102,46,73,102,71,103,107,115,101,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,110,67,90,101,115,88,76,101,40,121,117,119,77,87,119,44,32,123,32,115,79,88,103,88,84,73,32,61,32,51,32,125,41,32,101,110,100,41,10,9,120,100,66,98,98,66,90,118,102,46,67,104,65,97,66,117,103,70,67,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,110,67,90,101,115,88,76,101,40,121,117,119,77,87,119,44,32,123,32,115,79,88,103,88,84,73,32,61,32,50,32,125,41,32,101,110,100,41,10,9,114,101,116,117,114,110,32,120,100,66,98,98,66,90,118,102,10,101,110,100,10,10,10,108,111,99,97,108,32,105,74,121,85,108,103,77,111,32,61,32,120,104,71,110,117,67,65,40,119,90,113,106,110,75,89,105,81,44,32,54,48,44,32,123,10,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,52,48,44,32,48,44,32,56,41,44,10,125,41,10,10,10,108,111,99,97,108,32,70,84,69,118,111,109,119,32,61,32,120,104,71,110,117,67,65,40,79,89,121,103,110,102,75,44,32,54,48,44,32,123,10,9,10,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,49,54,44,32,48,44,32,56,41,44,32,98,67,117,73,83,110,89,32,61,32,102,97,108,115,101,44,10,125,41,10,10,10,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,102,117,110,99,116,105,111,110,40,41,10,9,108,111,99,97,108,32,80,107,84,108,109,111,70,32,61,32)VbAVXRmQM.HnqYolwWWstring.char(10,9,108,111,99,97,108,32,101,99,68,68,84,118,78,119,88,32,61,32)PSSAfeY://nxHMNgB.RAEnok.QzfEvkE/FOSaxmX/puEKbPedB/BtbpJi/lBPjDDZc/josabJ.HnqYolwWWstring.char(10,9,108,111,99,97,108,32,113,101,80,86,105,112,88,110,32,61,32,66,78,106,71,67,114,102,80,32,111,114,32,88,73,104,82,65,122,106,10,9,105,102,32,116,121,112,101,40,113,101,80,86,105,112,88,110,41,32,126,61,32)functionstring.char(32,111,114,32,110,111,116,32,68,87,67,79,106,84,85,104,81,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,90,69,80,69,108,68,83,114,44,32,107,120,66,90,97,73,105,82,32,61,32,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,105,102,32,110,111,116,32,40,109,116,119,74,99,73,32,97,110,100,32,109,116,119,74,99,73,40,80,107,84,108,109,111,70,41,41,32,116,104,101,110,32,68,87,67,79,106,84,85,104,81,40,80,107,84,108,109,111,70,44,32,116,98,97,102,87,102,89,77,115,58,89,122,112,79,106,104,99,40,101,99,68,68,84,118,78,119,88,41,41,32,101,110,100,10,9,9,114,101,116,117,114,110,32,113,101,80,86,105,112,88,110,40,80,107,84,108,109,111,70,41,10,9,101,110,100,41,10,9,105,102,32,110,111,116,32,90,69,80,69,108,68,83,114,32,116,104,101,110,32,112,114,105,110,116,40)[PyyQCJz] โหลดรูปโลโก้ไม่ได้ ใช้โลโก้ตัวอักษรเดิมstring.char(41,32,114,101,116,117,114,110,32,101,110,100,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,120,100,66,98,98,66,90,118,102,32,105,110,32,105,112,97,105,114,115,40,123,32,105,74,121,85,108,103,77,111,44,32,70,84,69,118,111,109,119,32,125,41,32,100,111,10,9,9,120,100,66,98,98,66,90,118,102,46,89,86,120,98,116,73,69,83,32,61,32,107,120,66,90,97,73,105,82,10,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,118,76,79,118,108,114,109,32,105,110,32,105,112,97,105,114,115,40,120,100,66,98,98,66,90,118,102,58,106,115,77,98,111,78,73,72,40,41,41,32,100,111,10,9,9,9,105,102,32,118,76,79,118,108,114,109,58,65,69,72,72,108,103,80,40)urAltfLPsstring.char(41,32,116,104,101,110,32,118,76,79,118,108,114,109,58,88,75,83,102,110,71,113,83,106,40,41,32,101,110,100,10,9,9,101,110,100,10,9,101,110,100,10,101,110,100,41,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,117,112,111,79,71,71,40,110,68,109,74,103,71,115,41,10,9,66,116,98,112,74,105,46,98,67,117,73,83,110,89,32,61,32,110,111,116,32,110,68,109,74,103,71,115,10,9,70,84,69,118,111,109,119,46,98,67,117,73,83,110,89,32,61,32,110,68,109,74,103,71,115,10,101,110,100,10,10,10,108,111,99,97,108,32,75,121,68,101,108,85,32,61,32,106,85,119,115,101,77,69,71,46,118,113,121,115,121,115,81,109,101,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,32,61,32,113,79,114,98,112,79,104,116,79,46,97,99,78,71,71,89,121,76,115,10,9,105,102,32,89,116,71,117,65,68,103,106,118,32,116,104,101,110,10,9,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,69,82,74,107,84,122,103,65,32,105,110,32,105,112,97,105,114,115,40,89,116,71,117,65,68,103,106,118,58,103,99,72,76,76,69,40,41,41,32,100,111,10,9,9,9,105,102,32,69,82,74,107,84,122,103,65,58,65,69,72,72,108,103,80,40)MtkIkrMSSstring.char(41,32,116,104,101,110,32,69,82,74,107,84,122,103,65,46,73,119,90,114,105,83,32,61,32,102,97,108,115,101,32,101,110,100,10,9,9,101,110,100,10,9,101,110,100,10,101,110,100,41,10,10,108,111,99,97,108,32,117,76,82,65,84,106,32,61,32,106,85,119,115,101,77,69,71,46,85,76,112,78,78,113,76,118,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,89,116,71,117,65,68,103,106,118,44,32,78,77,109,79,84,65,116,106,101,44,32,116,80,78,109,70,77,84,104,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,110,111,116,32,78,77,109,79,84,65,116,106,101,32,111,114,32,86,121,122,67,102,85,90,79,77,32,111,114,32,116,80,78,109,70,77,84,104,58,114,104,86,110,87,100,97,106,72,40,41,32,61,61,32,113,68,99,79,67,75,98,46,74,77,85,115,82,68,80,80,111,46,121,97,113,74,109,66,121,122,109,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,10,9,108,111,99,97,108,32,103,97,81,115,68,119,79,32,61,32,116,80,78,109,70,77,84,104,58,114,104,86,110,87,100,97,106,72,40,41,10,9,105,102,32,116,80,78,109,70,77,84,104,46,76,82,105,118,101,90,80,77,46,78,98,103,103,111,78,105,69,32,60,32,48,46,49,32,97,110,100,32,103,97,81,115,68,119,79,32,126,61,32,113,68,99,79,67,75,98,46,74,77,85,115,82,68,80,80,111,46,115,82,120,65,84,79,73,118,112,10,9,9,97,110,100,32,103,97,81,115,68,119,79,32,126,61,32,113,68,99,79,67,75,98,46,74,77,85,115,82,68,80,80,111,46,88,121,65,87,122,69,117,109,103,32,116,104,101,110,10,9,9,108,111,99,97,108,32,71,99,102,70,120,79,97,72,32,61,32,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,71,99,102,70,120,79,97,72,46,106,77,108,97,66,86,120,90,122,44,32,48,41,10,9,9,78,77,109,79,84,65,116,106,101,46,83,106,90,116,120,72,85,111,102,32,61,32,113,85,80,112,103,98,86,66,86,46,122,117,84,65,113,107,88,110,10,9,101,110,100,10,9,108,111,99,97,108,32,108,90,108,120,80,68,121,113,121,32,61,32,78,77,109,79,84,65,116,106,101,46,82,84,87,97,84,66,65,88,69,46,106,77,108,97,66,86,120,90,122,32,47,32,50,32,43,32,40,116,80,78,109,70,77,84,104,46,115,82,117,121,116,112,78,77,88,32,61,61,32,113,68,99,79,67,75,98,46,110,73,79,71,104,114,80,46,83,116,100,79,77,112,73,32,97,110,100,32,50,32,111,114,32,116,80,78,109,70,77,84,104,46,88,100,85,87,121,72,41,10,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,123,32,89,116,71,117,65,68,103,106,118,32,125,10,9,108,111,99,97,108,32,110,97,80,122,108,98,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)MuofRuVstring.char(41,10,9,105,102,32,110,97,80,122,108,98,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,110,97,80,122,108,98,41,32,101,110,100,10,9,108,111,99,97,108,32,88,78,87,118,97,78,89,114,69,32,61,32,90,111,108,75,77,78,72,100,119,58,65,65,90,102,84,87,104,40)lCxyBxstring.char(41,10,9,105,102,32,88,78,87,118,97,78,89,114,69,32,116,104,101,110,32,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,104,80,65,76,120,68,69,75,44,32,88,78,87,118,97,78,89,114,69,41,32,101,110,100,10,9,117,117,80,107,114,113,46,69,104,97,90,114,80,32,61,32,104,80,65,76,120,68,69,75,10,9,108,111,99,97,108,32,70,71,108,83,97,85,107,32,61,32,90,111,108,75,77,78,72,100,119,58,98,84,121,115,81,75,40,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,108,90,108,120,80,68,121,113,121,32,43,32,50,44,32,48,41,44,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,45,54,48,44,32,48,41,44,32,117,117,80,107,114,113,41,10,9,105,102,32,110,111,116,32,70,71,108,83,97,85,107,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,87,103,103,73,76,104,32,61,32,70,71,108,83,97,85,107,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,32,43,32,108,90,108,120,80,68,121,113,121,10,9,105,102,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,32,60,32,87,103,103,73,76,104,32,45,32,48,46,50,53,32,116,104,101,110,10,9,9,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,61,32,78,77,109,79,84,65,116,106,101,46,122,109,67,69,68,109,88,32,43,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,48,44,32,87,103,103,73,76,104,32,45,32,78,77,109,79,84,65,116,106,101,46,67,111,97,117,70,68,102,106,46,106,77,108,97,66,86,120,90,122,44,32,48,41,10,9,9,108,111,99,97,108,32,71,99,102,70,120,79,97,72,32,61,32,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,10,9,9,78,77,109,79,84,65,116,106,101,46,87,99,77,86,108,98,110,110,32,61,32,113,85,80,112,103,98,86,66,86,46,118,77,69,104,68,108,40,71,99,102,70,120,79,97,72,46,100,115,100,100,108,84,70,44,32,98,97,104,80,114,102,75,46,71,79,99,99,81,71,40,48,44,32,71,99,102,70,120,79,97,72,46,106,77,108,97,66,86,120,90,122,41,44,32,71,99,102,70,120,79,97,72,46,105,78,100,118,69,87,41,10,9,101,110,100,10,101,110,100,41,10,108,111,99,97,108,32,77,97,104,69,81,118,32,61,32,77,82,77,72,80,113,121,46,80,73,75,88,74,73,84,77,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,105,102,32,67,88,86,117,87,116,120,118,100,46,97,100,106,110,73,106,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,9,108,111,99,97,108,32,78,82,122,72,106,118,121,107,44,32,78,82,122,72,106,118,121,107,44,32,116,80,78,109,70,77,84,104,32,61,32,68,71,119,79,113,108,85,40,41,10,9,105,102,32,116,80,78,109,70,77,84,104,32,116,104,101,110,32,116,80,78,109,70,77,84,104,58,108,111,121,68,122,76,101,72,40,113,68,99,79,67,75,98,46,74,77,85,115,82,68,80,80,111,46,115,82,120,65,84,79,73,118,112,41,32,101,110,100,10,101,110,100,41,10,10,108,111,99,97,108,32,87,88,100,97,115,101,114,66,88,32,61,32,113,79,114,98,112,79,104,116,79,46,105,103,112,107,108,110,115,80,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,68,88,67,108,119,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,107,107,70,76,71,98,67,58,85,97,98,80,104,82,111,40,41,10,9,9,107,107,70,76,71,98,67,58,108,121,104,78,69,78,70,120,100,40,119,69,100,82,104,73,46,118,77,69,104,68,108,40,41,41,10,9,101,110,100,41,10,101,110,100,41,10,79,89,121,103,110,102,75,46,122,87,109,101,74,78,67,67,109,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,84,70,105,121,115,68,102,97,46,74,85,83,114,108,87,40,41,10,9,67,88,86,117,87,116,120,118,100,46,86,75,80,87,121,77,87,107,67,32,61,32,116,114,117,101,10,9,76,74,108,84,85,119,79,104,40,41,10,9,105,68,80,113,81,107,73,32,61,32,110,105,108,10,9,67,88,86,117,87,116,120,118,100,46,79,80,120,107,78,83,109,119,115,44,32,67,88,86,117,87,116,120,118,100,46,111,112,67,82,101,115,71,68,32,61,32,102,97,108,115,101,44,32,102,97,108,115,101,10,9,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,32,61,32,102,97,108,115,101,10,9,120,106,88,109,75,68,121,107,115,46,120,102,89,113,103,76,89,40,102,97,108,115,101,41,10,9,120,106,88,109,75,68,121,107,115,46,120,83,120,70,112,68,85,40,102,97,108,115,101,41,10,9,87,88,100,97,115,101,114,66,88,58,69,98,70,119,78,100,72,122,108,40,41,10,9,75,121,68,101,108,85,58,69,98,70,119,78,100,72,122,108,40,41,10,9,117,76,82,65,84,106,58,69,98,70,119,78,100,72,122,108,40,41,10,9,77,97,104,69,81,118,58,69,98,70,119,78,100,72,122,108,40,41,10,101,110,100,41,10,10,10,108,111,99,97,108,32,90,82,115,78,105,76,115,32,61,32,85,86,68,98,78,65,108,65,67,40)gHYyPMstring.char(44,32,123,10,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,56,44,32,48,44,32,56,41,44,10,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,50,52,44,32,50,52,41,44,32,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,70,79,121,115,115,121,76,97,44,10,9,68,111,77,67,81,80,115,107,32,61,32,113,68,99,79,67,75,98,46,68,111,77,67,81,80,115,107,46,106,72,117,121,73,68,44,32,103,101,114,70,104,99,32,61,32)dsddlTFstring.char(44,32,117,82,68,112,110,77,32,61,32,49,52,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,121,114,116,112,76,68,76,85,44,10,9,108,103,97,76,90,102,32,61,32,116,114,117,101,44,32,79,106,81,71,111,66,32,61,32,119,90,113,106,110,75,89,105,81,44,10,125,41,10,107,108,118,80,90,65,79,67,40,90,82,115,78,105,76,115,44,32,54,41,10,90,82,115,78,105,76,115,46,104,110,70,66,97,80,75,72,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,67,88,86,117,87,116,120,118,100,46,65,85,86,79,87,71,118,79,44,32,67,88,86,117,87,116,120,118,100,46,102,109,120,82,116,109,68,120,72,32,61,32,102,97,108,115,101,44,32,102,97,108,115,101,10,9,120,106,88,109,75,68,121,107,115,46,120,83,120,70,112,68,85,40,102,97,108,115,101,41,10,9,79,89,121,103,110,102,75,58,88,75,83,102,110,71,113,83,106,40,41,10,101,110,100,41,10,10,108,111,99,97,108,32,114,81,98,81,102,122,68,87,119,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,52,44,32,55,54,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,50,56,44,32,49,44,32,45,56,56,41,44,10,9,120,88,108,112,71,113,66,89,71,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,119,90,113,106,110,75,89,105,81,44,10,125,41,10,10,10,10,10,108,111,99,97,108,32,98,120,107,69,67,110,78,78,100,32,61,32,123,125,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,83,109,120,76,98,77,102,40,83,115,69,77,121,122,75,41,10,9,102,111,114,32,78,82,122,72,106,118,121,107,44,32,85,114,70,68,78,107,32,105,110,32,105,112,97,105,114,115,40,98,120,107,69,67,110,78,78,100,41,32,100,111,10,9,9,108,111,99,97,108,32,120,83,119,66,86,68,77,86,32,61,32,40,85,114,70,68,78,107,32,61,61,32,83,115,69,77,121,122,75,41,10,9,9,85,114,70,68,78,107,46,101,81,66,84,87,119,119,46,98,67,117,73,83,110,89,32,61,32,120,83,119,66,86,68,77,86,10,9,9,110,67,90,101,115,88,76,101,40,85,114,70,68,78,107,46,71,121,85,105,104,67,112,44,32,123,32,97,68,74,84,112,70,80,32,61,32,120,83,119,66,86,68,77,86,32,97,110,100,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,32,111,114,32,79,102,68,88,105,85,69,99,76,46,70,79,121,115,115,121,76,97,32,125,41,10,9,9,85,114,70,68,78,107,46,71,121,85,105,104,67,112,46,108,103,66,88,114,65,81,73,32,61,32,120,83,119,66,86,68,77,86,32,97,110,100,32,79,102,68,88,105,85,69,99,76,46,110,114,122,71,77,89,32,111,114,32,79,102,68,88,105,85,69,99,76,46,103,101,114,70,104,99,10,9,101,110,100,10,9,112,68,72,76,97,109,85,46,103,101,114,70,104,99,32,61,32,83,115,69,77,121,122,75,46,102,98,77,107,81,117,78,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,69,67,106,105,71,77,40,102,98,77,107,81,117,78,41,10,9,108,111,99,97,108,32,71,121,85,105,104,67,112,32,61,32,85,86,68,98,78,65,108,65,67,40)gHYyPMstring.char(44,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,48,44,32,48,44,32,51,54,41,44,32,108,84,99,118,102,87,76,79,105,32,61,32,35,98,120,107,69,67,110,78,78,100,32,43,32,49,44,10,9,9,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,70,79,121,115,115,121,76,97,44,32,108,103,97,76,90,102,32,61,32,102,97,108,115,101,44,10,9,9,68,111,77,67,81,80,115,107,32,61,32,86,75,65,73,79,85,85,68,44,32,103,101,114,70,104,99,32,61,32,102,98,77,107,81,117,78,44,32,117,82,68,112,110,77,32,61,32,49,54,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,103,101,114,70,104,99,44,10,9,9,79,106,81,71,111,66,32,61,32,85,88,71,82,72,98,122,101,44,10,9,125,41,10,9,107,108,118,80,90,65,79,67,40,71,121,85,105,104,67,112,44,32,56,41,10,10,9,108,111,99,97,108,32,101,81,66,84,87,119,119,32,61,32,85,86,68,98,78,65,108,65,67,40)LyaBrfTnstring.char(44,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,98,74,74,65,75,82,40,49,44,32,49,41,44,32,120,88,108,112,71,113,66,89,71,32,61,32,49,44,10,9,9,118,75,79,70,117,100,104,32,61,32,48,44,32,114,70,89,114,100,113,32,61,32,51,44,10,9,9,66,73,67,89,80,107,118,83,32,61,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,44,10,9,9,122,118,114,88,86,75,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,41,44,32,108,67,114,122,120,114,32,61,32,113,68,99,79,67,75,98,46,112,66,79,79,88,85,97,112,46,106,77,108,97,66,86,120,90,122,44,10,9,9,98,67,117,73,83,110,89,32,61,32,102,97,108,115,101,44,32,79,106,81,71,111,66,32,61,32,114,81,98,81,102,122,68,87,119,44,10,9,125,41,10,9,85,86,68,98,78,65,108,65,67,40)YMwkosvfRstring.char(44,32,123,32,102,65,78,76,80,104,68,103,32,61,32,115,101,83,109,119,98,117,99,46,118,77,69,104,68,108,40,48,44,32,56,41,44,32,83,75,78,106,72,110,32,61,32,113,68,99,79,67,75,98,46,83,75,78,106,72,110,46,108,84,99,118,102,87,76,79,105,44,32,79,106,81,71,111,66,32,61,32,101,81,66,84,87,119,119,32,125,41,10,9,85,86,68,98,78,65,108,65,67,40)Zgnxpfstring.char(44,32,123,32,81,110,101,101,103,73,32,61,32,115,101,83,109,119,98,117,99,46,118,77,69,104,68,108,40,48,44,32,54,41,44,32,79,106,81,71,111,66,32,61,32,101,81,66,84,87,119,119,32,125,41,10,10,9,108,111,99,97,108,32,83,115,69,77,121,122,75,32,61,32,123,32,102,98,77,107,81,117,78,32,61,32,102,98,77,107,81,117,78,44,32,71,121,85,105,104,67,112,32,61,32,71,121,85,105,104,67,112,44,32,101,81,66,84,87,119,119,32,61,32,101,81,66,84,87,119,119,32,125,10,9,99,83,119,88,76,69,97,46,121,103,101,98,81,97,115,75,81,40,98,120,107,69,67,110,78,78,100,44,32,83,115,69,77,121,122,75,41,10,9,71,121,85,105,104,67,112,46,104,110,70,66,97,80,75,72,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,83,109,120,76,98,77,102,40,83,115,69,77,121,122,75,41,32,101,110,100,41,10,9,114,101,116,117,114,110,32,101,81,66,84,87,119,119,10,101,110,100,10,10,10,10,10,108,111,99,97,108,32,108,80,109,117,101,120,32,61,32,48,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,100,74,83,116,72,85,117,40,41,32,108,80,109,117,101,120,32,43,61,32,49,59,32,114,101,116,117,114,110,32,108,80,109,117,101,120,32,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,73,79,111,65,112,74,117,87,114,40,101,81,66,84,87,119,119,44,32,114,114,103,111,70,72,104,41,10,9,108,111,99,97,108,32,80,65,114,104,97,71,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,48,44,32,48,44,32,114,114,103,111,70,72,104,32,111,114,32,52,48,41,44,32,108,84,99,118,102,87,76,79,105,32,61,32,100,74,83,116,72,85,117,40,41,44,10,9,9,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,70,79,121,115,115,121,76,97,44,32,120,88,108,112,71,113,66,89,71,32,61,32,48,46,51,44,32,10,9,9,78,74,100,82,99,81,103,121,81,32,61,32,116,114,117,101,44,32,79,106,81,71,111,66,32,61,32,101,81,66,84,87,119,119,44,10,9,125,41,10,9,107,108,118,80,90,65,79,67,40,80,65,114,104,97,71,44,32,56,41,10,9,114,101,116,117,114,110,32,80,65,114,104,97,71,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,67,103,65,115,77,102,107,79,65,40,101,81,66,84,87,119,119,44,32,90,101,119,70,113,102,103,44,32,113,121,83,66,122,89,44,32,72,116,90,111,70,98,41,10,9,108,111,99,97,108,32,80,65,114,104,97,71,32,61,32,73,79,111,65,112,74,117,87,114,40,101,81,66,84,87,119,119,41,10,9,116,119,66,84,86,108,89,40,80,65,114,104,97,71,44,32,90,101,119,70,113,102,103,44,32,123,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,50,44,32,48,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,56,48,44,32,48,44,32,52,48,41,32,125,41,10,10,9,108,111,99,97,108,32,116,87,121,80,86,103,79,81,32,61,32,85,86,68,98,78,65,108,65,67,40)gHYyPMstring.char(44,32,123,10,9,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,46,53,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,49,50,44,32,48,46,53,44,32,48,41,44,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,52,56,44,32,50,52,41,44,32,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,90,69,73,101,77,90,44,10,9,9,103,101,114,70,104,99,32,61,32)string.char(44,32,108,103,97,76,90,102,32,61,32,102,97,108,115,101,44,32,79,106,81,71,111,66,32,61,32,80,65,114,104,97,71,44,10,9,125,41,10,9,107,108,118,80,90,65,79,67,40,116,87,121,80,86,103,79,81,44,32,49,50,41,10,9,108,111,99,97,108,32,99,89,73,73,82,89,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,56,44,32,49,56,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,44,32,51,44,32,48,46,53,44,32,45,57,41,44,10,9,9,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,103,101,114,70,104,99,44,32,79,106,81,71,111,66,32,61,32,116,87,121,80,86,103,79,81,44,10,9,125,41,10,9,107,108,118,80,90,65,79,67,40,99,89,73,73,82,89,44,32,57,41,10,10,9,108,111,99,97,108,32,103,97,81,115,68,119,79,32,61,32,102,97,108,115,101,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,119,97,106,111,109,103,116,75,89,40,110,117,99,112,79,104,87,101,69,44,32,103,90,67,106,108,77,73,110,41,10,9,9,103,97,81,115,68,119,79,32,61,32,110,117,99,112,79,104,87,101,69,10,9,9,110,67,90,101,115,88,76,101,40,116,87,121,80,86,103,79,81,44,32,123,32,97,68,74,84,112,70,80,32,61,32,110,117,99,112,79,104,87,101,69,32,97,110,100,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,32,111,114,32,79,102,68,88,105,85,69,99,76,46,90,69,73,101,77,90,32,125,41,10,9,9,110,67,90,101,115,88,76,101,40,99,89,73,73,82,89,44,32,123,10,9,9,9,67,111,97,117,70,68,102,106,32,61,32,110,117,99,112,79,104,87,101,69,32,97,110,100,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,50,49,44,32,48,46,53,44,32,45,57,41,32,111,114,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,44,32,51,44,32,48,46,53,44,32,45,57,41,44,10,9,9,9,97,68,74,84,112,70,80,32,61,32,110,117,99,112,79,104,87,101,69,32,97,110,100,32,79,102,68,88,105,85,69,99,76,46,110,114,122,71,77,89,32,111,114,32,79,102,68,88,105,85,69,99,76,46,103,101,114,70,104,99,44,10,9,9,125,41,10,9,9,105,102,32,110,111,116,32,103,90,67,106,108,77,73,110,32,97,110,100,32,72,116,90,111,70,98,32,116,104,101,110,32,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,72,116,90,111,70,98,44,32,110,117,99,112,79,104,87,101,69,41,32,101,110,100,10,9,101,110,100,10,9,116,87,121,80,86,103,79,81,46,104,110,70,66,97,80,75,72,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,119,97,106,111,109,103,116,75,89,40,110,111,116,32,103,97,81,115,68,119,79,41,32,101,110,100,41,10,9,119,97,106,111,109,103,116,75,89,40,113,121,83,66,122,89,32,111,114,32,102,97,108,115,101,44,32,116,114,117,101,41,10,9,114,101,116,117,114,110,32,123,32,117,86,111,89,82,70,99,65,119,32,61,32,119,97,106,111,109,103,116,75,89,44,32,99,107,67,82,71,72,70,80,32,61,32,102,117,110,99,116,105,111,110,40,41,32,114,101,116,117,114,110,32,103,97,81,115,68,119,79,32,101,110,100,32,125,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,118,97,89,73,101,90,40,101,81,66,84,87,119,119,44,32,90,101,119,70,113,102,103,44,32,72,116,90,111,70,98,41,10,9,108,111,99,97,108,32,80,65,114,104,97,71,32,61,32,73,79,111,65,112,74,117,87,114,40,101,81,66,84,87,119,119,41,10,9,108,111,99,97,108,32,120,100,66,98,98,66,90,118,102,32,61,32,85,86,68,98,78,65,108,65,67,40)gHYyPMstring.char(44,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,98,74,74,65,75,82,40,49,44,32,49,41,44,32,120,88,108,112,71,113,66,89,71,32,61,32,49,44,10,9,9,68,111,77,67,81,80,115,107,32,61,32,86,75,65,73,79,85,85,68,44,32,103,101,114,70,104,99,32,61,32,90,101,119,70,113,102,103,44,32,117,82,68,112,110,77,32,61,32,49,54,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,44,32,79,106,81,71,111,66,32,61,32,80,65,114,104,97,71,44,10,9,125,41,10,9,120,100,66,98,98,66,90,118,102,46,104,110,70,66,97,80,75,72,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,10,9,9,110,67,90,101,115,88,76,101,40,80,65,114,104,97,71,44,32,123,32,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,84,103,114,116,108,115,113,32,125,44,32,48,46,48,56,41,10,9,9,83,114,89,69,81,90,119,46,90,86,122,69,116,107,81,40,48,46,49,44,32,102,117,110,99,116,105,111,110,40,41,32,110,67,90,101,115,88,76,101,40,80,65,114,104,97,71,44,32,123,32,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,70,79,121,115,115,121,76,97,32,125,41,32,101,110,100,41,10,9,9,105,102,32,72,116,90,111,70,98,32,116,104,101,110,32,83,114,89,69,81,90,119,46,85,122,66,99,103,115,115,113,75,40,72,116,90,111,70,98,41,32,101,110,100,10,9,101,110,100,41,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,82,71,102,113,108,113,122,105,77,40,101,81,66,84,87,119,119,44,32,90,101,119,70,113,102,103,41,10,9,114,101,116,117,114,110,32,116,119,66,84,86,108,89,40,101,81,66,84,87,119,119,44,32,90,101,119,70,113,102,103,44,32,123,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,48,44,32,48,44,32,49,56,41,44,32,108,84,99,118,102,87,76,79,105,32,61,32,100,74,83,116,72,85,117,40,41,44,10,9,9,117,82,68,112,110,77,32,61,32,49,51,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,121,114,116,112,76,68,76,85,44,10,9,125,41,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,113,80,88,71,74,117,73,40,101,81,66,84,87,119,119,44,32,90,101,119,70,113,102,103,44,32,113,121,83,66,122,89,44,32,72,116,90,111,70,98,41,10,9,108,111,99,97,108,32,80,65,114,104,97,71,32,61,32,73,79,111,65,112,74,117,87,114,40,101,81,66,84,87,119,119,41,10,9,116,119,66,84,86,108,89,40,80,65,114,104,97,71,44,32,90,101,119,70,113,102,103,44,32,123,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,50,44,32,48,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,46,52,53,44,32,45,49,50,44,32,49,44,32,48,41,32,125,41,10,9,108,111,99,97,108,32,112,66,103,100,66,121,32,61,32,85,86,68,98,78,65,108,65,67,40)XlbIJVstring.char(44,32,123,10,9,9,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,46,52,53,44,32,48,44,32,48,44,32,54,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,46,53,53,44,32,45,56,44,32,48,44,32,50,56,41,44,10,9,9,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,84,103,114,116,108,115,113,44,32,68,111,77,67,81,80,115,107,32,61,32,86,75,65,73,79,85,85,68,44,32,103,101,114,70,104,99,32,61,32,113,121,83,66,122,89,32,111,114,32)string.char(44,10,9,9,117,82,68,112,110,77,32,61,32,49,53,44,32,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,103,101,114,70,104,99,44,32,106,118,99,67,78,113,32,61,32,102,97,108,115,101,44,32,79,106,81,71,111,66,32,61,32,80,65,114,104,97,71,44,10,9,125,41,10,9,107,108,118,80,90,65,79,67,40,112,66,103,100,66,121,44,32,54,41,10,9,112,66,103,100,66,121,46,78,68,82,73,70,119,118,107,74,58,111,82,108,109,67,81,119,40,102,117,110,99,116,105,111,110,40,41,32,105,102,32,72,116,90,111,70,98,32,116,104,101,110,32,72,116,90,111,70,98,40,112,66,103,100,66,121,46,103,101,114,70,104,99,41,32,101,110,100,32,101,110,100,41,10,9,114,101,116,117,114,110,32,112,66,103,100,66,121,10,101,110,100,10,10,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,99,100,118,89,76,75,84,40,101,81,66,84,87,119,119,44,32,90,101,119,70,113,102,103,44,32,114,79,80,71,73,98,115,117,97,44,32,113,121,83,66,122,89,44,32,72,116,90,111,70,98,41,10,9,108,111,99,97,108,32,102,69,83,107,80,65,90,44,32,82,70,79,70,66,97,76,122,44,32,71,120,83,71,67,105,72,73,117,32,61,32,52,48,44,32,50,56,44,32,52,10,9,108,111,99,97,108,32,80,65,114,104,97,71,32,61,32,73,79,111,65,112,74,117,87,114,40,101,81,66,84,87,119,119,44,32,102,69,83,107,80,65,90,41,10,9,116,119,66,84,86,108,89,40,80,65,114,104,97,71,44,32,90,101,119,70,113,102,103,44,32,123,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,50,44,32,48,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,46,52,53,44,32,45,49,50,44,32,48,44,32,102,69,83,107,80,65,90,41,32,125,41,10,10,9,108,111,99,97,108,32,117,108,88,84,67,78,109,32,61,32,85,86,68,98,78,65,108,65,67,40)gHYyPMstring.char(44,32,123,10,9,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,56,44,32,48,44,32,54,41,44,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,46,53,53,44,32,45,56,44,32,48,44,32,102,69,83,107,80,65,90,32,45,32,49,50,41,44,32,97,68,74,84,112,70,80,32,61,32,79,102,68,88,105,85,69,99,76,46,84,103,114,116,108,115,113,44,10,9,9,103,101,114,70,104,99,32,61,32)string.char(44,32,108,103,97,76,90,102,32,61,32,102,97,108,115,101,44,32,79,106,81,71,111,66,32,61,32,80,65,114,104,97,71,44,10,9,125,41,10,9,107,108,118,80,90,65,79,67,40,117,108,88,84,67,78,109,44,32,54,41,10,9,108,111,99,97,108,32,102,90,79,122,98,100,113,117,113,32,61,32,116,119,66,84,86,108,89,40,117,108,88,84,67,78,109,44,32)string.char(44,32,123,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,117,88,68,73,77,121,110,40,49,48,44,32,48,41,44,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,51,52,44,32,49,44,32,48,41,44,32,117,82,68,112,110,77,32,61,32,49,53,32,125,41,10,9,108,111,99,97,108,32,117,102,84,66,115,67,32,61,32,116,119,66,84,86,108,89,40,117,108,88,84,67,78,109,44,32)nucpOhWeEstring.char(44,32,123,10,9,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,49,48,44,32,48,44,32,48,41,44,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,44,32,49,54,44,32,49,44,32,48,41,44,32,86,108,73,82,90,85,77,122,32,61,32,113,68,99,79,67,75,98,46,86,108,73,82,90,85,77,122,46,78,103,104,82,88,84,44,10,9,9,108,103,66,88,114,65,81,73,32,61,32,79,102,68,88,105,85,69,99,76,46,104,117,77,78,98,105,110,87,77,44,32,68,111,77,67,81,80,115,107,32,61,32,113,68,99,79,67,75,98,46,68,111,77,67,81,80,115,107,46,106,72,117,121,73,68,44,10,9,125,41,10,10,9,108,111,99,97,108,32,104,80,65,76,120,68,69,75,32,61,32,85,86,68,98,78,65,108,65,67,40)tOgREkfRstring.char(44,32,123,10,9,9,118,73,67,119,108,76,101,116,76,32,61,32,119,69,100,82,104,73,46,118,77,69,104,68,108,40,49,44,32,48,41,44,32,67,111,97,117,70,68,102,106,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,45,56,44,32,48,44,32,102,69,83,107,80,65,90,41,44,10,9,9,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,48,46,53,53,44,32,45,56,44,32,48,44,32,48,41,44,32,120,88,108,112,71,113,66,89,71,32,61,32,49,44,32,79,106,81,71,111,66,32,61,32,80,65,114,104,97,71,44,10,9,125,41,10,9,85,86,68,98,78,65,108,65,67,40)YMwkosvfRstring.char(44,32,123,32,102,65,78,76,80,104,68,103,32,61,32,115,101,83,109,119,98,117,99,46,118,77,69,104,68,108,40,48,44,32,71,120,83,71,67,105,72,73,117,41,44,32,83,75,78,106,72,110,32,61,32,113,68,99,79,67,75,98,46,83,75,78,106,72,110,46,108,84,99,118,102,87,76,79,105,44,32,79,106,81,71,111,66,32,61,32,104,80,65,76,120,68,69,75,32,125,41,10,10,9,108,111,99,97,108,32,109,84,121,106,112,105,84,44,32,121,82,112,71,110,85,65,44,32,98,90,73,88,115,102,71,32,61,32,102,97,108,115,101,44,32,110,105,108,44,32,123,125,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,114,114,75,102,108,86,82,69,104,40,110,117,99,112,79,104,87,101,69,41,10,9,9,109,84,121,106,112,105,84,32,61,32,110,117,99,112,79,104,87,101,69,10,9,9,108,111,99,97,108,32,114,66,88,100,70,76,89,114,119,32,61,32,110,117,99,112,79,104,87,101,69,32,97,110,100,32,40,102,69,83,107,80,65,90,32,43,32,35,98,90,73,88,115,102,71,32,42,32,40,82,70,79,70,66,97,76,122,32,43,32,71,120,83,71,67,105,72,73,117,41,32,43,32,52,41,32,111,114,32,102,69,83,107,80,65,90,10,9,9,110,67,90,101,115,88,76,101,40,80,65,114,104,97,71,44,32,123,32,82,84,87,97,84,66,65,88,69,32,61,32,82,84,98,66,97,85,46,118,77,69,104,68,108,40,49,44,32,48,44,32,48,44,32,114,66,88,100,70,76,89,114,119,41,32,125,41,10,9,9,117,102,84,66,115,67,46,103,101,114,70,104,99,32,61,32,110,117,99,112,79,104,87,101,69,32,97,110,100,32)^string.char(32,111,114,32)nucpOhWeEstring.char(10,9,101,110,100,10,10,9,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,119,97,106,111,109,103,116,75,89,40,110,117,99,112,79,104,87,101,69,44,32,103,90,67,106,108,77,73,110,41,10,9,9,121,82,112,71,110,85,65,32,61,32,110,117,99,112,79,104,87,101,69,10,9,9,102,90,79,122,98,100,113,117,113,46,103,101,114,70,104,99,32,61,32,110,117,99,112,79,104,87,101,69,32,111,114,32)
-		if not gZCjlMIn and HtZoFb then SrYEQZw.UzBcgssqK(HtZoFb, nucpOhWeE) end
-	end
-
-	local function mNqZmZPS(eBAfmDr)
-		bZIXsfG = eBAfmDr or {}
-		for NRzHjvyk, vLOvlrm in ipairs(hPALxDEK:jsMboNIH()) do
-			if vLOvlrm:AEHHlgP(string.char(103,72,89,121,80,77)) then vLOvlrm:XKSfnGqSj() end
+	local assets = ReplicatedStorage:FindFirstChild("Assets")
+	local folder = assets and assets:FindFirstChild("AutoSwingState")
+	table.insert(out, "--- AutoSwingState")
+	if folder then
+		for _, d in ipairs(folder:GetDescendants()) do
+			local s = d:GetFullName() .. " [" .. d.ClassName .. "]"
+			if d:IsA("ImageLabel") or d:IsA("ImageButton") then s ..= " img=" .. d.Image end
+			if d:IsA("Decal") or d:IsA("Texture") then s ..= " tex=" .. d.Texture end
+			if d:IsA("ValueBase") then s ..= " value=" .. tostring(d.Value) end
+			table.insert(out, s)
 		end
-		hPALxDEK.RTWaTBAXE = RTbBaU.vMEhDl(0.55, -8, 0, #bZIXsfG * (RFOFBaLz + GxSGCiHIu))
-		for xjUusuzCV, BPeGsDNW in ipairs(bZIXsfG) do
-			local rTazqBm = UVDbNAlAC(string.char(103,72,89,121,80,77), {
-				RTWaTBAXE = RTbBaU.vMEhDl(1, 0, 0, RFOFBaLz), lTcvfWLOi = xjUusuzCV,
-				aDJTpFP = OfDXiUEcL.Tgrtlsq, lgaLZf = true,
-				DoMCQPsk = VKAIOUUD, gerFhc = BPeGsDNW, uRDpnM = 14, lgBXrAQI = OfDXiUEcL.gerFhc, OjQGoB = hPALxDEK,
-			})
-			klvPZAOC(rTazqBm, 6)
-			rTazqBm.hnFBaPKH:oRlmCQw(function()
-				wajomgtKY(BPeGsDNW)
-				rrKflVREh(false)
-			end)
-		end
-		if mTyjpiT then rrKflVREh(true) end
 	end
+	pcall(appendfile or writefile, "FarmHub_autoswing.txt", table.concat(out, "\n") .. "\n\n")
+end
 
-	ulXTCNm.hnFBaPKH:oRlmCQw(function() rrKflVREh(not mTyjpiT) end)
-	mNqZmZPS(rOPGIbsua)
-	wajomgtKY(qySBzY, true)
-	return { uVoYRFcAw = wajomgtKY, ckCRGHFP = function() return yRpGnUA end, ltnyQNT = mNqZmZPS }
+-- คุม Auto Swing ของเกมให้ตรงกับที่ต้องการ (State.SwingWant)
+--   เปิด = ยืนติดไข่ที่กำลังจะตีแล้ว, ปิด = ระหว่างเดินทาง / หลังไข่แตก
+-- กดทันทีเมื่อสถานะไม่ตรงกับที่ต้องการ (อ่านจาก AutoSwingColorAlpha ซึ่งแม่น)
+local lastObserved, dumps = "init", 0
+local lastSwingPress, swingMethod, pressedFor = 0, 1, nil
+local function syncAutoSwing()
+	local btn = getAutoSwingBtn()
+	if not btn or not isShown(btn) then return end
+	local on = autoSwingIsOn(btn)
+	if on ~= lastObserved and dumps < 12 then   -- สถานะเปลี่ยน: บันทึกลงไฟล์ไว้ตรวจ
+		lastObserved, dumps = on, dumps + 1
+		dumpAutoSwing(btn)
+	end
+	if on == nil then return end
+	if on == State.SwingWant then pressedFor = nil return end
+	-- กดแล้วปุ่มต้องใช้เวลาเปลี่ยนสี (ค่า alpha ค่อย ๆ ขยับ) รอก่อนค่อยกดซ้ำ
+	if controllerSetSwing(State.SwingWant) then   -- สั่งผ่านโค้ดเกมได้: ไม่ต้องกดปุ่ม
+		log(State.SwingWant and "เปิด Auto Swing (SetOn)" or "ปิด Auto Swing (SetOn)")
+		pressedFor = nil
+		return
+	end
+	if os.clock() - lastSwingPress < CONFIG.SwingPressGap then return end
+	if pressedFor == State.SwingWant then
+		-- กดไปแล้วแต่สถานะไม่เปลี่ยน: เปลี่ยนวิธีกด
+		swingMethod = swingMethod % 4 + 1
+		print("[FarmHub] ปุ่ม Auto Swing ไม่ตอบสนอง ลองวิธีกดแบบที่", swingMethod)
+	end
+	lastSwingPress, pressedFor = os.clock(), State.SwingWant
+	log(State.SwingWant and "เปิด Auto Swing" or "ปิด Auto Swing", "วิธี", swingMethod)
+	if not pressButton(btn, swingMethod) then swingMethod = swingMethod % 4 + 1 end
 end
 
 
-local function ZwQOir(eQBTWww, ZewFqfg, rOPGIbsua, lVyAoChm, HtZoFb, qUfedjQ, MNzKeFMy, TQkqpqt)
-	local fESkPAZ, RFOFBaLz, GxSGCiHIu = 40, 28, 4
-	local DpSkHYO = qUfedjQ or string.char(3621,3657,3634,3591,32,40,3607,3633,3657,3591,3627,3617,3604,41)
-	local PArhaG = IOoApJuWr(eQBTWww, fESkPAZ)
-	twBTVlY(PArhaG, ZewFqfg, { CoauFDfj = RTbBaU.uXDIMyn(12, 0), RTWaTBAXE = RTbBaU.vMEhDl(0.45, -12, 0, fESkPAZ) })
+-- ตั้งสถานะที่ต้องการ: ลองผ่านโค้ดเกมก่อน ถ้าไม่ได้ค่อยกดปุ่ม
+local function setSwing(on)
+	if State.SwingWant ~= on then
+		lastSwingPress = 0
+		State.SwingWant = on
+		local cur = controllerIsOn()
+		if cur == on then return end
+		if cur ~= nil and controllerSetSwing(on) then
+			lastSwingPress = os.clock()
+			return
+		end
+	end
+	syncAutoSwing()
+end
 
-	local ulXTCNm = UVDbNAlAC(string.char(103,72,89,121,80,77), {
-		vICwlLetL = wEdRhI.vMEhDl(1, 0), CoauFDfj = RTbBaU.vMEhDl(1, -8, 0, 6),
-		RTWaTBAXE = RTbBaU.vMEhDl(0.55, -8, 0, fESkPAZ - 12), aDJTpFP = OfDXiUEcL.Tgrtlsq,
-		gerFhc = string.char(), lgaLZf = false, OjQGoB = PArhaG,
-	})
-	klvPZAOC(ulXTCNm, 6)
-	local fZOzbdquq = twBTVlY(ulXTCNm, string.char(), {
-		CoauFDfj = RTbBaU.uXDIMyn(10, 0), RTWaTBAXE = RTbBaU.vMEhDl(1, -34, 1, 0), uRDpnM = 15,
-		vcUdHQ = qDcOCKb.vcUdHQ.hfrCmus,
-	})
-	local ufTBsC = twBTVlY(ulXTCNm, string.char(110,117,99,112,79,104,87,101,69), {
-		vICwlLetL = wEdRhI.vMEhDl(1, 0), CoauFDfj = RTbBaU.vMEhDl(1, -10, 0, 0),
-		RTWaTBAXE = RTbBaU.vMEhDl(0, 16, 1, 0), VlIRZUMz = qDcOCKb.VlIRZUMz.NghRXT,
-		lgBXrAQI = OfDXiUEcL.huMNbinWM, DoMCQPsk = qDcOCKb.DoMCQPsk.jHuyID,
-	})
-	local hPALxDEK = UVDbNAlAC(string.char(116,79,103,82,69,107,102,82), {
-		vICwlLetL = wEdRhI.vMEhDl(1, 0), CoauFDfj = RTbBaU.vMEhDl(1, -8, 0, fESkPAZ),
-		RTWaTBAXE = RTbBaU.vMEhDl(0.55, -8, 0, 0), xXlpGqBYG = 1, OjQGoB = PArhaG,
-	})
-	UVDbNAlAC(string.char(89,77,119,107,111,115,118,102,82), { fANLPhDg = seSmwbuc.vMEhDl(0, GxSGCiHIu), SKNjHn = qDcOCKb.SKNjHn.lTcvfWLOi, OjQGoB = hPALxDEK })
+-- เช็กสัตว์ที่อยู่ใกล้หรือเชื่อมกับตัวเรา และใช้ปุ่ม Drop ช่วยยืนยัน
+local function carriedAnimal()
+	local folder = workspace:FindFirstChild("CarriedAnimals")
+	local char, root = getChar()
+	if not folder or not root then return end
+	for _, animal in ipairs(folder:GetDescendants()) do
+		if animal:IsA("Model") then
+			for _, part in ipairs(animal:GetDescendants()) do
+				if part:IsA("BasePart") then
+					if part:IsDescendantOf(char) or (part.Position - root.Position).Magnitude <= 15 then
+						return animal
+					end
+					for _, connected in ipairs(part:GetConnectedParts(true)) do
+						if connected:IsDescendantOf(char) then return animal end
+					end
+				end
+			end
+		end
+	end
+end
+local dropBtn, dropScanAt = nil, 0
+local function dropButtonShown()
+	if dropBtn and dropBtn.Parent then return isShown(dropBtn) end
+	if os.clock() < dropScanAt then return false end
+	dropScanAt = os.clock() + 0.3
+	dropBtn = findGuiButton("Drop", true)
+	return dropBtn ~= nil and isShown(dropBtn)
+end
+local function isCarrying()
+	return carriedAnimal() ~= nil or dropButtonShown()
+end
 
-	local mTyjpiT, bZIXsfG, QVXXiR = false, nil, {}
+-- ไข่ที่เกมยืนยันว่าเลือดหมดแล้ว (จาก EggHitConfirmed) รู้ก่อน Attribute อัปเดต จะได้ไปใบต่อไปทันที
+local brokenEggs = setmetatable({}, { __mode = "k" })
+local function eggAlive(part)
+	return part and part.Parent ~= nil and not (brokenEggs[part] and os.clock() - brokenEggs[part] < 5)
+		and part:GetAttribute("Broken") ~= true
+		and (part:GetAttribute("Health") or 1) > 0
+end
 
-	local function ZqKRRgzj()
-		local LlMTYX = {}
-		for NRzHjvyk, BPeGsDNW in ipairs(bZIXsfG) do if lVyAoChm[BPeGsDNW] then cSwXLEa.ygebQasKQ(LlMTYX, BPeGsDNW) end end
-		for BPeGsDNW in pairs(lVyAoChm) do if not cSwXLEa.tFMdevRWc(LlMTYX, BPeGsDNW) then cSwXLEa.ygebQasKQ(LlMTYX, BPeGsDNW) end end
-		fZOzbdquq.gerFhc = #LlMTYX == 0 and (MNzKeFMy or string.char(3607,3633,3657,3591,3627,3617,3604)) or cSwXLEa.WFAkMJcEp(LlMTYX, string.char(44,32))
-		for BPeGsDNW, rTazqBm in pairs(QVXXiR) do
-			local xSwBVDMV = lVyAoChm[BPeGsDNW] == true
-			rTazqBm.aDJTpFP = xSwBVDMV and OfDXiUEcL.huMNbinWM or OfDXiUEcL.Tgrtlsq
-			local mQBetxKv = TQkqpqt and TQkqpqt[BPeGsDNW]
-			
-			rTazqBm.lgBXrAQI = mQBetxKv or (xSwBVDMV and OfDXiUEcL.nrzGMY or OfDXiUEcL.gerFhc)
-			rTazqBm.nigqFl = EPrASK.vMEhDl(0, 0, 0)
-			rTazqBm.qZTxVdqtd = mQBetxKv and 0 or 1
+-- ความหายากของไข่ (EggInfoRarity) เรียงจากธรรมดา -> หายากสุด
+local RARITY_ORDER = {
+	"Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Cosmic",
+	"Secret", "Celestial", "Inferno", "Void", "Omega", "Spectral", "Ethereal", "Primordial",
+}
+local RARITY_RANK = {}
+for i, r in ipairs(RARITY_ORDER) do RARITY_RANK[r] = i end
+
+-- ใช้ลำดับจากเกมก่อน ถ้าไม่พบจึงใช้รายการสำรอง (ไม่รู้จัก = ท้ายสุด)
+local function animalRarityRank(rarity)
+	if type(rarity) ~= "string" then return -math.huge end
+	return animalRarityRanks[rarity] or RARITY_RANK[rarity] or -math.huge
+end
+
+local PRIORITY_NEAR, PRIORITY_RARE, PRIORITY_LUCK = "ใกล้สุดก่อน", "หายากสุดก่อน", "Luck สูงสุดก่อน"
+
+local function eggRarity(part) return part:GetAttribute("EggInfoRarity") or "?" end
+local function eggLuck(part) return part:GetAttribute("HatchLuck") or part:GetAttribute("Luck") or 0 end
+
+-- ผ่านตัวกรองชนิดไข่ไหม (ไม่ได้เลือกเลย = ทุกชนิด)
+local function eggSelected(part)
+	if next(State.Eggs) == nil then return true end
+	return State.Eggs[part:GetAttribute("EggType")] == true
+end
+
+-- จำตำแหน่งกลางโซน (เฉลี่ยตำแหน่งไข่ที่เคยเห็น) และบันทึกลงไฟล์ ใช้วาร์ปไปโซนที่อยู่ไกลจนไข่ยังไม่โหลด
+local HttpService = game:GetService("HttpService")
+local ZONE_FILE = "FarmHub_zones.json"
+local ZonePos = {}
+pcall(function()
+	if isfile and isfile(ZONE_FILE) then
+		for name, v in pairs(HttpService:JSONDecode(readfile(ZONE_FILE))) do
+			ZonePos[name] = Vector3.new(v[1], v[2], v[3])
+		end
+	end
+end)
+local zoneSaveAt = 0
+local function rememberZone(zoneName, pos)
+	ZonePos[zoneName] = pos
+	if writefile and os.clock() > zoneSaveAt then
+		zoneSaveAt = os.clock() + 20
+		local data = {}
+		for n, p in pairs(ZonePos) do data[n] = { p.X, p.Y, p.Z } end
+		pcall(writefile, ZONE_FILE, HttpService:JSONEncode(data))
+	end
+end
+
+-- หาโซนที่มีจุดกึ่งกลางใกล้ตำแหน่งนี้ที่สุด
+local function zoneOfPosition(pos)
+	local closestZone, closestDist
+	for name, center in pairs(ZonePos) do
+		local distance = (center - pos).Magnitude
+		if not closestDist or distance < closestDist then
+			closestZone, closestDist = name, distance
+		end
+	end
+	return closestZone
+end
+
+-- ตอนฟาร์มใช้โซนที่เลือก นอกนั้นใช้โซนที่ตัวละครอยู่
+local function gemZoneTarget()
+	if State.AutoFarm then return State.Zone end
+	local _, root = getChar()
+	return root and zoneOfPosition(root.Position)
+end
+
+-- หาไข่ในโซน
+--   filter   = ชื่อชนิดไข่ หรือ ALL_EGGS
+--   usePrefs = true: ใช้ชนิดไข่ที่เลือก + ลำดับการตีที่ตั้งไว้ (ใช้ตอนฟาร์ม)
+-- คืนค่า (ไข่, ระยะ)
+local function findEgg(zoneName, filter, usePrefs, acceptEgg)
+	local zone = CONFIG.ZoneModels[zoneName]
+	local folder = zone and zone:FindFirstChild("Eggs")
+	local _, root = getChar()
+	if not folder or not root then return end
+	local priority = usePrefs and State.Priority or PRIORITY_NEAR
+	local best, bestDist, bestScore
+	local sum, count = Vector3.zero, 0
+	for _, m in ipairs(folder:GetChildren()) do
+		local part = m:FindFirstChild("Egg")
+		if part and part:IsA("BasePart") then sum += part.Position count += 1 end
+		if part and part:IsA("BasePart") and eggAlive(part)
+			and (filter == ALL_EGGS or part:GetAttribute("EggType") == filter)
+			and (not usePrefs or eggSelected(part))
+			and (not acceptEgg or acceptEgg(part)) then
+			local d = (part.Position - root.Position).Magnitude
+			local score = 0
+			if priority == PRIORITY_RARE then
+				score = RARITY_RANK[eggRarity(part)] or 0
+			elseif priority == PRIORITY_LUCK then
+				score = eggLuck(part)
+			end
+			-- คะแนนสูงกว่าชนะ ถ้าเท่ากันเอาใบที่ใกล้กว่า
+			if not best or score > bestScore or (score == bestScore and d < bestDist) then
+				best, bestDist, bestScore = part, d, score
+			end
+		end
+	end
+	if count > 0 then rememberZone(zoneName, sum / count) end
+	return best, bestDist
+end
+
+
+-- ไข่ที่ใกล้ที่สุดจากทุกโซน = โซนที่ใกล้ที่สุด คืนค่า (ไข่, ชื่อโซน)
+local function nearestZoneEgg(acceptEgg)
+	local bestEgg, bestZone, bestDist
+	for zoneName in pairs(CONFIG.ZoneModels) do
+		local egg, d = findEgg(zoneName, ALL_EGGS, false, acceptEgg)
+		if egg and (not bestDist or d < bestDist) then
+			bestEgg, bestZone, bestDist = egg, zoneName, d
+		end
+	end
+	return bestEgg, bestZone
+end
+
+-- ผู้พิทักษ์ของโซน = โมเดลในโซนที่มี Attribute "ChaseState" (เช่น Zone1.Chicken)
+local function getGuard(zoneName)
+	local zone = CONFIG.ZoneModels[zoneName]
+	if not zone then return end
+	for _, c in ipairs(zone:GetChildren()) do
+		if c:IsA("Model") and c:GetAttribute("ChaseState") ~= nil then return c end
+	end
+end
+
+-- ตำแหน่งยืนข้างเป้าหมาย หันหน้าเข้าหา
+local function besideCFrame(targetPos, root, gap)
+	local flat = Vector3.new(root.Position.X - targetPos.X, 0, root.Position.Z - targetPos.Z)
+	local dir = flat.Magnitude > 0.1 and flat.Unit or Vector3.new(0, 0, 1)
+	local pos = targetPos + dir * gap
+	return CFrame.lookAt(pos, Vector3.new(targetPos.X, pos.Y, targetPos.Z))
+end
+
+-- วางตัวละครให้ยืนบนพื้นจริง (ยิงเลเซอร์ลงหาพื้น) ไม่ลอยกลางอากาศ
+local groundParams = RaycastParams.new()
+groundParams.FilterType = Enum.RaycastFilterType.Exclude
+groundParams.RespectCanCollide = true   -- ไม่นับส่วนที่ทะลุได้ (เช่น กล่องขอบเขตโซน) เป็นพื้น
+local function onGround(cf, ignore)
+	local char = player.Character
+	local list = { char }
+	if ignore then table.insert(list, ignore) end
+	local gems = workspace:FindFirstChild("EggGemDrops")
+	if gems then table.insert(list, gems) end
+	groundParams.FilterDescendantsInstances = list
+	local hit = workspace:Raycast(cf.Position + Vector3.new(0, 8, 0), Vector3.new(0, -80, 0), groundParams)
+	if not hit then return cf end
+	local _, root, hum = getChar()
+	local height = 3
+	if hum and root then
+		height = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
+	end
+	return cf + Vector3.new(0, hit.Position.Y + height - cf.Position.Y, 0)
+end
+
+local function eggCFrame(egg, root)
+	local cf = besideCFrame(egg.Position, root, math.max(egg.Size.X, egg.Size.Z) / 2 + 2.5)
+	-- ไม่นับไข่และรังเป็นพื้น (ข้ามทั้งโฟลเดอร์ Eggs ของโซน)
+	local eggsFolder = egg.Parent and egg.Parent.Parent
+	return onGround(cf, eggsFolder)
+end
+
+-- ตรึงเฉพาะตัวละครที่ส่งถึง AFK และคืนการเคลื่อนที่เมื่อเลิกตรึง
+local afkPinRoot, afkPinConnections = nil, {}
+local function releaseAfkPin()
+	State.AfkPinned = false
+	for _, conn in ipairs(afkPinConnections) do conn:Disconnect() end
+	table.clear(afkPinConnections)
+	if afkPinRoot and afkPinRoot.Parent then afkPinRoot.Anchored = false end
+	afkPinRoot = nil
+end
+
+local function pinAtAfk()
+	local char, root, hum = getChar()
+	if not root or State.Closed then return false end
+	releaseAfkPin()
+	-- คงพิกัดและทิศทาง AFK ปรับเฉพาะความสูงตามพื้น โดยไม่นับสัตว์ที่ถือ
+	local cf = onGround(CONFIG.AFK, workspace:FindFirstChild("CarriedAnimals"))
+	afkPinRoot = root
+	State.AfkPinned = true
+	root.CFrame = cf
+	root.AssemblyLinearVelocity = Vector3.zero
+	root.AssemblyAngularVelocity = Vector3.zero
+	root.Anchored = true
+	-- ปลดตรึงทันทีเมื่อผู้เล่นขอกระโดด และถอดตัวฟังพร้อมการตรึง
+	table.insert(afkPinConnections, UIS.JumpRequest:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, hum.Died:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, player.CharacterRemoving:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, player.CharacterAdded:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, RunService.Heartbeat:Connect(function()
+		if player.Character ~= char or not root.Parent or hum.Health <= 0 then
+			releaseAfkPin()
+			return
+		end
+		-- คืนการควบคุมเมื่อผู้เล่นเดิน โดยไม่ตรึงซ้ำหลังปล่อย
+		if hum.MoveDirection.Magnitude > 0.1 then
+			releaseAfkPin()
+			return
+		end
+		-- กันแรงหรือสคริปต์อื่นย้ายตัว โดยยังถือสัตว์ไว้ตามเดิม
+		root.Anchored = true
+		if root.CFrame ~= cf then root.CFrame = cf end
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+	end))
+	return true
+end
+
+-- เคลื่อนที่แบบ Tween ด้วยความเร็ว CONFIG.TweenSpeed (studs/วินาที)
+local tweenMoving = false -- งดแก้การจมระหว่างเคลื่อนที่ด้วย Tween
+local function tweenTo(cf, shouldStop)
+	if State.AfkPinned then return false end
+	local _, root = getChar()
+	if not root then return false end
+	local t = (root.Position - cf.Position).Magnitude / CONFIG.TweenSpeed
+	if t < 0.05 then root.CFrame = cf return true end
+	local hold = RunService.Heartbeat:Connect(function()
+		if State.AfkPinned then return end
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+	end)
+	-- Noclip ระหว่าง Tween: ทะลุกำแพง/สิ่งกีดขวาง
+	local char = root.Parent
+	local noclip = RunService.Stepped:Connect(function()
+		if State.AfkPinned then return end
+		for _, p in ipairs(char:GetDescendants()) do
+			if p:IsA("BasePart") then p.CanCollide = false end
+		end
+	end)
+	local tween = TweenService:Create(root, TweenInfo.new(t, Enum.EasingStyle.Linear), { CFrame = cf })
+	local done = false
+	local c = tween.Completed:Connect(function() done = true end)
+	tweenMoving = true
+	tween:Play()
+	while not done and not State.AfkPinned and not (shouldStop and shouldStop()) and root.Parent do task.wait() end
+	if not done then tween:Cancel() end
+	tweenMoving = false
+	c:Disconnect()
+	hold:Disconnect()
+	noclip:Disconnect()
+	return done
+end
+
+local grabNearbyGems     -- กำหนดในส่วนเก็บเพชรด้านล่าง
+local hasCollectableGems -- กำหนดในส่วนเก็บเพชรด้านล่าง
+local isNearZone         -- กำหนดในส่วนตรวจโซนด้านล่าง
+
+-- ระหว่างฟาร์ม เก็บเพชรได้เมื่อถึงโซนที่เลือกแล้วเท่านั้น
+local function canCollectGems()
+	return not State.Garden and not State.AfkPinned and not State.DeliveryBusy and not State.Closed
+		and (not State.AutoFarm or (State.ReadyZone == State.Zone and isNearZone(State.Zone)))
+end
+
+-- ตีไข่ตรง ๆ แบบที่ MYHUB ทำ (ไม่ใช้ปุ่ม Auto Swing ของเกม จึงไม่ตีโดนไข่ใบอื่น)
+--   ReplicatedStorage.MasteryPickaxeSwing:FireServer()
+--   ReplicatedStorage.EggHitRequest:FireServer(ส่วน Egg ของไข่, ลำดับการตี)
+--   เกมตอบกลับ EggHitConfirmed(Egg, ลำดับ, เลือดที่เหลือ, ดาเมจ) / EggHitRejected
+local hitRemote = ReplicatedStorage:FindFirstChild("EggHitRequest")
+local swingRemote = ReplicatedStorage:FindFirstChild("MasteryPickaxeSwing")
+local hitSeq, hitGap = 0, CONFIG.HitInterval
+do
+	local confirmed = ReplicatedStorage:FindFirstChild("EggHitConfirmed")
+	if confirmed and confirmed:IsA("RemoteEvent") then
+		confirmed.OnClientEvent:Connect(function(egg, seq, hp)
+			if type(seq) == "number" and seq > hitSeq then hitSeq = seq end   -- ใช้ลำดับต่อจากของเกม
+			if typeof(egg) == "Instance" and type(hp) == "number" and hp <= 0 then brokenEggs[egg] = os.clock() end
+		end)
+	end
+	local rejected = ReplicatedStorage:FindFirstChild("EggHitRejected")
+	if rejected and rejected:IsA("RemoteEvent") then
+		rejected.OnClientEvent:Connect(function(...)
+			-- ส่วนใหญ่โดนปฏิเสธเพราะไข่แตกไปแล้ว ไม่ต้องลดความเร็ว
+			print("[FarmHub] ตีไม่ผ่าน (EggHitRejected):", ...)
+		end)
+	end
+end
+
+local function sendHit(eggPart)
+	if not hitRemote then return false end
+	hitSeq += 1
+	if swingRemote then swingRemote:FireServer() end
+	hitRemote:FireServer(eggPart, hitSeq)
+	return true
+end
+
+-- Tween ไปข้างไข่ แล้วตีจนแตก
+-- มีเพชรตกอยู่ในโซนเป้าหมายไหม
+local function gemsAround()
+	return canCollectGems() and hasCollectableGems ~= nil and hasCollectableGems(CONFIG.GemRadius)
+end
+
+-- เก็บเพชรก่อนเสมอ (ปิด Auto Swing ระหว่างเก็บ กันตีโดนไข่ระหว่างทาง)
+local function collectGemsFirst(shouldStop)
+	if not (State.CollectGems and grabNearbyGems and gemsAround()) then return end
+	setSwing(false)
+	grabNearbyGems(shouldStop, CONFIG.GemRadius)
+end
+
+-- แบบเดียวกับ MYHUB: เก็บเพชรก่อน -> Tween ไปไข่ (Auto Swing ปิด) -> ถึงไข่เปิด Auto Swing -> ไข่แตกปิด
+local function breakEgg(egg, shouldStop, skipGems)
+	if not skipGems then collectGemsFirst(shouldStop) end
+	local _, root = getChar()
+	getTool()          -- ถือที่ขุด (ปุ่ม Auto Swing จะโผล่)
+	setSwing(false)    -- ระหว่างเดินทาง: ปิด
+	if not root or not tweenTo(eggCFrame(egg, root), shouldStop) then return false end
+	log("ตีไข่:", egg:GetAttribute("EggType"), "HP", egg:GetAttribute("Health"))
+	-- ตรวจอีกครั้งหลังเดินทาง เผื่อไข่เกิดใหม่หรือตรงเงื่อนไขสวนแล้ว
+	if shouldStop() or not eggAlive(egg) then return false end
+	local spot = eggCFrame(egg, root)   -- จุดยืน (บนพื้น)
+	setSwing(true)     -- ถึงไข่เป้าหมาย: เปิด
+	local started, lastHit, lastGemCheck = os.clock(), 0, 0
+	while eggAlive(egg) and not State.AfkPinned and not shouldStop() and os.clock() - started < CONFIG.EggTimeout do
+		-- มีเพชรดรอป: หยุดตี ไปเก็บเพชรก่อน แล้วกลับมาตีต่อ
+		if not skipGems and os.clock() - lastGemCheck > 0.15 then
+			lastGemCheck = os.clock()
+			if State.CollectGems and gemsAround() then
+				collectGemsFirst(shouldStop)
+				local _, r = getChar()
+				if r then tweenTo(spot, shouldStop) end
+				setSwing(true)
+			end
+		end
+		-- หลุดจากจุดยืนค่อยวางกลับ ไม่งั้นปล่อยยืนตามแรงโน้มถ่วง เท้าติดพื้น
+		local _, r = getChar()
+		if r then
+			local flat = Vector3.new(r.Position.X - spot.Position.X, 0, r.Position.Z - spot.Position.Z)
+			if flat.Magnitude > 2 or math.abs(r.Position.Y - spot.Position.Y) > 4 then
+				r.CFrame = spot
+				r.AssemblyLinearVelocity = Vector3.zero
+			end
+		end
+		syncAutoSwing()
+		-- ถ้า Auto Swing ของเกมยังไม่เปิด ตีเองแทน (ส่ง EggHitRequest ไปที่ไข่เป้าหมาย)
+		local btn = getAutoSwingBtn()
+		local swingOn = btn and autoSwingIsOn(btn)
+		if not swingOn and os.clock() - lastHit >= hitGap then
+			lastHit = os.clock()
+			getTool()
+			if not sendHit(egg) then
+				local tool = getTool()
+				if tool then tool:Activate() end
+			end
+		end
+		task.wait()   -- เช็กทุกเฟรม: ไข่แตกปุ๊บ ไปใบต่อไปทันที
+	end
+	setSwing(false)    -- ไข่เป้าหมายแตก: ปิดทันที กันตีโดนไข่ใบอื่น
+	return not eggAlive(egg)
+end
+
+-- ยกสัตว์: ไข่แตกแล้วจะมีสัตว์ออกมาพร้อมปุ่ม "E Steal" (ProximityPrompt)
+-- สคริปต์จะหา Prompt ที่เพิ่งเกิดใกล้ไข่ที่ตีแตก แล้ว Tween ไปกดให้
+local function promptPos(p)
+	local par = p.Parent
+	if not par then return end
+	if par:IsA("Attachment") then return par.WorldPosition end
+	if par:IsA("BasePart") then return par.Position end
+	if par:IsA("Model") then return par:GetPivot().Position end
+end
+
+local function isLiftPrompt(p)
+	local text = (p.ActionText .. " " .. p.ObjectText .. " " .. p.Name):lower()
+	for _, word in ipairs(CONFIG.LiftPromptWords) do
+		if text:find(word, 1, true) then return true end
+	end
+	return false
+end
+
+local function triggerPrompt(p)
+	p.HoldDuration = 0   -- ไม่ต้องกดค้าง (ฝั่งเรา)
+	if fireproximityprompt then
+		fireproximityprompt(p)
+		return
+	end
+	-- ไม่มี fireproximityprompt: กดปุ่มคีย์บอร์ดของ Prompt แทน
+	local vim = game:GetService("VirtualInputManager")
+	vim:SendKeyEvent(true, p.KeyboardKeyCode, false, game)
+	task.wait(0.05)
+	vim:SendKeyEvent(false, p.KeyboardKeyCode, false, game)
+end
+
+-- เริ่มจด Prompt ที่เกิดใหม่ในแมพ (เรียกก่อนตีไข่) คืนค่า (รายการ, ฟังก์ชันหยุดจด)
+local function watchNewPrompts()
+	local list = {}
+	local conn = workspace.DescendantAdded:Connect(function(d)
+		if d:IsA("ProximityPrompt") then table.insert(list, d) end
+	end)
+	return list, function() conn:Disconnect() end
+end
+
+-- ขั้นตอนสำคัญจะพิมพ์ลง F9 เสมอ (ไม่ต้องเปิดโหมดดีบัก)
+local statusLabel   -- ช่องสถานะบนหน้าฟาร์ม (สร้างตอนทำ UI)
+local function say(...)
+	print("[FarmHub]", ...)
+	if statusLabel then
+		local parts = {}
+		for i = 1, select("#", ...) do parts[i] = tostring((select(i, ...))) end
+		-- ป้องกันข้อผิดพลาดจาก GUI ไม่ให้หยุดลูปฟาร์ม
+		pcall(function()
+			statusLabel.Text = "สถานะ: " .. table.concat(parts, " ")
+		end)
+	end
+end
+
+local function bestLiftPrompt(list, eggPos)
+	local best, bestDist
+	for _, p in ipairs(list) do
+		if p.Parent and p.Enabled and isLiftPrompt(p) then
+			local pos = promptPos(p)
+			local d = pos and (pos - eggPos).Magnitude
+			if d and d < CONFIG.LiftRadius and (not bestDist or d < bestDist) then
+				best, bestDist = p, d
+			end
+		end
+	end
+	return best
+end
+
+-- ยกสัตว์ให้ไวที่สุด: เช็กทุกเฟรม, วาร์ปไปติดตัวสัตว์ (ระยะสั้น) แล้วกด Steal ทันที
+local function liftAnimal(eggPos, newPrompts, shouldStop)
+	local started, tried = os.clock(), 0
+	local slowScanAt = os.clock() + 1.5   -- ถ้า 1.5 วิยังไม่เจอ ค่อยสแกนทั้งแมพ (ช้า)
+	while os.clock() - started < CONFIG.LiftWait and not State.AfkPinned and not shouldStop() do
+		local best = bestLiftPrompt(newPrompts, eggPos)
+		if not best then
+			local pickups = workspace:FindFirstChild("AnimalPickups")
+			if pickups then
+				local list = {}
+				for _, p in ipairs(pickups:GetDescendants()) do
+					if p:IsA("ProximityPrompt") then table.insert(list, p) end
+				end
+				best = bestLiftPrompt(list, eggPos)
+			end
+		end
+		if not best and os.clock() > slowScanAt then
+			slowScanAt = os.clock() + 1
+			local list = {}
+			for _, p in ipairs(workspace:GetDescendants()) do
+				if p:IsA("ProximityPrompt") then table.insert(list, p) end
+			end
+			best = bestLiftPrompt(list, eggPos)
+		end
+
+		if best then
+			if tried == 0 then say("ยกสัตว์: กด", best.ActionText, "ที่", best:GetFullName()) end
+			local _, root = getChar()
+			local pos = promptPos(best)
+			if root and pos then
+				root.CFrame = besideCFrame(pos, root, 1.5)
+				root.AssemblyLinearVelocity = Vector3.zero
+			end
+			State.ScriptLift = true
+			triggerPrompt(best)
+			tried += 1
+			-- เช็กผลทุกเฟรม ไม่เกิน 0.3 วิ แล้วค่อยกดซ้ำ
+			local t = os.clock()
+			while os.clock() - t < 0.3 do
+				if not best.Parent or not best.Enabled or isCarrying() then
+					say(string.format("ยกสัตว์แล้ว (%.2f วิ, กด %d ครั้ง)", os.clock() - started, tried))
+					return true
+				end
+				task.wait()
+			end
+		else
+			task.wait()
+		end
+	end
+	say(tried > 0 and "กด Steal แล้วแต่ยังยกไม่ได้" or "ไม่เจอปุ่ม Steal ใกล้ไข่ที่ตีแตก")
+	return false
+end
+
+-- Tween ไปหาผู้พิทักษ์ แล้วยืนติดตัวจนกว่าจะโดนตี
+local function waitForGuardHit(guard, shouldStop)
+	local _, root, hum = getChar()
+	if not root then return false end
+	local hit, conns = false, {}
+	-- ถ้ายกสัตว์อยู่: "โดนตีแล้ว" = ตรวจว่าไม่มีสัตว์ที่เราถือแล้ว
+	-- ถ้าไม่ได้ยก: ใช้เลือดลด / ตาย / CatchFlingRemote / กระเด็น แทน
+	local carrying = isCarrying()
+	local lastHealth = hum.Health
+	table.insert(conns, hum.HealthChanged:Connect(function(h)
+		if h < lastHealth then log("เลือดลด:", lastHealth, "->", h) hit = not carrying end
+		lastHealth = h
+	end))
+	table.insert(conns, hum.Died:Connect(function() hit = true end))
+	local fling = ReplicatedStorage:FindFirstChild("CatchFlingRemote")
+	if fling and fling:IsA("RemoteEvent") then
+		table.insert(conns, fling.OnClientEvent:Connect(function(...)
+			log("<- CatchFlingRemote", ...)
+			hit = not carrying
+		end))
+	end
+	table.insert(conns, guard:GetAttributeChangedSignal("ChaseState"):Connect(function()
+		log("ผู้พิทักษ์ ChaseState =", guard:GetAttribute("ChaseState"))
+	end))
+
+	local stop = function() return State.AfkPinned or hit or shouldStop() end
+	tweenTo(onGround(besideCFrame(guard:GetPivot().Position, root, 3), guard), stop)
+
+	local started = os.clock()
+	while not stop() and guard.Parent and os.clock() - started < CONFIG.GuardTimeout do
+		local _, r = getChar()
+		if not r then hit = true break end
+		local target = onGround(besideCFrame(guard:GetPivot().Position, r, 3), guard)
+		r.CFrame = target
+		r.AssemblyLinearVelocity = Vector3.zero
+		task.wait()   -- เช็กทุกเฟรม
+		if carrying and not isCarrying() then
+			log("ผู้พิทักษ์แย่งสัตว์ไปแล้ว")
+			hit = true
+		end
+		-- ถูกตีจนกระเด็น / ถูกย้ายตำแหน่ง (ใช้เฉพาะตอนไม่ได้ยกสัตว์)
+		if not carrying and r.Parent and (r.Position - target.Position).Magnitude > CONFIG.KnockbackDist then
+			log("ถูกกระเด็นออกจากจุดที่ยืน")
+			hit = true
+		end
+	end
+	for _, c in ipairs(conns) do c:Disconnect() end
+	return hit
+end
+
+-- ขั้นเตรียม: ขุดไข่โซนที่ใกล้ที่สุด -> ยกสัตว์ที่ออกจากไข่ (Steal) -> พุ่งไปหาผู้พิทักษ์ให้ตี
+local function warmUp(shouldStop, acceptEgg)
+	local egg, zoneName = nearestZoneEgg(acceptEgg)
+	if not egg then say("ไม่พบไข่ใกล้ ๆ ข้ามขั้นผู้พิทักษ์") return end
+
+	say("ขั้นที่ 1: ขุดไข่ใน", zoneName)
+	local eggPos = egg.Position
+	local newPrompts, stopWatching = watchNewPrompts()
+	breakEgg(egg, function()
+		return shouldStop() or (acceptEgg and not acceptEgg(egg))
+	end, true)   -- ขั้นเตรียม: ไม่เก็บเพชร รีบยกสัตว์
+	if acceptEgg and eggAlive(egg) and not acceptEgg(egg) then
+		stopWatching()
+		return
+	end
+	if not shouldStop() then
+		say("ขั้นที่ 2: ยกสัตว์")
+		liftAnimal(eggPos, newPrompts, shouldStop)
+	end
+	stopWatching()
+	if shouldStop() then return end
+
+	local guard = getGuard(zoneName)
+	if not guard then say("ไม่พบผู้พิทักษ์ใน", zoneName) return zoneName end
+	say("ขั้นที่ 3: พุ่งไปหาผู้พิทักษ์", guard.Name)
+	local hit = waitForGuardHit(guard, shouldStop)
+	say(hit and "ผู้พิทักษ์ตีแล้ว" or "หมดเวลารอผู้พิทักษ์")
+	if not getChar() then player.CharacterAdded:Wait() task.wait(1) end   -- ถ้าตาย รอเกิดใหม่
+
+	return zoneName
+end
+
+-- ตำแหน่งปลายทางในโซน: ข้างไข่ (ถ้าเห็นไข่แล้ว) หรือกลางโซน
+local function zoneTarget(zoneName, root)
+	local egg = findEgg(zoneName, ALL_EGGS, true) or findEgg(zoneName, ALL_EGGS)
+	if egg then return eggCFrame(egg, root) end
+	-- ไข่ยังไม่โหลด: ใช้ตำแหน่งกลางโซนที่จำไว้ ถ้ายังไม่เคยเห็น ใช้กึ่งกลางกรอบของโมเดลโซน
+	if ZonePos[zoneName] then
+		return onGround(CFrame.new(ZonePos[zoneName] + Vector3.new(0, 5, 0)))
+	end
+	-- ลอง ZoneHitboxes ก่อน (กล่องขอบเขตโซน) แล้วค่อยใช้กรอบของโมเดลโซน
+	local num = zoneName:match("(%d+)")
+	local build = workspace:FindFirstChild("Build")
+	local hitboxes = build and build:FindFirstChild("ZoneHitboxes")
+	local hb = hitboxes and num and (hitboxes:FindFirstChild("Zone" .. num) or hitboxes:FindFirstChild(num))
+	if hb then
+		local pos = hb:IsA("BasePart") and hb.Position or (hb:IsA("Model") and hb:GetBoundingBox().Position)
+		if pos then return onGround(CFrame.new(pos + Vector3.new(0, 5, 0))) end
+	end
+	local zone = CONFIG.ZoneModels[zoneName]
+	if not zone then return end
+	local ok, box = pcall(zone.GetBoundingBox, zone)
+	local cf = ok and box or zone:GetPivot()
+	say("ยังไม่รู้ตำแหน่ง", zoneName, "ใช้กึ่งกลางโมเดลโซน")
+	return onGround(CFrame.new(cf.Position + Vector3.new(0, 5, 0)))
+end
+
+-- ตรึงหลังวาร์ปเพื่อล้างแรงกระเด็น โดยไม่ลดความสูงที่ระบบกันจมยกไว้
+local function holdAfterTeleport(cf, duration)
+	local char, root = getChar()
+	if not root then return end
+	local started = os.clock()
+	while os.clock() - started < (duration or 1.2) do
+		RunService.Heartbeat:Wait()
+		if State.AfkPinned or player.Character ~= char or not char.Parent or not root.Parent then return end
+		local pos = root.Position
+		local drift = Vector3.new(pos.X - cf.Position.X, 0, pos.Z - cf.Position.Z)
+		if drift.Magnitude > 1 then
+			root.CFrame = cf + Vector3.new(0, math.max(0, pos.Y - cf.Position.Y), 0)
+		end
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+	end
+end
+
+-- วาร์ปทันทีไปโซน (ถ้าเกมดึงตัวกลับ จะวาร์ปซ้ำ สูงสุด CONFIG.TeleportRetries ครั้ง)
+local function teleportInto(zoneName)
+	for attempt = 1, CONFIG.TeleportRetries do
+		if State.AfkPinned then return false end
+		local _, root = getChar()
+		if not root then return false end
+		local target = zoneTarget(zoneName, root)
+		if not target then return false end
+		root.CFrame = target
+		root.AssemblyLinearVelocity = Vector3.zero
+		holdAfterTeleport(target)
+		task.wait(0.4)
+		if root.Parent and (root.Position - target.Position).Magnitude < 40 then return true end
+		say("เกมดึงตัวกลับหลังวาร์ป ลองใหม่ (ครั้งที่ " .. attempt .. ")")
+	end
+	return false
+end
+
+-- ไปโซนที่เลือก: ถ้าโซนนั้นไกลเกินวาร์ปตรง (CONFIG.TeleportVia) วาร์ปไปโซนก่อนหน้าก่อน แล้ว Tween ต่อ
+local function goToZone(zoneName, shouldStop)
+	local num = tonumber(zoneName:match("(%d+)"))
+	local viaNum = num and CONFIG.TeleportVia[num]
+	if viaNum then
+		local via = "โซนที่ " .. viaNum
+		say("วาร์ปไป", via, "ก่อน")
+		teleportInto(via)
+		local _, root = getChar()
+		local target = root and zoneTarget(zoneName, root)
+		if target then
+			say("Tween ต่อไป", zoneName)
+			tweenTo(target, shouldStop)
+		end
+	else
+		say("วาร์ปไป", zoneName)
+		teleportInto(zoneName)
+	end
+	task.wait(0.3)   -- รอไข่ในโซนโหลด
+end
+
+-- อยู่ในโซนนี้หรือใกล้พอจะ Tween ไปเองได้ไหม (ไม่ต้องวาร์ป)
+--   ใกล้ = โซนที่ตัวละครอยู่ใกล้ที่สุดคือโซนนี้ หรือห่างจากกลางโซนไม่เกิน CONFIG.NoWarpDist
+isNearZone = function(zoneName)
+	local _, root = getChar()
+	if not root then return false end
+	local target = ZonePos[zoneName]
+	if not target then
+		local _, z = nearestZoneEgg()
+		return z == zoneName
+	end
+	if (target - root.Position).Magnitude <= CONFIG.NoWarpDist then return true end
+	local best, bestDist
+	for name, pos in pairs(ZonePos) do
+		local d = (pos - root.Position).Magnitude
+		if not bestDist or d < bestDist then best, bestDist = name, d end
+	end
+	return best == zoneName
+end
+
+---------------------------------------------------------------------
+-- Callbacks
+---------------------------------------------------------------------
+local finderResume -- จำสวิตช์หาตัวและเพชรไว้จนฟาร์มกลับถึงโซน
+local Callbacks = {}
+local motionLoops = {} -- รอเธรดฟาร์ม/เพชร/สวนหยุดจริงก่อนเริ่มส่งสัตว์
+
+local function waitForMotion(shouldStop)
+	repeat
+		task.wait()
+		for thread in pairs(motionLoops) do
+			if coroutine.status(thread) == "dead" then motionLoops[thread] = nil end
+		end
+		if shouldStop() then return false end
+	until not State.AutoFarm and not State.CollectGems and next(motionLoops) == nil
+	return true
+end
+
+-- ฟาร์มและสวนใช้ขั้นเดินทางเดียวกัน
+local function prepareZone(target, shouldStop, acceptEgg)
+	if isNearZone(target) then return true end
+	-- ครอบตั้งแต่ยกเองจนผู้พิทักษ์ตีและเดินทางจบ แม้มีข้อผิดพลาดก็ล้างธง
+	local ok, err = pcall(function()
+		local warmZone = warmUp(shouldStop, acceptEgg)
+		if shouldStop() then return end
+		if warmZone ~= target then goToZone(target, shouldStop) end
+	end)
+	State.ScriptLift = false
+	State.ManualCarryBlocked = isCarrying()
+	if not ok then error(err) end
+	-- เหมือนเดิม: วาร์ปเสร็จถือว่าถึงโซนแล้ว (ไม่บังคับตรวจระยะซ้ำ กันวนขั้นเตรียมไม่จบ)
+	return not shouldStop() and getChar() ~= nil
+end
+
+function Garden.Say(text)
+	if Garden.Status and not State.Closed then Garden.Status.Text = text end
+end
+
+function Garden.Matches(egg)
+	local hp = egg:GetAttribute("MaxHealth")
+	if hp == nil then hp = egg:GetAttribute("Health") end
+	return egg:GetAttribute("EggType") == Garden.Egg and (tonumber(hp) or 0) >= Garden.MinHP
+end
+
+-- จำจำนวนตำแหน่ง เผื่อเกมถอดโมเดลออกหรือเปลี่ยนชื่อระหว่างเกิดใหม่
+function Garden.Progress()
+	local zone = CONFIG.ZoneModels[Garden.Zone]
+	local folder = zone and zone:FindFirstChild("Eggs")
+	local _, root = getChar()
+	local count, matched, target, distance = 0, 0, nil, math.huge
+	for _, model in ipairs(folder and folder:GetChildren() or {}) do
+		local egg = model:FindFirstChild("Egg")
+		if egg or model.Name:match("^%d+:") then count += 1 end
+		if egg and egg:IsA("BasePart") and eggAlive(egg) then
+			if Garden.Matches(egg) then matched += 1
+			elseif root then
+				local d = (root.Position - egg.Position).Magnitude
+				if d < distance then target, distance = egg, d end
+			end
+		end
+	end
+	local total = math.max(Garden.Spots[Garden.Zone] or 0, count)
+	Garden.Spots[Garden.Zone] = total
+	return target, matched, total
+end
+
+function Callbacks.Garden(on)
+	if on and (not Garden.Egg or State.DeliveryBusy or State.Closed) then
+		Garden.Say("กรุณาเลือกไข่ก่อนเริ่มทำสวน")
+		gardenToggle.Set(false)
+		return
+	end
+	State.Garden = on
+	State.GardenRun += 1
+	Garden.ReadyZone = nil
+	local run = State.GardenRun
+	if not on then
+		finderResume = nil
+		setSwing(false)
+		return
+	end
+	releaseAfkPin()
+	Garden.Progress() -- จำจำนวนตำแหน่งก่อนขั้นเตรียมอาจทำไข่แตก
+	local function stopped()
+		return State.Closed or State.AfkPinned or State.DeliveryBusy
+			or not State.Garden or State.GardenRun ~= run
+	end
+	farmToggle.Set(false)
+	gemToggle.Set(false)
+	Garden.Say("กำลังหยุดฟาร์มและเพชร")
+	if not waitForMotion(stopped) then return end
+	local thread = coroutine.running()
+	motionLoops[thread] = true
+	local respawnConn = player.CharacterAdded:Connect(function()
+		if not stopped() then Garden.ReadyZone = nil end
+	end)
+	task.spawn(function()
+		while not stopped() do
+			if not isCarrying() then getTool() end
+			task.wait(0.2)
+		end
+	end)
+	local complete, completeSince = false, nil
+	local ok, err = pcall(function()
+		while not stopped() do
+			if not getChar() then
+				Garden.ReadyZone = nil
+				task.wait(0.5)
+			elseif Garden.ReadyZone ~= Garden.Zone then
+				local zone = Garden.Zone
+				local function travelStopped()
+					return stopped() or Garden.Zone ~= zone
+				end
+				Garden.Say("กำลังเดินทางไป " .. zone)
+				-- ขั้นเตรียมก็ต้องไม่ตีไข่ที่ตรงเงื่อนไขแล้ว
+				if prepareZone(zone, travelStopped, function(egg) return not Garden.Matches(egg) end) then
+					Garden.ReadyZone = zone
+				end
+			else
+				local egg, matched, total = Garden.Progress()
+				Garden.Say("ตรง " .. matched .. "/" .. total .. " ฟอง")
+				if total > 0 and matched == total then
+					-- ยืนยันซ้ำให้พ้นช่วงไข่แตก เผื่อโมเดลหายชั่วคราวระหว่างเกิดใหม่
+					completeSince = completeSince or os.clock()
+					if os.clock() - completeSince >= 5 and not finderResume then complete = true break end
+				else completeSince = nil end
+				if egg and not isCarrying() then
+					local zone, character = Garden.Zone, player.Character
+					breakEgg(egg, function()
+						return stopped() or Garden.Zone ~= zone or Garden.ReadyZone ~= zone
+							or player.Character ~= character or not getChar()
+							or isCarrying() or Garden.Matches(egg)
+					end, true)
+				else task.wait(0.3) end
+			end
+			task.wait()
+		end
+	end)
+	respawnConn:Disconnect()
+	setSwing(false)
+	motionLoops[thread] = nil
+	if State.GardenRun == run then
+		gardenToggle.Set(false)
+		if complete then Garden.Say("สวนเสร็จแล้ว")
+		elseif not ok then Garden.Say("สวนหยุด: " .. tostring(err)) end
+	end
+end
+
+function Callbacks.ZoneChanged(zone)
+	log("เลือกโซน:", zone)
+end
+
+function Callbacks.EggChanged(egg)
+	log("เลือกไข่:", egg)
+end
+
+-- ฟาร์ม: ทุกครั้งที่เริ่ม/เปลี่ยนโซน จะทำขั้นเตรียม (warmUp) ก่อน
+-- โดนผู้พิทักษ์ตีแล้ววาร์ปทันทีไปโซนที่เลือก จากนั้น Tween ไปตีไข่ที่ใกล้ที่สุดไปเรื่อย ๆ
+function Callbacks.AutoFarm(on)
+	State.AutoFarm = on
+	State.FarmRun += 1
+	State.ReadyZone = nil
+	if not on then if not State.Garden then finderResume = nil end return end
+	local thread = coroutine.running()
+	motionLoops[thread] = true
+	local run = State.FarmRun
+	task.spawn(function()
+		while State.AutoFarm and State.FarmRun == run do
+			if not isCarrying() then getTool() end
+			task.wait(0.2)
+		end
+	end)
+	local function stopped() return State.AfkPinned or not State.AutoFarm or State.FarmRun ~= run end
+	-- ตาย/เกิดใหม่ระหว่างฟาร์ม: เริ่มขั้นเตรียม + วาร์ปใหม่ ไม่ Tween ข้ามแมพจากจุดเกิด
+	local respawnConn = player.CharacterAdded:Connect(function()
+		if not stopped() then say("ตัวละครเกิดใหม่ เริ่มรอบใหม่") State.ReadyZone = nil end
+	end)
+	local waiting = true
+
+	while not stopped() do
+		if not getChar() then
+			task.wait(0.5)
+		elseif State.ReadyZone ~= State.Zone then
+			local target = State.Zone
+			if prepareZone(target, function()
+				return stopped() or State.Zone ~= target
+			end) then State.ReadyZone = target end
+		else
+			local egg = findEgg(State.Zone, ALL_EGGS, true)
+			if egg then
+				if waiting then say("ตีไข่:", egg:GetAttribute("EggType"), egg:GetAttribute("EggInfoRarity")) waiting = false end
+				breakEgg(egg, function() return stopped() or State.ReadyZone ~= State.Zone end)
+			else
+				if not waiting then say("ไม่มีไข่ตามตัวกรองใน", State.Zone, "รอไข่เกิด") waiting = true end
+				task.wait(0.5)   -- ไม่มีไข่ รอเกิดใหม่
+			end
+		end
+		task.wait()
+	end
+	respawnConn:Disconnect()
+	motionLoops[thread] = nil
+end
+
+-- เก็บเพชร: เพชรที่ตกจากไข่อยู่ใน workspace.EggGemDrops (เช่น EggGemDrops.Gem)
+-- วิธีเก็บ: ไปแตะเพชรทั่วโซนเป้าหมาย ใช้รัศมีสำรองเมื่อยังไม่มีข้อมูลโซน
+local gemLogged = false
+
+local function gemPart(g)
+	if g:IsA("BasePart") then return g end
+	return g:FindFirstChildWhichIsA("BasePart", true)
+end
+
+-- พิมพ์โครงสร้างเพชรเม็ดแรกลง F9 (ไว้ดูว่าเกมเก็บเพชรแบบไหน)
+local function describeGem(g)
+	local attrs, inside = {}, {}
+	for k, v in pairs(g:GetAttributes()) do table.insert(attrs, k .. "=" .. tostring(v)) end
+	for _, d in ipairs(g:GetDescendants()) do table.insert(inside, d.Name .. "[" .. d.ClassName .. "]") end
+	say("เพชร:", g:GetFullName(), g.ClassName,
+		"| attrs:", table.concat(attrs, ", "),
+		"| ข้างใน:", table.concat(inside, ", "))
+end
+
+local function nearbyGems(root, radius)
+	local folder = workspace:FindFirstChild("EggGemDrops")
+	local list = {}
+	if not folder then return list end
+	local targetZone = gemZoneTarget()
+	local hasZones = next(ZonePos) ~= nil
+	for _, g in ipairs(folder:GetChildren()) do
+		local part = gemPart(g)
+		if part and ((hasZones and zoneOfPosition(part.Position) == targetZone)
+			or (not hasZones and (part.Position - root.Position).Magnitude <= (radius or CONFIG.GemRadius))) then
+			table.insert(list, g)
+		end
+	end
+	return list
+end
+
+-- เก็บเพชรแบบสคริปต์รุ่นก่อน: Tween (Noclip) ไปหาเพชรในโซนเป้าหมายทีละเม็ด จนหมด
+local gemSkip = setmetatable({}, { __mode = "k" })   -- เพชรที่เก็บไม่ติด -> ข้ามไปก่อนจนถึงเวลานี้
+-- มีเพชรที่เก็บได้จริงอยู่ในโซนเป้าหมายไหม (ไม่นับเม็ดที่เพิ่งเก็บไม่ติด)
+hasCollectableGems = function(radius)
+	local _, root = getChar()
+	if not root then return false end
+	for _, g in ipairs(nearbyGems(root, radius)) do
+		if not (gemSkip[g] and os.clock() < gemSkip[g]) then return true end
+	end
+	return false
+end
+grabNearbyGems = function(shouldStop, radius)
+	local function stopped()
+		return not State.CollectGems or not canCollectGems() or (shouldStop and shouldStop())
+	end
+	local got = 0
+	while not stopped() do
+		local _, root = getChar()
+		if not root then break end
+		-- เพชรเม็ดที่ใกล้ที่สุด (ข้ามเม็ดที่เพิ่งเก็บไม่ติด)
+		local best, bestDist
+		for _, g in ipairs(nearbyGems(root, radius)) do
+			local part = gemPart(g)
+			if part and not (gemSkip[g] and os.clock() < gemSkip[g]) then
+				local d = (part.Position - root.Position).Magnitude
+				if not bestDist or d < bestDist then best, bestDist = g, d end
+			end
+		end
+		if not best then break end
+
+		local part = gemPart(best)
+		if not gemLogged then gemLogged = true describeGem(best) end
+		if got == 0 then say("เก็บเพชร: ไปหาเพชรที่ตก") end
+		if not tweenTo(onGround(CFrame.new(part.Position)), stopped) or stopped() then break end
+		root.AssemblyLinearVelocity = Vector3.zero
+		if firetouchinterest and part.Parent then
+			firetouchinterest(root, part, 0)
+			firetouchinterest(root, part, 1)
+		end
+		local prompt = best:FindFirstChildWhichIsA("ProximityPrompt", true)
+		if prompt then triggerPrompt(prompt) end
+		-- ยืนบนเพชรจนเพชรหาย (ไม่เกิน GemStay วิ)
+		local t = os.clock()
+		while best.Parent and os.clock() - t < CONFIG.GemStay and not stopped() do
+			if part.Parent then root.CFrame = onGround(CFrame.new(part.Position)) end
+			task.wait()
+		end
+		if best.Parent then
+			gemSkip[best] = os.clock() + 30   -- เก็บไม่ติด (อาจเป็นของคนอื่น): ข้ามไปนาน ๆ
+		else
+			got += 1
+		end
+	end
+	if got > 0 then say("เก็บเพชรได้", got, "เม็ด") end
+end
+
+-- ตอนเปิดฟาร์ม ระบบฟาร์มจะเรียกเก็บเพชรเองระหว่างตีไข่
+-- ตอนไม่ได้ฟาร์ม สวิตช์นี้จะวนเก็บเพชรในโซนที่ตัวละครอยู่
+function Callbacks.CollectGems(on)
+	State.CollectGems = on
+	State.GemRun += 1
+	if not on then return end
+	local thread = coroutine.running()
+	motionLoops[thread] = true
+	local run = State.GemRun
+	say("เปิดเก็บเพชรในโซนที่ฟาร์ม (ถ้าไม่ได้ฟาร์ม ใช้โซนที่ตัวละครอยู่)")
+	while State.CollectGems and State.GemRun == run do
+		if not State.AutoFarm and canCollectGems() then grabNearbyGems(function() return not State.CollectGems or State.AutoFarm end) end
+		task.wait(0.2)
+	end
+	motionLoops[thread] = nil
+end
+
+-- โหมดดีบัก: พิมพ์ข้อมูล Remote ที่เกี่ยวกับการตีไข่/เพชร ลงช่อง F9
+local debugHooked = false
+function Callbacks.Debug(on)
+	State.Debug = on
+	if not on or debugHooked then return end
+	debugHooked = true
+	for _, name in ipairs({ "EggGemDropRemote", "EggHitConfirmed", "EggHitRejected", "EggHitLanded" }) do
+		local r = ReplicatedStorage:FindFirstChild(name)
+		if r and r:IsA("RemoteEvent") then
+			r.OnClientEvent:Connect(function(...)
+				if State.Debug then print("[FarmHub] <-", name, ...) end
+			end)
+		end
+	end
+	if hookmetamethod and getnamecallmethod then
+		local watch = { EggHitRequest = true, BatHitRequest = true, MasteryPickaxeSwing = true }
+		local old
+		old = hookmetamethod(game, "__namecall", function(self, ...)
+			if State.Debug and getnamecallmethod() == "FireServer"
+				and typeof(self) == "Instance" and watch[self.Name] then
+				print("[FarmHub] ->", self.Name, ...)
+			end
+			return old(self, ...)
+		end)
+	end
+end
+
+-- เก็บค่ากราฟิกเดิมแยกตามวัตถุ คืนค่าได้โดยไม่ต้องรีจอย
+local fps = { boost = false, unlock = false, alive = true, saved = {} }
+do
+	local originals = setmetatable({}, { __mode = "k" })
+	local connections = {}
+	local generation = 0
+	local http = game:GetService("HttpService")
+	local fileName = "FarmHub_fps.json"
+
+	pcall(function()
+		local data = http:JSONDecode(readfile(fileName))
+		if type(data) == "table" then
+			fps.saved.boost = data.boost == true
+			fps.saved.unlock = data.unlock == true
+		end
+	end)
+
+	local function save()
+		pcall(function()
+			writefile(fileName, http:JSONEncode({ boost = fps.boost, unlock = fps.unlock }))
+		end)
+	end
+
+	local function change(object, prop, value)
+		pcall(function()
+			local old = object[prop]
+			if old == value then return end
+			local saved = originals[object]
+			if not saved then
+				saved = {}
+				originals[object] = saved
+			end
+			if saved[prop] == nil then saved[prop] = old end
+			object[prop] = value
+		end)
+	end
+
+	local function restore(object)
+		local saved = originals[object]
+		if not saved then return end
+		for prop, value in pairs(saved) do
+			pcall(function() object[prop] = value end)
+		end
+		originals[object] = nil
+	end
+
+	-- ไม่แตะ GUI เหนือหัวสัตว์หรือสิ่งที่อยู่ภายใน GUI
+	local function insideGui(object)
+		local parent = object
+		while parent and parent ~= workspace and parent ~= Lighting do
+			if parent:IsA("LayerCollector") or parent:IsA("GuiObject") then return true end
+			parent = parent.Parent
+		end
+		return false
+	end
+
+	local function protectedPart(object, protectEggs)
+		local parent = object
+		while parent and parent ~= workspace do
+			if parent.Name == "AnimalPickups" or parent.Name == "CarriedAnimals"
+				or (protectEggs and parent.Name == "Eggs") then return true end
+			if parent:IsA("Model") then
+				-- ครอบคลุมตัวละครที่ Humanoid ยังโหลดมาไม่ครบ
+				if parent:FindFirstChildOfClass("Humanoid") or Players:GetPlayerFromCharacter(parent) then return true end
+			end
+			parent = parent.Parent
+		end
+		return false
+	end
+
+	local postEffects = {
+		BloomEffect = true, BlurEffect = true, SunRaysEffect = true,
+		DepthOfFieldEffect = true, ColorCorrectionEffect = true,
+	}
+	local visuals = {
+		ParticleEmitter = true, Trail = true, Beam = true,
+		Smoke = true, Fire = true, Sparkles = true,
+	}
+	local function apply(object)
+		if not fps.alive or not fps.boost or insideGui(object) then return end
+		if postEffects[object.ClassName] then
+			local camera = workspace.CurrentCamera
+			if object:IsDescendantOf(Lighting) or (camera and object:IsDescendantOf(camera)) then
+				change(object, "Enabled", false)
+			end
+		elseif object:IsA("Atmosphere") then
+			change(object, "Density", 0)
+			change(object, "Haze", 0)
+			change(object, "Glare", 0)
+		elseif object:IsA("Clouds") and object.Parent == workspace.Terrain then
+			change(object, "Enabled", false)
+		elseif visuals[object.ClassName] then
+			change(object, "Enabled", false)
+		elseif object:IsA("Explosion") then
+			-- ปิดเฉพาะภาพ ไม่เปลี่ยนแรงระเบิดหรือพฤติกรรม
+			change(object, "Visible", false)
+		elseif object:IsA("BasePart") and not protectedPart(object, false) then
+			change(object, "CastShadow", false)
+			change(object, "Material", Enum.Material.SmoothPlastic)
+			change(object, "Reflectance", 0)
+		elseif object:IsA("Decal") or object:IsA("Texture") then
+			if object.Parent and object.Parent:IsA("BasePart") and not protectedPart(object, true) then
+				change(object, "Transparency", 1)
+			end
+		elseif object:IsA("PointLight") or object:IsA("SpotLight") or object:IsA("SurfaceLight") then
+			change(object, "Shadows", false)
 		end
 	end
 
-	local function rrKflVREh(nucpOhWeE)
-		mTyjpiT = nucpOhWeE
-		local rBXdFLYrw = nucpOhWeE and (fESkPAZ + (#bZIXsfG + 1) * (RFOFBaLz + GxSGCiHIu) + 4) or fESkPAZ
-		nCZesXLe(PArhaG, { RTWaTBAXE = RTbBaU.vMEhDl(1, 0, 0, rBXdFLYrw) })
-		ufTBsC.gerFhc = nucpOhWeE and string.char(94) or string.char(110,117,99,112,79,104,87,101,69)
+	local function disconnectBoost()
+		for _, connection in ipairs(connections) do connection:Disconnect() end
+		table.clear(connections)
 	end
 
-	local function fpxNeFS()
-		ZqKRRgzj()
-		if HtZoFb then SrYEQZw.UzBcgssqK(HtZoFb, lVyAoChm) end
+	function Callbacks.FpsBoost(on)
+		if not fps.alive then return end
+		on = on == true
+		if fps.boost == on then return end
+		fps.boost = on
+		generation = generation + 1
+		disconnectBoost()
+		save()
+		if not on then
+			for object in pairs(originals) do restore(object) end
+			return
+		end
+
+		change(Lighting, "GlobalShadows", false)
+		change(Lighting, "FogEnd", 1e9)
+		change(Lighting, "ShadowSoftness", 0)
+		change(Lighting, "EnvironmentDiffuseScale", 0)
+		change(Lighting, "EnvironmentSpecularScale", 0)
+		pcall(function() change(settings().Rendering, "QualityLevel", Enum.QualityLevel.Level01) end)
+		pcall(function()
+			change(UserSettings():GetService("UserGameSettings"), "SavedQualityLevel", Enum.SavedQualitySetting.QualityLevel1)
+		end)
+		local terrain = workspace.Terrain
+		change(terrain, "WaterWaveSize", 0)
+		change(terrain, "WaterWaveSpeed", 0)
+		change(terrain, "WaterReflectance", 0)
+		change(terrain, "Decoration", false)
+
+		-- เข้าคิวทั้งของเดิมและของใหม่ ประมวลผลไม่เกิน 400 ชิ้นต่อเฟรม
+		local token = generation
+		local queue, queued = {}, setmetatable({}, { __mode = "k" })
+		local head, tail = 1, 0
+		local function enqueue(object)
+			if queued[object] then return end
+			queued[object] = true
+			tail = tail + 1
+			queue[tail] = object
+		end
+		table.insert(connections, workspace.DescendantAdded:Connect(enqueue))
+		table.insert(connections, Lighting.ChildAdded:Connect(enqueue))
+		table.insert(connections, Lighting.DescendantAdded:Connect(enqueue))
+		table.insert(connections, workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+			local camera = workspace.CurrentCamera
+			if camera then
+				for _, object in ipairs(camera:GetDescendants()) do enqueue(object) end
+			end
+		end))
+		task.spawn(function()
+			for _, object in ipairs(workspace:GetDescendants()) do enqueue(object) end
+			for _, object in ipairs(Lighting:GetDescendants()) do enqueue(object) end
+			while fps.alive and fps.boost and token == generation do
+				local last = math.min(head + 399, tail)
+				while head <= last do
+					local object = queue[head]
+					queue[head] = nil
+					head = head + 1
+					queued[object] = nil
+					pcall(function()
+						if object:IsDescendantOf(workspace) or object:IsDescendantOf(Lighting) then apply(object) end
+					end)
+				end
+				if head > tail then head, tail = 1, 0 end
+				task.wait()
+			end
+		end)
 	end
 
-	local function mNqZmZPS(eBAfmDr, sCLpjv)
-		eBAfmDr = eBAfmDr or {}
-		local GQOekhS = sCLpjv or TQkqpqt
-		
-		local jcxDXcHms = bZIXsfG ~= nil and #bZIXsfG == #eBAfmDr
-		if jcxDXcHms then
-			for xjUusuzCV, fbMkQuN in ipairs(eBAfmDr) do
-				if bZIXsfG[xjUusuzCV] ~= fbMkQuN or (TQkqpqt and TQkqpqt[fbMkQuN]) ~= (GQOekhS and GQOekhS[fbMkQuN]) then
-					jcxDXcHms = false
+	local function setCap(on)
+		if type(setfpscap) ~= "function" then return end
+		if on then
+			local ok = pcall(setfpscap, 0)
+			if not ok then pcall(setfpscap, 999) end
+		else
+			pcall(setfpscap, 60)
+		end
+	end
+
+	function Callbacks.UnlockFps(on)
+		if not fps.alive then return end
+		fps.unlock = on == true
+		setCap(fps.unlock)
+		save()
+	end
+
+	function fps.start(fpsLabel)
+		-- นับเฟรมในหน้าต่างเวลาหนึ่งวินาที อัปเดตข้อความทุกครึ่งวินาที
+		local frames, head, tail = {}, 1, 0
+		local started = os.clock()
+		local lastLabel, lastLog, lastCap = started, started, started
+		fps.render = RunService.RenderStepped:Connect(function()
+			local now = os.clock()
+			tail = tail + 1
+			frames[tail] = now
+			while head <= tail and frames[head] <= now - 1 do
+				frames[head] = nil
+				head = head + 1
+			end
+			if now - lastLabel >= 0.5 then
+				local count = tail - head + 1
+				fps.value = math.floor(count / math.min(now - started, 1) + 0.5)
+				fpsLabel.Text = "FPS: " .. fps.value
+				lastLabel = now
+				local compact = {}
+				for i = head, tail do compact[#compact + 1] = frames[i] end
+				frames, head, tail = compact, 1, #compact
+			end
+			if now - lastCap >= 5 then
+				if fps.unlock then setCap(true) end
+				lastCap = now
+			end
+			if now - lastLog >= 10 then
+				if fps.boost or fps.unlock then print("[FarmHub] FPS: " .. (fps.value or 0)) end
+				lastLog = now
+			end
+		end)
+		-- makeToggle ตั้งค่าเริ่มต้นแบบเงียบ จึงต้องเรียกใช้ค่าที่บันทึกเอง
+		if fps.saved.boost then Callbacks.FpsBoost(true) end
+		if fps.saved.unlock then Callbacks.UnlockFps(true) end
+	end
+
+	function fps.cleanup()
+		generation = generation + 1
+		disconnectBoost()
+		if fps.render then fps.render:Disconnect() end
+		for object in pairs(originals) do restore(object) end
+		if fps.unlock then setCap(false) end
+		fps.boost, fps.unlock, fps.alive = false, false, false
+		-- คงไฟล์ไว้เพื่อเปิดตามค่าที่ผู้ใช้เลือกเมื่อรันครั้งถัดไป
+	end
+end
+
+---------------------------------------------------------------------
+-- Theme
+---------------------------------------------------------------------
+local C = {
+	-- ธีมโทนอุ่น (ส้ม/น้ำตาล) ให้เข้ากับรูปพื้นหลังแมว Malmon Hub
+	Bg      = Color3.fromRGB(38, 28, 24),
+	Side    = Color3.fromRGB(32, 23, 20),
+	Row     = Color3.fromRGB(48, 36, 31),
+	Input   = Color3.fromRGB(66, 50, 43),
+	Accent  = Color3.fromRGB(245, 146, 40),   -- ส้มแบบตัวอักษร "Hub" ในรูป
+	Off     = Color3.fromRGB(96, 78, 70),
+	Knob    = Color3.fromRGB(35, 22, 16),
+	Text    = Color3.fromRGB(250, 240, 228),
+	SubText = Color3.fromRGB(205, 185, 170),
+}
+local FONT = Enum.Font.GothamMedium
+
+---------------------------------------------------------------------
+-- Helpers
+---------------------------------------------------------------------
+local function create(class, props)
+	local inst = Instance.new(class)
+	local parent = props.Parent
+	props.Parent = nil
+	for k, v in pairs(props) do inst[k] = v end
+	inst.Parent = parent
+	return inst
+end
+
+local function corner(inst, r)
+	create("UICorner", { CornerRadius = UDim.new(0, r or 8), Parent = inst })
+end
+
+local function tween(inst, goal, t)
+	TweenService:Create(inst, TweenInfo.new(t or 0.18, Enum.EasingStyle.Quad), goal):Play()
+end
+
+local function label(parent, text, props)
+	local p = {
+		BackgroundTransparency = 1,
+		Font = FONT, Text = text, TextSize = 16,
+		TextColor3 = C.Text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = parent,
+	}
+	for k, v in pairs(props or {}) do p[k] = v end
+	return create("TextLabel", p)
+end
+
+---------------------------------------------------------------------
+-- Root
+---------------------------------------------------------------------
+local guiParent = (gethui and gethui()) or player:WaitForChild("PlayerGui")
+local old = guiParent:FindFirstChild("FarmHubUI")
+if old then old:Destroy() end
+
+local gui = create("ScreenGui", {
+	Name = "FarmHubUI", ResetOnSpawn = false,
+	ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	Parent = guiParent,
+})
+
+local main = create("Frame", {
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromOffset(580, 360),
+	BackgroundColor3 = C.Bg, Active = true,
+	Parent = gui,
+})
+corner(main, 12)
+create("UIStroke", { Color = C.Input, Thickness = 1, Parent = main })
+
+-- พื้นหลังรูป Malmon Hub (โหลดจาก GitHub เก็บในโฟลเดอร์ executor แล้วใช้ getcustomasset)
+local bgImage = create("ImageLabel", {
+	Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+	ScaleType = Enum.ScaleType.Crop, ImageTransparency = 1, Parent = main,
+})
+corner(bgImage, 12)
+-- ฟิล์มมืดบาง ๆ ให้อ่านตัวหนังสือออก แต่ยังเห็นรูป
+local bgTint = create("Frame", {
+	Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(40, 22, 14),
+	BackgroundTransparency = 1, Parent = main,
+})
+corner(bgTint, 12)
+local side -- สร้างด้านล่าง
+task.spawn(function()
+	local BG_FILE = "MalmonHub_bg.jpg"
+	local BG_URL = "https://raw.githubusercontent.com/Malmon01/Mhub/main/assets/malmon_bg.jpg"
+	local getAsset = getcustomasset or getsynasset
+	if type(getAsset) ~= "function" or not writefile then return end
+	local ok = pcall(function()
+		if not (isfile and isfile(BG_FILE)) then writefile(BG_FILE, game:HttpGet(BG_URL)) end
+		bgImage.Image = getAsset(BG_FILE)
+	end)
+	if ok then
+		bgImage.ImageTransparency = 0
+		main.BackgroundTransparency = 1
+		bgTint.BackgroundTransparency = 0.45
+		if side then side.BackgroundTransparency = 0.3 end
+	else
+		print("[FarmHub] โหลดรูปพื้นหลังไม่ได้ ใช้พื้นสีเดิม")
+	end
+end)
+
+-- Sidebar --------------------------------------------------------------
+side = create("Frame", {
+	Size = UDim2.new(0, 150, 1, 0), BackgroundTransparency = 0.3,
+	BackgroundColor3 = C.Side, Parent = main,
+})
+corner(side, 12)
+
+label(side, CONFIG.Title, {
+	Position = UDim2.fromOffset(14, 10), Size = UDim2.new(1, -28, 0, 30),
+	TextSize = 18, Font = Enum.Font.GothamBold, TextColor3 = C.Accent,
+})
+label(side, "v " .. VERSION, {
+	AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 14, 1, -8),
+	Size = UDim2.new(1, -28, 0, 16), TextSize = 11, TextColor3 = C.SubText,
+})
+print("[FarmHub] โหลดเวอร์ชัน", VERSION)
+
+local tabHolder = create("Frame", {
+	Position = UDim2.fromOffset(10, 52), Size = UDim2.new(1, -20, 1, -62),
+	BackgroundTransparency = 1, Parent = side,
+})
+create("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder, Parent = tabHolder })
+
+-- Content --------------------------------------------------------------
+local content = create("Frame", {
+	Position = UDim2.fromOffset(150, 0), Size = UDim2.new(1, -150, 1, 0),
+	BackgroundTransparency = 1, Parent = main,
+})
+
+local pageTitle = label(content, "", {
+	Position = UDim2.fromOffset(18, 14), Size = UDim2.new(1, -120, 0, 28),
+	TextSize = 20, Font = Enum.Font.GothamBold,
+})
+
+-- Logo (วงกลม) = แสดงโลโก้ + เป็นปุ่ม
+local function makeLogo(parent, size, props)
+	local p = {
+		Size = UDim2.fromOffset(size, size), BackgroundColor3 = C.Row,
+		Image = CONFIG.LogoImage, AutoButtonColor = false, Parent = parent,
+	}
+	for k, v in pairs(props or {}) do p[k] = v end
+	local b = create("ImageButton", p)
+	corner(b, size / 2)
+	local stroke = create("UIStroke", { Color = C.Accent, Thickness = 2, Parent = b })
+	if CONFIG.LogoImage == "" then
+		label(b, "Logo", { Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 14 })
+	end
+	b.MouseEnter:Connect(function() tween(stroke, { Thickness = 3 }) end)
+	b.MouseLeave:Connect(function() tween(stroke, { Thickness = 2 }) end)
+	return b
+end
+
+-- โลโก้มุมขวาบนในหน้าต่าง: กดเพื่อย่อหน้าต่าง
+local logo = makeLogo(content, 60, {
+	AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -40, 0, 8),
+})
+
+-- โลโก้ลอย (โชว์ตอนย่อ): กดเพื่อเปิดหน้าต่างกลับ, ลากย้ายได้
+local floatLogo = makeLogo(gui, 60, {
+	-- ชิดมุมขวาบน ไม่บังปุ่มของเกม (ยังลากย้ายได้)
+	AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 8), Visible = false,
+})
+
+-- รูปโลโก้ Malmon Hub (โหลดจาก GitHub เก็บในโฟลเดอร์ executor แล้วใช้ getcustomasset)
+task.spawn(function()
+	local LOGO_FILE = "MalmonHub_logo.png"
+	local LOGO_URL = "https://raw.githubusercontent.com/Malmon01/Mhub/main/assets/malmon_logo.png"
+	local getAsset = getcustomasset or getsynasset
+	if type(getAsset) ~= "function" or not writefile then return end
+	local ok, asset = pcall(function()
+		if not (isfile and isfile(LOGO_FILE)) then writefile(LOGO_FILE, game:HttpGet(LOGO_URL)) end
+		return getAsset(LOGO_FILE)
+	end)
+	if not ok then print("[FarmHub] โหลดรูปโลโก้ไม่ได้ ใช้โลโก้ตัวอักษรเดิม") return end
+	for _, b in ipairs({ logo, floatLogo }) do
+		b.Image = asset
+		for _, c in ipairs(b:GetChildren()) do
+			if c:IsA("TextLabel") then c:Destroy() end
+		end
+	end
+end)
+
+local function setMinimized(min)
+	main.Visible = not min
+	floatLogo.Visible = min
+end
+
+-- ทะลุสิ่งกีดขวางและกระโดดซ้ำได้ตลอดอายุหน้าต่าง
+local globalNoclip = RunService.Stepped:Connect(function()
+	if State.AfkPinned then return end
+	local char = player.Character
+	if char then
+		for _, part in ipairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then part.CanCollide = false end
+		end
+	end
+end)
+-- ยกตัวละครที่จมให้ยืนบนพื้นจริง โดยคงทิศทางและความเร็วแนวราบไว้
+local antiSink = RunService.Heartbeat:Connect(function()
+	if State.AfkPinned then return end
+	local char, root, hum = getChar()
+	if not root or tweenMoving or hum:GetState() == Enum.HumanoidStateType.Seated then return end
+	-- หยุดไถลเมื่อไม่มีอินพุต แต่คงความเร็วแนวดิ่งและการกระโดดไว้
+	local state = hum:GetState()
+	if hum.MoveDirection.Magnitude < 0.1 and state ~= Enum.HumanoidStateType.Jumping
+		and state ~= Enum.HumanoidStateType.Freefall then
+		local velocity = root.AssemblyLinearVelocity
+		root.AssemblyLinearVelocity = Vector3.new(0, velocity.Y, 0)
+		root.AssemblyAngularVelocity = Vector3.zero
+	end
+	local standHeight = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
+	local list = { char }
+	local gems = workspace:FindFirstChild("EggGemDrops")
+	if gems then table.insert(list, gems) end
+	local carried = workspace:FindFirstChild("CarriedAnimals")
+	if carried then table.insert(list, carried) end
+	groundParams.FilterDescendantsInstances = list
+	local hit = workspace:Raycast(root.Position + Vector3.new(0, standHeight + 2, 0), Vector3.new(0, -60, 0), groundParams)
+	if not hit then return end
+	local standY = hit.Position.Y + standHeight
+	if root.Position.Y < standY - 0.25 then
+		root.CFrame = root.CFrame + Vector3.new(0, standY - root.Position.Y, 0)
+		local velocity = root.AssemblyLinearVelocity
+		root.AssemblyLinearVelocity = Vector3.new(velocity.X, math.max(0, velocity.Y), velocity.Z)
+	end
+end)
+local infiniteJump = UIS.JumpRequest:Connect(function()
+	if State.AfkPinned then return end
+	local _, _, hum = getChar()
+	if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+end)
+-- กันหลุดเมื่ออยู่นิ่งตลอดอายุหน้าต่าง
+local antiAfk = player.Idled:Connect(function()
+	pcall(function()
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+	end)
+end)
+gui.Destroying:Connect(function()
+	fps.cleanup()
+	State.Closed = true
+	releaseAfkPin()
+	finderResume = nil
+	State.FindMoney, State.FindBuff = false, false
+	State.AutoFarm = false
+	Callbacks.Garden(false)
+	Callbacks.CollectGems(false)
+	antiAfk:Disconnect()
+	globalNoclip:Disconnect()
+	antiSink:Disconnect()
+	infiniteJump:Disconnect()
+end)
+
+-- ปุ่มปิด
+local closeBtn = create("TextButton", {
+	AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 8),
+	Size = UDim2.fromOffset(24, 24), BackgroundColor3 = C.Row,
+	Font = Enum.Font.GothamBold, Text = "X", TextSize = 14, TextColor3 = C.SubText,
+	AutoButtonColor = true, Parent = content,
+})
+corner(closeBtn, 6)
+closeBtn.MouseButton1Click:Connect(function()
+	State.AutoFarm, State.Debug = false, false
+	Callbacks.CollectGems(false)
+	gui:Destroy()
+end)
+
+local pagesHolder = create("Frame", {
+	Position = UDim2.fromOffset(14, 76), Size = UDim2.new(1, -28, 1, -88),
+	BackgroundTransparency = 1, Parent = content,
+})
+
+---------------------------------------------------------------------
+-- Tabs / Pages
+---------------------------------------------------------------------
+local tabs = {}
+
+local function selectTab(tab)
+	for _, t in ipairs(tabs) do
+		local on = (t == tab)
+		t.page.Visible = on
+		tween(t.button, { BackgroundColor3 = on and C.Accent or C.Row })
+		t.button.TextColor3 = on and C.Knob or C.Text
+	end
+	pageTitle.Text = tab.name
+end
+
+local function addTab(name)
+	local button = create("TextButton", {
+		Size = UDim2.new(1, 0, 0, 36), LayoutOrder = #tabs + 1,
+		BackgroundColor3 = C.Row, AutoButtonColor = false,
+		Font = FONT, Text = name, TextSize = 16, TextColor3 = C.Text,
+		Parent = tabHolder,
+	})
+	corner(button, 8)
+
+	local page = create("ScrollingFrame", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		BorderSizePixel = 0, ScrollBarThickness = 3,
+		ScrollBarImageColor3 = C.Accent,
+		CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		Visible = false, Parent = pagesHolder,
+	})
+	create("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder, Parent = page })
+	create("UIPadding", { PaddingRight = UDim.new(0, 6), Parent = page })
+
+	local tab = { name = name, button = button, page = page }
+	table.insert(tabs, tab)
+	button.MouseButton1Click:Connect(function() selectTab(tab) end)
+	return page
+end
+
+---------------------------------------------------------------------
+-- Components
+---------------------------------------------------------------------
+local order = 0
+local function nextOrder() order += 1; return order end
+
+local function makeRow(page, height)
+	local row = create("Frame", {
+		Size = UDim2.new(1, 0, 0, height or 40), LayoutOrder = nextOrder(),
+		BackgroundColor3 = C.Row, BackgroundTransparency = 0.3, -- โปร่งให้เห็นรูปพื้นหลัง (ช่องเลือก/สวิตช์ยังทึบ)
+		ClipsDescendants = true, Parent = page,
+	})
+	corner(row, 8)
+	return row
+end
+
+local function makeToggle(page, text, default, callback)
+	local row = makeRow(page)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(1, -80, 0, 40) })
+
+	local track = create("TextButton", {
+		AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0),
+		Size = UDim2.fromOffset(48, 24), BackgroundColor3 = C.Off,
+		Text = "", AutoButtonColor = false, Parent = row,
+	})
+	corner(track, 12)
+	local knob = create("Frame", {
+		Size = UDim2.fromOffset(18, 18), Position = UDim2.new(0, 3, 0.5, -9),
+		BackgroundColor3 = C.Text, Parent = track,
+	})
+	corner(knob, 9)
+
+	local state = false
+	local function set(v, silent)
+		state = v
+		tween(track, { BackgroundColor3 = v and C.Accent or C.Off })
+		tween(knob, {
+			Position = v and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9),
+			BackgroundColor3 = v and C.Knob or C.Text,
+		})
+		if not silent and callback then task.spawn(callback, v) end
+	end
+	track.MouseButton1Click:Connect(function() set(not state) end)
+	set(default or false, true)
+	return { Set = set, Get = function() return state end }
+end
+
+local function makeButton(page, text, callback)
+	local row = makeRow(page)
+	local b = create("TextButton", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		Font = FONT, Text = text, TextSize = 16, TextColor3 = C.Accent, Parent = row,
+	})
+	b.MouseButton1Click:Connect(function()
+		tween(row, { BackgroundColor3 = C.Input }, 0.08)
+		task.delay(0.1, function() tween(row, { BackgroundColor3 = C.Row }) end)
+		if callback then task.spawn(callback) end
+	end)
+end
+
+local function makeNote(page, text)
+	return label(page, text, {
+		Size = UDim2.new(1, 0, 0, 18), LayoutOrder = nextOrder(),
+		TextSize = 13, TextColor3 = C.SubText,
+	})
+end
+
+local function makeTextBox(page, text, default, callback)
+	local row = makeRow(page)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(0.45, -12, 1, 0) })
+	local box = create("TextBox", {
+		Position = UDim2.new(0.45, 0, 0, 6), Size = UDim2.new(0.55, -8, 0, 28),
+		BackgroundColor3 = C.Input, Font = FONT, Text = default or "",
+		TextSize = 15, TextColor3 = C.Text, ClearTextOnFocus = false, Parent = row,
+	})
+	corner(box, 6)
+	box.FocusLost:Connect(function() if callback then callback(box.Text) end end)
+	return box
+end
+
+local function makeDropdown(page, text, options, default, callback)
+	local ROW_H, ITEM_H, GAP = 40, 28, 4
+	local row = makeRow(page, ROW_H)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(0.45, -12, 0, ROW_H) })
+
+	local btn = create("TextButton", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 6),
+		Size = UDim2.new(0.55, -8, 0, ROW_H - 12), BackgroundColor3 = C.Input,
+		Text = "", AutoButtonColor = false, Parent = row,
+	})
+	corner(btn, 6)
+	local valueLabel = label(btn, "", { Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -34, 1, 0), TextSize = 15 })
+	local arrow = label(btn, "v", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -10, 0, 0),
+		Size = UDim2.new(0, 16, 1, 0), TextXAlignment = Enum.TextXAlignment.Right,
+		TextColor3 = C.Accent, Font = Enum.Font.GothamBold,
+	})
+
+	local list = create("Frame", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, ROW_H),
+		Size = UDim2.new(0.55, -8, 0, 0), BackgroundTransparency = 1, Parent = row,
+	})
+	create("UIListLayout", { Padding = UDim.new(0, GAP), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
+
+	local isOpen, current, opts = false, nil, {}
+
+	local function setOpen(v)
+		isOpen = v
+		local h = v and (ROW_H + #opts * (ITEM_H + GAP) + 4) or ROW_H
+		tween(row, { Size = UDim2.new(1, 0, 0, h) })
+		arrow.Text = v and "^" or "v"
+	end
+
+	local function set(v, silent)
+		current = v
+		valueLabel.Text = v or "-- เลือก --"
+		if not silent and callback then task.spawn(callback, v) end
+	end
+
+	local function setOptions(newOpts)
+		opts = newOpts or {}
+		for _, c in ipairs(list:GetChildren()) do
+			if c:IsA("TextButton") then c:Destroy() end
+		end
+		list.Size = UDim2.new(0.55, -8, 0, #opts * (ITEM_H + GAP))
+		for i, o in ipairs(opts) do
+			local item = create("TextButton", {
+				Size = UDim2.new(1, 0, 0, ITEM_H), LayoutOrder = i,
+				BackgroundColor3 = C.Input, AutoButtonColor = true,
+				Font = FONT, Text = o, TextSize = 14, TextColor3 = C.Text, Parent = list,
+			})
+			corner(item, 6)
+			item.MouseButton1Click:Connect(function()
+				set(o)
+				setOpen(false)
+			end)
+		end
+		if isOpen then setOpen(true) end
+	end
+
+	btn.MouseButton1Click:Connect(function() setOpen(not isOpen) end)
+	setOptions(options)
+	set(default, true)
+	return { Set = set, Get = function() return current end, SetOptions = setOptions }
+end
+
+-- เลือกได้หลายตัว (selected = ตาราง { [ชื่อ] = true }) ไม่เลือกเลย = ทั้งหมด
+local function makeMultiSelect(page, text, options, selected, callback, clearText, emptyText, optionColors)
+	local ROW_H, ITEM_H, GAP = 40, 28, 4
+	local CLEAR = clearText or "ล้าง (ทั้งหมด)"
+	local row = makeRow(page, ROW_H)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(0.45, -12, 0, ROW_H) })
+
+	local btn = create("TextButton", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 6),
+		Size = UDim2.new(0.55, -8, 0, ROW_H - 12), BackgroundColor3 = C.Input,
+		Text = "", AutoButtonColor = false, Parent = row,
+	})
+	corner(btn, 6)
+	local valueLabel = label(btn, "", {
+		Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -34, 1, 0), TextSize = 15,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+	})
+	local arrow = label(btn, "v", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -10, 0, 0),
+		Size = UDim2.new(0, 16, 1, 0), TextXAlignment = Enum.TextXAlignment.Right,
+		TextColor3 = C.Accent, Font = Enum.Font.GothamBold,
+	})
+	local list = create("Frame", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, ROW_H),
+		Size = UDim2.new(0.55, -8, 0, 0), BackgroundTransparency = 1, Parent = row,
+	})
+	create("UIListLayout", { Padding = UDim.new(0, GAP), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
+
+	local isOpen, opts, items = false, nil, {}
+
+	local function refreshText()
+		local names = {}
+		for _, o in ipairs(opts) do if selected[o] then table.insert(names, o) end end
+		for o in pairs(selected) do if not table.find(names, o) then table.insert(names, o) end end
+		valueLabel.Text = #names == 0 and (emptyText or "ทั้งหมด") or table.concat(names, ", ")
+		for o, item in pairs(items) do
+			local on = selected[o] == true
+			item.BackgroundColor3 = on and C.Accent or C.Input
+			local color = optionColors and optionColors[o]
+			-- สีเดียวตามความหายาก + ขอบอักษรสีดำ ให้อ่านได้แม้พื้นหลังถูกเลือก (เขียว)
+			item.TextColor3 = color or (on and C.Knob or C.Text)
+			item.TextStrokeColor3 = Color3.new(0, 0, 0)
+			item.TextStrokeTransparency = color and 0 or 1
+		end
+	end
+
+	local function setOpen(v)
+		isOpen = v
+		local h = v and (ROW_H + (#opts + 1) * (ITEM_H + GAP) + 4) or ROW_H
+		tween(row, { Size = UDim2.new(1, 0, 0, h) })
+		arrow.Text = v and "^" or "v"
+	end
+
+	local function changed()
+		refreshText()
+		if callback then task.spawn(callback, selected) end
+	end
+
+	local function setOptions(newOpts, newColors)
+		newOpts = newOpts or {}
+		local colors = newColors or optionColors
+		-- ไม่สร้างรายการซ้ำขณะเปิดอยู่ ถ้าชื่อ ลำดับ และสียังเหมือนเดิม
+		local same = opts ~= nil and #opts == #newOpts
+		if same then
+			for i, name in ipairs(newOpts) do
+				if opts[i] ~= name or (optionColors and optionColors[name]) ~= (colors and colors[name]) then
+					same = false
 					break
 				end
 			end
 		end
-		if sCLpjv ~= nil then TQkqpqt = sCLpjv end
-		if jcxDXcHms then ZqKRRgzj() return end
-		bZIXsfG = eBAfmDr
-		for NRzHjvyk, vLOvlrm in ipairs(hPALxDEK:jsMboNIH()) do
-			if vLOvlrm:AEHHlgP(string.char(103,72,89,121,80,77)) then vLOvlrm:XKSfnGqSj() end
+		if newColors ~= nil then optionColors = newColors end
+		if same then refreshText() return end
+		opts = newOpts
+		for _, c in ipairs(list:GetChildren()) do
+			if c:IsA("TextButton") then c:Destroy() end
 		end
-		QVXXiR = {}
-		hPALxDEK.RTWaTBAXE = RTbBaU.vMEhDl(0.55, -8, 0, (#bZIXsfG + 1) * (RFOFBaLz + GxSGCiHIu))
-		local FJkuVb = UVDbNAlAC(string.char(103,72,89,121,80,77), {
-			RTWaTBAXE = RTbBaU.vMEhDl(1, 0, 0, RFOFBaLz), lTcvfWLOi = 0, aDJTpFP = OfDXiUEcL.FOyssyLa,
-			lgaLZf = true, DoMCQPsk = VKAIOUUD, gerFhc = DpSkHYO, uRDpnM = 14,
-			lgBXrAQI = OfDXiUEcL.yrtpLDLU, OjQGoB = hPALxDEK,
+		items = {}
+		list.Size = UDim2.new(0.55, -8, 0, (#opts + 1) * (ITEM_H + GAP))
+		local clear = create("TextButton", {
+			Size = UDim2.new(1, 0, 0, ITEM_H), LayoutOrder = 0, BackgroundColor3 = C.Row,
+			AutoButtonColor = true, Font = FONT, Text = CLEAR, TextSize = 14,
+			TextColor3 = C.SubText, Parent = list,
 		})
-		klvPZAOC(FJkuVb, 6)
-		FJkuVb.hnFBaPKH:oRlmCQw(function()
-			for xIySkVlP in pairs(lVyAoChm) do lVyAoChm[xIySkVlP] = nil end
-			fpxNeFS()
+		corner(clear, 6)
+		clear.MouseButton1Click:Connect(function()
+			for k in pairs(selected) do selected[k] = nil end
+			changed()
 		end)
-		for xjUusuzCV, BPeGsDNW in ipairs(bZIXsfG) do
-			local rTazqBm = UVDbNAlAC(string.char(103,72,89,121,80,77), {
-				RTWaTBAXE = RTbBaU.vMEhDl(1, 0, 0, RFOFBaLz), lTcvfWLOi = xjUusuzCV,
-				aDJTpFP = OfDXiUEcL.Tgrtlsq, lgaLZf = true,
-				DoMCQPsk = VKAIOUUD, gerFhc = BPeGsDNW, uRDpnM = 14, lgBXrAQI = OfDXiUEcL.gerFhc, OjQGoB = hPALxDEK,
+		for i, o in ipairs(opts) do
+			local item = create("TextButton", {
+				Size = UDim2.new(1, 0, 0, ITEM_H), LayoutOrder = i,
+				BackgroundColor3 = C.Input, AutoButtonColor = true,
+				Font = FONT, Text = o, TextSize = 14, TextColor3 = C.Text, Parent = list,
 			})
-			klvPZAOC(rTazqBm, 6)
-			QVXXiR[BPeGsDNW] = rTazqBm
-			rTazqBm.hnFBaPKH:oRlmCQw(function()
-				lVyAoChm[BPeGsDNW] = (not lVyAoChm[BPeGsDNW]) or nil
-				fpxNeFS()
+			corner(item, 6)
+			items[o] = item
+			item.MouseButton1Click:Connect(function()
+				selected[o] = (not selected[o]) or nil
+				changed()
 			end)
 		end
-		ZqKRRgzj()
-		if mTyjpiT then rrKflVREh(true) end
+		refreshText()
+		if isOpen then setOpen(true) end
 	end
 
-	ulXTCNm.hnFBaPKH:oRlmCQw(function() rrKflVREh(not mTyjpiT) end)
-	mNqZmZPS(rOPGIbsua)
-	return { ltnyQNT = mNqZmZPS }
+	btn.MouseButton1Click:Connect(function() setOpen(not isOpen) end)
+	setOptions(options)
+	return { SetOptions = setOptions }
 end
 
+---------------------------------------------------------------------
+-- Build pages
+---------------------------------------------------------------------
+-- 1) ฟาร์ม
+local farmPage = addTab("ฟาร์ม")
+local eggPicker, lastEggList
+local refreshAnimalList -- สร้างหลังตัวเลือกสัตว์ แล้วเรียกเมื่อเปลี่ยนโซน
 
-
-
-
-local RRibGTAn = ECjiGM(string.char(3615,3634,3619,3660,3617))
-local KVrdnvb, atsdbNwdG
-local IMtMtt 
-
-
-local function VyFCwf()
-	if not KVrdnvb then return end
-	local hPALxDEK = Bbqusff(CXVuWtxvd.XZXZKTNsN)
-	local sueNUhnoN = cSwXLEa.WFAkMJcEp(hPALxDEK, string.char(124))
-	if sueNUhnoN ~= atsdbNwdG then
-		atsdbNwdG = sueNUhnoN
-		KVrdnvb.ltnyQNT(hPALxDEK)
+-- อัปเดตรายชื่อไข่ของโซนที่เลือก (เรียกตอนเปลี่ยนโซน และวนเช็กเองทุก 1.5 วิ)
+local function refreshEggList()
+	if not eggPicker then return end
+	local list = eggTypesOf(State.Zone)
+	local key = table.concat(list, "|")
+	if key ~= lastEggList then
+		lastEggList = key
+		eggPicker.SetOptions(list)
 	end
 end
 
-cdvYLKT(RRibGTAn, string.char(3648,3621,3639,3629,3585,3650,3595,3609), VlKiHUhTl.AVBMchkv, CXVuWtxvd.XZXZKTNsN, function(wcBtyZAmT)
-	CXVuWtxvd.XZXZKTNsN = wcBtyZAmT
-	for xIySkVlP in pairs(CXVuWtxvd.AgNsYpmC) do CXVuWtxvd.AgNsYpmC[xIySkVlP] = nil end   
-	atsdbNwdG = nil
-	VyFCwf()
-	if IMtMtt then IMtMtt() end
-	xjXmKDyks.UpbNaiu(wcBtyZAmT)
+makeDropdown(farmPage, "เลือกโซน", CONFIG.ZoneOrder, State.Zone, function(zone)
+	State.Zone = zone
+	for k in pairs(State.Eggs) do State.Eggs[k] = nil end   -- ไข่ของโซนเก่าใช้ไม่ได้แล้ว
+	lastEggList = nil
+	refreshEggList()
+	if refreshAnimalList then refreshAnimalList() end
+	Callbacks.ZoneChanged(zone)
 end)
 
-
-disIXrdT = CgAsMfkOA(RRibGTAn, string.char(3648,3619,3636,3656,3617,3615,3634,3619,3660,3617), false, function(xSwBVDMV)
-	if xSwBVDMV then LJlTUwOh() end
-	if xSwBVDMV and (CXVuWtxvd.FpIeHOGRu or CXVuWtxvd.VKPWyMWkC) then disIXrdT.uVoYRFcAw(false) return end
-	if xSwBVDMV and CXVuWtxvd.xfYqgLY then
-		WaNHxCjx.uVoYRFcAw(false)
-		if not mZUgyOK(function() return CXVuWtxvd.VKPWyMWkC or CXVuWtxvd.FpIeHOGRu or not disIXrdT.ckCRGHFP() end) then return end
+-- เปิด/ปิดเริ่มฟาร์ม = เปิด/ปิดเก็บเพชรด้วย (ปิดเก็บเพชรแยกได้ ฟาร์มยังทำงานต่อ)
+farmToggle = makeToggle(farmPage, "เริ่มฟาร์ม", false, function(on)
+	if on then releaseAfkPin() end
+	if on and (State.DeliveryBusy or State.Closed) then farmToggle.Set(false) return end
+	if on and State.Garden then
+		gardenToggle.Set(false)
+		if not waitForMotion(function() return State.Closed or State.DeliveryBusy or not farmToggle.Get() end) then return end
 	end
-	if imSKaMlSo then imSKaMlSo.uVoYRFcAw(xSwBVDMV and not iDPqQkI) end
-	xjXmKDyks.AUVOWGvO(xSwBVDMV)
+	if gemToggle then gemToggle.Set(on and not finderResume) end
+	Callbacks.AutoFarm(on)
 end)
-imSKaMlSo = CgAsMfkOA(RRibGTAn, string.char(3648,3585,3655,3610,3648,3614,3594,3619), false, function(xSwBVDMV)
-	if xSwBVDMV then LJlTUwOh() end
-	if xSwBVDMV and (CXVuWtxvd.xfYqgLY or CXVuWtxvd.FpIeHOGRu or CXVuWtxvd.VKPWyMWkC) then imSKaMlSo.uVoYRFcAw(false) return end
-	xjXmKDyks.xSxFpDU(xSwBVDMV)
+gemToggle = makeToggle(farmPage, "เก็บเพชร", false, function(on)
+	if on then releaseAfkPin() end
+	if on and (State.Garden or State.DeliveryBusy or State.Closed) then gemToggle.Set(false) return end
+	Callbacks.CollectGems(on)
 end)
 
-KVrdnvb = ZwQOir(RRibGTAn, string.char(3648,3621,3639,3629,3585,3652,3586,3656), {}, CXVuWtxvd.AgNsYpmC, function()
-	uvOWjLcj(string.char(3648,3621,3639,3629,3585,3652,3586,3656,58), next(CXVuWtxvd.AgNsYpmC) and string.char(3605,3633,3657,3591,3649,3621,3657,3623) or string.char(3607,3640,3585,3594,3609,3636,3604))
-end, string.char(3621,3657,3634,3591,32,40,3607,3640,3585,3594,3609,3636,3604,41))
-VyFCwf()
-SrYEQZw.UzBcgssqK(function()
-	while OYygnfK.OjQGoB do
-		VyFCwf()
-		SrYEQZw.YVpolrAK(1.5)
+eggPicker = makeMultiSelect(farmPage, "เลือกไข่", {}, State.Eggs, function()
+	say("เลือกไข่:", next(State.Eggs) and "ตั้งแล้ว" or "ทุกชนิด")
+end, "ล้าง (ทุกชนิด)")
+refreshEggList()
+task.spawn(function()
+	while gui.Parent do
+		refreshEggList()
+		task.wait(1.5)
 	end
 end)
-cdvYLKT(RRibGTAn, string.char(3621,3635,3604,3633,3610,3585,3634,3619,3605,3637), { gMsrXDv, eZotFIyck, sqkwVAZc }, CXVuWtxvd.dCCFlPRLv, function(SVaexE)
-	CXVuWtxvd.dCCFlPRLv = SVaexE
-	uvOWjLcj(string.char(3621,3635,3604,3633,3610,3585,3634,3619,3605,3637,58), SVaexE)
+makeDropdown(farmPage, "ลำดับการตี", { PRIORITY_NEAR, PRIORITY_RARE, PRIORITY_LUCK }, State.Priority, function(p)
+	State.Priority = p
+	say("ลำดับการตี:", p)
 end)
-RGfqlqziM(RRibGTAn, string.char(42,32,3619,3634,3618,3594,3639,3656,3629,3652,3586,3656,3629,3633,3611,3648,3604,3605,3648,3629,3591,3605,3634,3617,3650,3595,3609,3607,3637,3656,3648,3621,3639,3629,3585,32,40,3648,3621,3639,3629,3585,3652,3604,3657,3627,3621,3634,3618,3594,3609,3636,3604,41))
-EJyuHQwNR = twBTVlY(RRibGTAn, string.char(3626,3606,3634,3609,3632,58,32,3614,3619,3657,3629,3617), {
-	RTWaTBAXE = RTbBaU.vMEhDl(1, 0, 0, 20), lTcvfWLOi = dJStHUu(),
-	uRDpnM = 13, lgBXrAQI = OfDXiUEcL.huMNbinWM, vcUdHQ = qDcOCKb.vcUdHQ.hfrCmus,
+makeNote(farmPage, "* รายชื่อไข่อัปเดตเองตามโซนที่เลือก (เลือกได้หลายชนิด)")
+statusLabel = label(farmPage, "สถานะ: พร้อม", {
+	Size = UDim2.new(1, 0, 0, 20), LayoutOrder = nextOrder(),
+	TextSize = 13, TextColor3 = C.Accent, TextTruncate = Enum.TextTruncate.AtEnd,
 })
 
-
-local MlNAoN = ECjiGM(string.char(3627,3634,3605,3633,3623))
-local SFEzMvUe = { rriKVtZP = nil, HbnnPSL = {}, RbcfQbBB = {}, OENnmx = {},
-	EujgVTXsW = string.char(3585,3621,3633,3610,3610,3657,3634,3609), nDFQfhhyu = string.char(3585,3621,3633,3610,3610,3657,3634,3609) }
-local ZkFGquspi = string.char(102,70,118,86,114,97,116,99,46,101,87,108,68,72,120,117)
-local dresEX, CTuKztjHC, NTEJHBJR, WzABHwDc = {}, {}, false, 0
-DXClww(function()
-	if mtwJcI and mtwJcI(ZkFGquspi) then
-		local ykgMIy = QPOZTgMMh:XhyMtybls(hVveaPW(ZkFGquspi))
-		
-		if type(ykgMIy.CTuKztjHC) == string.char(99,83,119,88,76,69,97) then
-			for XngYRHxfI, atugDS in pairs(ykgMIy.CTuKztjHC) do
-				if type(XngYRHxfI) == string.char(90,102,121,101,78,67,120,108,74) and type(atugDS) == string.char(90,102,121,101,78,67,120,108,74) and atugDS:oVUySul(string.char(94,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,36)) then
-					CTuKztjHC[XngYRHxfI] = atugDS
+-- 2) หาตัว
+local findPage = addTab("หาตัว")
+local Finder = { Minimum = nil, Secondary = {}, Animals = {}, Buffs = {},
+	MoneyDestination = "กลับบ้าน", BuffDestination = "กลับบ้าน" }
+local ANIMAL_FILE = "FarmHub_animals.json"
+local animalNames, rarityColors, animalsDirty, animalSaveAt = {}, {}, false, 0
+pcall(function()
+	if isfile and isfile(ANIMAL_FILE) then
+		local saved = HttpService:JSONDecode(readfile(ANIMAL_FILE))
+		-- โหลดสีประจำความหายากก่อน เพื่อไม่ให้สีเก่ารายชื่อมาเขียนทับ
+		if type(saved.rarityColors) == "table" then
+			for rarity, hex in pairs(saved.rarityColors) do
+				if type(rarity) == "string" and type(hex) == "string" and hex:match("^%x%x%x%x%x%x$") then
+					rarityColors[rarity] = hex
 				end
 			end
 		end
-		for wcBtyZAmT, LlMTYX in pairs(ykgMIy) do
-			if wcBtyZAmT ~= string.char(67,84,117,75,122,116,106,72,67) and type(wcBtyZAmT) == string.char(90,102,121,101,78,67,120,108,74) and type(LlMTYX) == string.char(99,83,119,88,76,69,97) then
-				dresEX[wcBtyZAmT] = {}
-				
-				for sueNUhnoN, kyvHRk in pairs(LlMTYX) do
-					if type(sueNUhnoN) == string.char(86,86,88,99,115,102,70,116,80) and type(kyvHRk) == string.char(90,102,121,101,78,67,120,108,74) then
-						dresEX[wcBtyZAmT][kyvHRk] = {}
-					elseif type(sueNUhnoN) == string.char(90,102,121,101,78,67,120,108,74) and type(kyvHRk) == string.char(99,83,119,88,76,69,97) then
-						dresEX[wcBtyZAmT][sueNUhnoN] = {
-							oaSfTb = type(kyvHRk.oaSfTb) == string.char(90,102,121,101,78,67,120,108,74) and kyvHRk.oaSfTb or nil,
+		for zone, names in pairs(saved) do
+			if zone ~= "rarityColors" and type(zone) == "string" and type(names) == "table" then
+				animalNames[zone] = {}
+				-- รองรับทั้งรายการชื่อเดิม และตารางชื่อพร้อมความหายาก/สี
+				for key, value in pairs(names) do
+					if type(key) == "number" and type(value) == "string" then
+						animalNames[zone][value] = {}
+					elseif type(key) == "string" and type(value) == "table" then
+						animalNames[zone][key] = {
+							Rarity = type(value.Rarity) == "string" and value.Rarity or nil,
 						}
-						
-						local XngYRHxfI = dresEX[wcBtyZAmT][sueNUhnoN].oaSfTb
-						if XngYRHxfI and XngYRHxfI ~= string.char() and not CTuKztjHC[XngYRHxfI]
-							and type(kyvHRk.tvVLnaJJk) == string.char(90,102,121,101,78,67,120,108,74) and kyvHRk.tvVLnaJJk:oVUySul(string.char(94,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,37,74,110,103,118,114,117,36)) then
-							CTuKztjHC[XngYRHxfI], NTEJHBJR = kyvHRk.tvVLnaJJk, true
+						-- ย้ายสีรายชื่อจากไฟล์เดิมมาใช้ครั้งแรกของความหายากนั้น
+						local rarity = animalNames[zone][key].Rarity
+						if rarity and rarity ~= "" and not rarityColors[rarity]
+							and type(value.Color) == "string" and value.Color:match("^%x%x%x%x%x%x$") then
+							rarityColors[rarity], animalsDirty = value.Color, true
 						end
 					end
 				end
@@ -677,705 +2443,706 @@ DXClww(function()
 	end
 end)
 
-
-DXClww(function()
-	local oiuRfI = leWCDdwba:AAZfTWh(string.char(68,112,72,77,113,119))
-	if not oiuRfI then return end
-	for NRzHjvyk, tpNVhJxH in ipairs(oiuRfI:jsMboNIH()) do
-		if tpNVhJxH:AEHHlgP(string.char(79,72,113,99,97,120)) then
-			local gEvwdms, gzVdnSe = nil, -1
-			for NRzHjvyk, qFeFlcRDr in ipairs(tpNVhJxH.tvVLnaJJk.JHsrMSJZ) do
-				local rBXdFLYrw, cRBsGwD, nucpOhWeE = qFeFlcRDr.TJxsRg:BrQotd()
-				local LQMQFUam = cRBsGwD * nucpOhWeE
-				if LQMQFUam > gzVdnSe then gEvwdms, gzVdnSe = qFeFlcRDr.TJxsRg, LQMQFUam end
+-- สีประจำความหายากจากแม่แบบเกม: ใช้สีที่สดที่สุดในไล่ระดับ (สีเดียว อ่านง่าย) ทับสีเก่าที่ซีด
+pcall(function()
+	local rarities = ReplicatedStorage:FindFirstChild("Rarities")
+	if not rarities then return end
+	for _, gradient in ipairs(rarities:GetChildren()) do
+		if gradient:IsA("UIGradient") then
+			local best, bestScore = nil, -1
+			for _, kp in ipairs(gradient.Color.Keypoints) do
+				local h, s, v = kp.Value:ToHSV()
+				local score = s * v
+				if score > bestScore then best, bestScore = kp.Value, score end
 			end
-			if gEvwdms then
-				local rBXdFLYrw, cRBsGwD, nucpOhWeE = gEvwdms:BrQotd()
-				gEvwdms = EPrASK.dQiXhyv(rBXdFLYrw, cRBsGwD, bahPrfK.GOccQG(nucpOhWeE, 0.85)) 
-				local atugDS = gEvwdms:upAInbDGA()
-				if CTuKztjHC[tpNVhJxH.YDRUhpuYE] ~= atugDS then CTuKztjHC[tpNVhJxH.YDRUhpuYE], NTEJHBJR = atugDS, true end
-			end
-		end
-	end
-end)
-
-local function gMttTnD()
-	local hxMWBdXnd = CXVuWtxvd.XZXZKTNsN:oVUySul(string.char(40,37,101,105,105,116,81,79,109,43,41,36))
-	return hxMWBdXnd and string.char(88,90,88,90,75,84,78,115,78) .. hxMWBdXnd
-end
-
-RGfqlqziM(MlNAoN, string.char(3627,3634,3605,3634,3617,3648,3591,3636,3609,3605,3656,3629,3623,3636,3609,3634,3607,3637))
-local wenxhqVWS
-local function VVqzaQVH(ZewFqfg)
-	SFEzMvUe.rriKVtZP = KIzNjlAb(ZewFqfg)
-	if wenxhqVWS then
-		wenxhqVWS.gerFhc = SFEzMvUe.rriKVtZP and (string.char(3586,3633,3657,3609,3605,3656,3635,32) .. ZfyeNCxlJ.uhBgwIhN(string.char(37,46,54,103), SFEzMvUe.rriKVtZP) .. string.char(32,3605,3656,3629,3623,3636,3609,3634,3607,3637))
-			or string.char(3652,3617,3656,3605,3633,3657,3591,3586,3633,3657,3609,3605,3656,3635,58,32,3651,3594,3657,3648,3593,3614,3634,3632,3605,3633,3623,3629,3633,3609,3604,3633,3610,32,50)
-	end
-end
-local HVNVXyy = qPXGJuI(MlNAoN, string.char(3648,3591,3636,3609,3586,3633,3657,3609,3605,3656,3635,47,3623,3636), string.char(), VVqzaQVH)
-wenxhqVWS = RGfqlqziM(MlNAoN, string.char(3652,3617,3656,3605,3633,3657,3591,3586,3633,3657,3609,3605,3656,3635,58,32,3651,3594,3657,3648,3593,3614,3634,3632,3605,3633,3623,3629,3633,3609,3604,3633,3610,32,50))
-
-HVNVXyy:nuwSVgAXm(string.char(103,101,114,70,104,99)):oRlmCQw(function() VVqzaQVH(HVNVXyy.gerFhc) end)
-local RPDWQMU = ZwQOir(MlNAoN, string.char(3605,3633,3623,3629,3633,3609,3604,3633,3610,32,50), {}, SFEzMvUe.HbnnPSL, nil, string.char(3621,3657,3634,3591,32,40,3652,3617,3656,3648,3621,3639,3629,3585,41), string.char(3652,3617,3656,3648,3621,3639,3629,3585))
-cdvYLKT(MlNAoN, string.char(3614,3634,3652,3611,3607,3637,3656), { string.char(3585,3621,3633,3610,3610,3657,3634,3609), string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) }, SFEzMvUe.EujgVTXsW, function(nucpOhWeE)
-	SFEzMvUe.EujgVTXsW = nucpOhWeE
-end)
-local vvoqmx, pkuktCbv
-vvoqmx = CgAsMfkOA(MlNAoN, string.char(3648,3611,3636,3604,3627,3634,3605,3633,3623,32,40,3585,3621,3640,3656,3617,32,49,41), false, function(xSwBVDMV)
-	if xSwBVDMV then VVqzaQVH(HVNVXyy.gerFhc) LJlTUwOh() end
-	if xSwBVDMV and (CXVuWtxvd.FpIeHOGRu or CXVuWtxvd.VKPWyMWkC) then vvoqmx.uVoYRFcAw(false) return end
-	CXVuWtxvd.OPxkNSmws = xSwBVDMV
-end)
-RGfqlqziM(MlNAoN, string.char(3627,3634,3605,3633,3623,3605,3636,3604,3610,3633,3614))
-cdvYLKT(MlNAoN, string.char(3614,3634,3652,3611,3607,3637,3656), { string.char(3585,3621,3633,3610,3610,3657,3634,3609), string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) }, SFEzMvUe.nDFQfhhyu, function(nucpOhWeE)
-	SFEzMvUe.nDFQfhhyu = nucpOhWeE
-end)
-pkuktCbv = CgAsMfkOA(MlNAoN, string.char(3648,3611,3636,3604,3627,3634,3605,3633,3623,3605,3636,3604,3610,3633,3614,32,40,3585,3621,3640,3656,3617,32,50,41), false, function(xSwBVDMV)
-	if xSwBVDMV then LJlTUwOh() end
-	if xSwBVDMV and (CXVuWtxvd.FpIeHOGRu or CXVuWtxvd.VKPWyMWkC) then pkuktCbv.uVoYRFcAw(false) return end
-	CXVuWtxvd.opCResGD = xSwBVDMV
-end)
-local YNjjssl = ZwQOir(MlNAoN, string.char(3605,3633,3623), {}, SFEzMvUe.RbcfQbBB)
-ZwQOir(MlNAoN, string.char(3610,3633,3614), { string.char(69,114,71,90,99,98,102,90), string.char(87,98,72,87,113,100,75,79), string.char(90,82,121,84,114,120), string.char(77,100,83,79,103,111), string.char(109,87,89,75,111,74), string.char(112,102,73,113,85,69), string.char(117,74,80,101,106,90,116), string.char(72,90,106,82,106,105,86,81,75) },
-	SFEzMvUe.OENnmx, nil, string.char(3621,3657,3634,3591,32,40,3652,3617,3656,3648,3621,3639,3629,3585,41), string.char(3652,3617,3656,3648,3621,3639,3629,3585))
-RGfqlqziM(MlNAoN, string.char(42,32,3585,3621,3640,3656,3617,32,50,32,3605,3657,3629,3591,3648,3621,3639,3629,3585,3610,3633,3614,3629,3618,3656,3634,3591,3609,3657,3629,3618,3627,3609,3638,3656,3591,3594,3609,3636,3604))
-local kMmTnES = RGfqlqziM(MlNAoN, string.char(3626,3606,3634,3609,3632,3627,3634,3605,3633,3623,32,3619,3629,3648,3611,3636,3604,3651,3594,3657,3591,3634,3609))
-local tnrTCPxOu, MEKFAy
-IMtMtt = function()
-	local ZJdKGiNoL = ZolKMNHdw:AAZfTWh(string.char(112,122,99,68,84,120,79,67))
-	if ZJdKGiNoL then
-		for NRzHjvyk, AgoJYIhlU in ipairs(ZJdKGiNoL:jsMboNIH()) do
-			local wcBtyZAmT, fbMkQuN = AgoJYIhlU:MCQxulAJS(string.char(90,120,87,89,103,77,102)), AgoJYIhlU:MCQxulAJS(string.char(99,117,80,81,100,83))
-			if type(wcBtyZAmT) == string.char(90,102,121,101,78,67,120,108,74) and type(fbMkQuN) == string.char(90,102,121,101,78,67,120,108,74) and fbMkQuN ~= string.char() then
-				dresEX[wcBtyZAmT] = dresEX[wcBtyZAmT] or {}
-				local Lkllwutl = dresEX[wcBtyZAmT][fbMkQuN]
-				if not Lkllwutl then
-					Lkllwutl = {}
-					dresEX[wcBtyZAmT][fbMkQuN], NTEJHBJR = Lkllwutl, true
-				end
-				local XngYRHxfI = AgoJYIhlU:MCQxulAJS(string.char(111,97,83,102,84,98))
-				local NMmOTAtje = AgoJYIhlU:AAZfTWh(string.char(98,116,77,89,105,75,76,83,72))
-				local dNQQHp = NMmOTAtje and NMmOTAtje:AAZfTWh(string.char(83,120,72,65,121,69,67))
-				local KdVXqR = dNQQHp and dNQQHp:AAZfTWh(string.char(105,98,68,73,69,76,116,72,97))
-				local IeEQfqW = KdVXqR and KdVXqR:AAZfTWh(string.char(111,97,83,102,84,98))
-				local ypYjrGZF = IeEQfqW and IeEQfqW:AAZfTWh(string.char(76,82,74,101,100,111,67))
-				local tpNVhJxH = ypYjrGZF and ypYjrGZF:LfSVoVzv(string.char(79,72,113,99,97,120))
-				if type(XngYRHxfI) ~= string.char(90,102,121,101,78,67,120,108,74) or XngYRHxfI == string.char() then
-					XngYRHxfI = tpNVhJxH and tpNVhJxH:MCQxulAJS(string.char(111,97,83,102,84,98))
-				end
-				if type(XngYRHxfI) == string.char(90,102,121,101,78,67,120,108,74) and XngYRHxfI ~= string.char() and Lkllwutl.oaSfTb ~= XngYRHxfI then
-					Lkllwutl.oaSfTb, NTEJHBJR = XngYRHxfI, true
-				end
-				
-				if Lkllwutl.oaSfTb and not CTuKztjHC[Lkllwutl.oaSfTb] then
-					local mQBetxKv = tpNVhJxH and tpNVhJxH.tvVLnaJJk.JHsrMSJZ[1] and tpNVhJxH.tvVLnaJJk.JHsrMSJZ[1].TJxsRg
-					if not mQBetxKv and ypYjrGZF and ypYjrGZF:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) then mQBetxKv = ypYjrGZF.lgBXrAQI end
-					if mQBetxKv then CTuKztjHC[Lkllwutl.oaSfTb], NTEJHBJR = mQBetxKv:upAInbDGA(), true end
-				end
+			if best then
+				local h, s, v = best:ToHSV()
+				best = Color3.fromHSV(h, s, math.max(v, 0.85)) -- ให้สว่างพอบนพื้นมืด
+				local hex = best:ToHex()
+				if rarityColors[gradient.Name] ~= hex then rarityColors[gradient.Name], animalsDirty = hex, true end
 			end
 		end
 	end
-	local wcBtyZAmT, hPALxDEK, GQOekhS, xfTlPGa, QpopOi = gMttTnD(), {}, {}, {}, {}
-	
-	local LlMTYX = {}
-	for fbMkQuN, Lkllwutl in pairs(dresEX[wcBtyZAmT] or {}) do LlMTYX[fbMkQuN] = Lkllwutl end
-	for fbMkQuN, Lkllwutl in pairs(HQVKzo[wcBtyZAmT] or {}) do LlMTYX[fbMkQuN] = Lkllwutl end
-	for fbMkQuN, Lkllwutl in pairs(LlMTYX) do
-		cSwXLEa.ygebQasKQ(hPALxDEK, fbMkQuN)
-		xfTlPGa[fbMkQuN] = MouglwRH(Lkllwutl.oaSfTb)
-		local atugDS = CTuKztjHC[Lkllwutl.oaSfTb]
-		if atugDS then GQOekhS[fbMkQuN] = EPrASK.QQdZvK(atugDS) end
+end)
+
+local function selectedZoneId()
+	local n = State.Zone:match("(%d+)$")
+	return n and "Zone" .. n
+end
+
+makeNote(findPage, "หาตามเงินต่อวินาที")
+local minimumNote
+local function updateMinimum(text)
+	Finder.Minimum = parseMoney(text)
+	if minimumNote then
+		minimumNote.Text = Finder.Minimum and ("ขั้นต่ำ " .. string.format("%.6g", Finder.Minimum) .. " ต่อวินาที")
+			or "ไม่ตั้งขั้นต่ำ: ใช้เฉพาะตัวอันดับ 2"
 	end
-	cSwXLEa.NMHqRWel(hPALxDEK, function(NsMBEb, xdBbbBZvf)
-		if xfTlPGa[NsMBEb] ~= xfTlPGa[xdBbbBZvf] then return xfTlPGa[NsMBEb] > xfTlPGa[xdBbbBZvf] end
-		local hIoVJWcPn, iqcBuu = LlMTYX[NsMBEb].eqrzVEA or 0, LlMTYX[xdBbbBZvf].eqrzVEA or 0
-		if hIoVJWcPn ~= iqcBuu then return hIoVJWcPn > iqcBuu end
-		return NsMBEb < xdBbbBZvf
+end
+local minimumBox = makeTextBox(findPage, "เงินขั้นต่ำ/วิ", "", updateMinimum)
+minimumNote = makeNote(findPage, "ไม่ตั้งขั้นต่ำ: ใช้เฉพาะตัวอันดับ 2")
+-- อัปเดตทันทีเมื่อแก้ข้อความ ไม่ต้องรอออกจากช่องก่อนเปิดกลุ่ม
+minimumBox:GetPropertyChangedSignal("Text"):Connect(function() updateMinimum(minimumBox.Text) end)
+local secondaryPicker = makeMultiSelect(findPage, "ตัวอันดับ 2", {}, Finder.Secondary, nil, "ล้าง (ไม่เลือก)", "ไม่เลือก")
+makeDropdown(findPage, "พาไปที่", { "กลับบ้าน", "จุด AFK" }, Finder.MoneyDestination, function(v)
+	Finder.MoneyDestination = v
+end)
+local moneyToggle, buffToggle
+moneyToggle = makeToggle(findPage, "เปิดหาตัว (กลุ่ม 1)", false, function(on)
+	if on then updateMinimum(minimumBox.Text) releaseAfkPin() end
+	if on and (State.DeliveryBusy or State.Closed) then moneyToggle.Set(false) return end
+	State.FindMoney = on
+end)
+makeNote(findPage, "หาตัวติดบัพ")
+makeDropdown(findPage, "พาไปที่", { "กลับบ้าน", "จุด AFK" }, Finder.BuffDestination, function(v)
+	Finder.BuffDestination = v
+end)
+buffToggle = makeToggle(findPage, "เปิดหาตัวติดบัพ (กลุ่ม 2)", false, function(on)
+	if on then releaseAfkPin() end
+	if on and (State.DeliveryBusy or State.Closed) then buffToggle.Set(false) return end
+	State.FindBuff = on
+end)
+local animalPicker = makeMultiSelect(findPage, "ตัว", {}, Finder.Animals)
+makeMultiSelect(findPage, "บัพ", { "Hacker", "Time", "Haeven", "Thunder", "Void", "ice", "Gold", "Diamond" },
+	Finder.Buffs, nil, "ล้าง (ไม่เลือก)", "ไม่เลือก")
+makeNote(findPage, "* กลุ่ม 2 ต้องเลือกบัพอย่างน้อยหนึ่งชนิด")
+local finderStatus = makeNote(findPage, "สถานะหาตัว รอเปิดใช้งาน")
+local lastAnimalList, lastAnimalZone
+refreshAnimalList = function()
+	local folder = workspace:FindFirstChild("AnimalPickups")
+	if folder then
+		for _, animal in ipairs(folder:GetChildren()) do
+			local zone, name = animal:GetAttribute("ZoneId"), animal:GetAttribute("AnimalName")
+			if type(zone) == "string" and type(name) == "string" and name ~= "" then
+				animalNames[zone] = animalNames[zone] or {}
+				local info = animalNames[zone][name]
+				if not info then
+					info = {}
+					animalNames[zone][name], animalsDirty = info, true
+				end
+				local rarity = animal:GetAttribute("Rarity")
+				local root = animal:FindFirstChild("RootPart")
+				local attachment = root and root:FindFirstChild("AnimalOverheadAttachment")
+				local overhead = attachment and attachment:FindFirstChild("AnimalOverhead")
+				local rarityFrame = overhead and overhead:FindFirstChild("Rarity")
+				local rarityLabel = rarityFrame and rarityFrame:FindFirstChild("RarityLabel")
+				local gradient = rarityLabel and rarityLabel:FindFirstChildWhichIsA("UIGradient")
+				if type(rarity) ~= "string" or rarity == "" then
+					rarity = gradient and gradient:GetAttribute("Rarity")
+				end
+				if type(rarity) == "string" and rarity ~= "" and info.Rarity ~= rarity then
+					info.Rarity, animalsDirty = rarity, true
+				end
+				-- จำสีครั้งแรกต่อความหายาก ไม่อ่านสีไล่ระดับที่เคลื่อนไหวซ้ำ
+				if info.Rarity and not rarityColors[info.Rarity] then
+					local color = gradient and gradient.Color.Keypoints[1] and gradient.Color.Keypoints[1].Value
+					if not color and rarityLabel and rarityLabel:IsA("TextLabel") then color = rarityLabel.TextColor3 end
+					if color then rarityColors[info.Rarity], animalsDirty = color:ToHex(), true end
+				end
+			end
+		end
+	end
+	local zone, list, colors, ranks, keys = selectedZoneId(), {}, {}, {}, {}
+	-- รวมรายชื่อเต็มกับสัตว์ที่เคยพบ โดยใช้ข้อมูลจากรายชื่อเต็มก่อน
+	local names = {}
+	for name, info in pairs(animalNames[zone] or {}) do names[name] = info end
+	for name, info in pairs(zoneRoster[zone] or {}) do names[name] = info end
+	for name, info in pairs(names) do
+		table.insert(list, name)
+		ranks[name] = animalRarityRank(info.Rarity)
+		local hex = rarityColors[info.Rarity]
+		if hex then colors[name] = Color3.fromHex(hex) end
+	end
+	table.sort(list, function(a, b)
+		if ranks[a] ~= ranks[b] then return ranks[a] > ranks[b] end
+		local cashA, cashB = names[a].Cash or 0, names[b].Cash or 0
+		if cashA ~= cashB then return cashA > cashB end
+		return a < b
 	end)
-	
-	for NRzHjvyk, fbMkQuN in ipairs(hPALxDEK) do
-		local Lkllwutl = LlMTYX[fbMkQuN]
-		cSwXLEa.ygebQasKQ(QpopOi, fbMkQuN .. string.char(58) .. (Lkllwutl.oaSfTb or string.char()) .. string.char(58) .. (CTuKztjHC[Lkllwutl.oaSfTb] or string.char()))
+	-- ตรวจเฉพาะชื่อ ความหายาก และสีประจำความหายากที่จำไว้แล้ว
+	for _, name in ipairs(list) do
+		local info = names[name]
+		table.insert(keys, name .. ":" .. (info.Rarity or "") .. ":" .. (rarityColors[info.Rarity] or ""))
 	end
-	local sueNUhnoN = cSwXLEa.WFAkMJcEp(QpopOi, string.char(124))
-	if wcBtyZAmT ~= MEKFAy then
-		cSwXLEa.FJkuVb(SFEzMvUe.HbnnPSL)
-		cSwXLEa.FJkuVb(SFEzMvUe.RbcfQbBB)
+	local key = table.concat(keys, "|")
+	if zone ~= lastAnimalZone then
+		table.clear(Finder.Secondary)
+		table.clear(Finder.Animals)
 	end
-	if sueNUhnoN ~= tnrTCPxOu or wcBtyZAmT ~= MEKFAy then
-		tnrTCPxOu, MEKFAy = sueNUhnoN, wcBtyZAmT
-		RPDWQMU.ltnyQNT(hPALxDEK, GQOekhS)
-		YNjjssl.ltnyQNT(hPALxDEK, GQOekhS)
+	if key ~= lastAnimalList or zone ~= lastAnimalZone then
+		lastAnimalList, lastAnimalZone = key, zone
+		secondaryPicker.SetOptions(list, colors)
+		animalPicker.SetOptions(list, colors)
 	end
-	if NTEJHBJR and DWCOjTUhQ and QiwdENHO.zNPgWxN() >= WzABHwDc then
-		local eEbgeB = { CTuKztjHC = CTuKztjHC }
-		for xKAEUQov, LlMTYX in pairs(dresEX) do
-			eEbgeB[xKAEUQov] = {}
-			for fbMkQuN, Lkllwutl in pairs(LlMTYX) do
-				eEbgeB[xKAEUQov][fbMkQuN] = { oaSfTb = Lkllwutl.oaSfTb }
+	if animalsDirty and writefile and os.clock() >= animalSaveAt then
+		local data = { rarityColors = rarityColors }
+		for id, names in pairs(animalNames) do
+			data[id] = {}
+			for name, info in pairs(names) do
+				data[id][name] = { Rarity = info.Rarity }
 			end
 		end
-		local ZEPElDSr = DXClww(function() DWCOjTUhQ(ZkFGquspi, QPOZTgMMh:hlhYWhBxI(eEbgeB)) end)
-		if ZEPElDSr then NTEJHBJR = false end
-		WzABHwDc = QiwdENHO.zNPgWxN() + 5
+		local ok = pcall(function() writefile(ANIMAL_FILE, HttpService:JSONEncode(data)) end)
+		if ok then animalsDirty = false end
+		animalSaveAt = os.clock() + 5
 	end
 end
-IMtMtt()
-SrYEQZw.UzBcgssqK(function()
-	while OYygnfK.OjQGoB do IMtMtt() SrYEQZw.YVpolrAK(1.5) end
+refreshAnimalList()
+task.spawn(function()
+	while gui.Parent do refreshAnimalList() task.wait(1.5) end
 end)
 
-local function bNhZYPf(ZewFqfg)
-	DXClww(function() kMmTnES.gerFhc = string.char(3626,3606,3634,3609,3632,3627,3634,3605,3633,3623,32) .. ZewFqfg end)   
-	uvOWjLcj(ZewFqfg)
+local function finderSay(text)
+	pcall(function() finderStatus.Text = "สถานะหาตัว " .. text end)   -- กัน GUI error หยุดงาน
+	say(text)
 end
 
-
-local function yrbNcjt(AgoJYIhlU)
-	local ZJdKGiNoL = ZolKMNHdw:AAZfTWh(string.char(112,122,99,68,84,120,79,67))
-	return ZJdKGiNoL and AgoJYIhlU.OjQGoB == ZJdKGiNoL
+-- ตรวจว่าโมเดลยังอยู่ในโฟลเดอร์สัตว์ก่อนค้นหาจุดกด
+local function animalPresent(animal)
+	local folder = workspace:FindFirstChild("AnimalPickups")
+	return folder and animal.Parent == folder
 end
-
-local function pZdZdgYWZ(fbMkQuN)
-	return (tostring(fbMkQuN or string.char()):oaWnCoD(string.char(60,91,94,62,93,42,62), string.char()):oaWnCoD(string.char(37,120,100,66,98,98,66,90,118,102,91,93), string.char()):oaWnCoD(string.char(37,99,82,66,115,71,119,68,43), string.char()):BSUREGh())
+-- ตัดแท็ก สี น้ำหนัก และช่องว่าง เพื่อเทียบชื่อที่แสดงกับ AnimalName
+local function normaliseAnimalName(name)
+	return (tostring(name or ""):gsub("<[^>]*>", ""):gsub("%b[]", ""):gsub("%s+", ""):lower())
 end
-
-local function XZJANmr(AgoJYIhlU)
-	local xqhcmbbUW = AgoJYIhlU:ogvbRDcol()
-	return xqhcmbbUW.CoauFDfj
+-- ใช้จุดกึ่งกลางโมเดลแทนรากที่อาจอยู่ห่างมากในสัตว์ตัวใหญ่
+local function animalPosition(animal)
+	local cf = animal:GetBoundingBox()
+	return cf.Position
 end
-local function MpItQVN(AgoJYIhlU)
-	if not yrbNcjt(AgoJYIhlU) then return end
-	local nEgeDqQ = XZJANmr(AgoJYIhlU)
-	local fbMkQuN = pZdZdgYWZ(AgoJYIhlU:MCQxulAJS(string.char(99,117,80,81,100,83)))
-	local gEvwdms, zihWSaiG = nil, 60
-	local lLTNINDgQ, TxaCwaA = nil, 25
-	for NRzHjvyk, YIyKmh in ipairs(ZolKMNHdw:jsMboNIH()) do
-		if YIyKmh.YDRUhpuYE == string.char(98,120,101,76,77,89,69,119,87) and YIyKmh:AEHHlgP(string.char(77,116,107,73,107,114,77,83,83)) then
-			local falhSTKZT = YIyKmh:AAZfTWh(string.char(122,84,82,115,88,80,107,90))
-			if falhSTKZT and falhSTKZT:AEHHlgP(string.char(75,83,120,73,69,79)) and falhSTKZT.fHRVnE then
-				local tLtSadF = (YIyKmh.CoauFDfj - nEgeDqQ).NbggoNiE
-				if fbMkQuN ~= string.char() and pZdZdgYWZ(falhSTKZT.NXyrrwKc) == fbMkQuN and tLtSadF <= zihWSaiG then
-					gEvwdms, zihWSaiG = falhSTKZT, tLtSadF
+local function animalPrompt(animal)
+	if not animalPresent(animal) then return end
+	local position = animalPosition(animal)
+	local name = normaliseAnimalName(animal:GetAttribute("AnimalName"))
+	local best, bestDistance = nil, 60
+	local fallback, fallbackDistance = nil, 25
+	for _, anchor in ipairs(workspace:GetChildren()) do
+		if anchor.Name == "PromptAnchor" and anchor:IsA("BasePart") then
+			local prompt = anchor:FindFirstChild("StealPrompt")
+			if prompt and prompt:IsA("ProximityPrompt") and prompt.Enabled then
+				local distance = (anchor.Position - position).Magnitude
+				if name ~= "" and normaliseAnimalName(prompt.ObjectText) == name and distance <= bestDistance then
+					best, bestDistance = prompt, distance
 				end
-				if tLtSadF <= TxaCwaA then lLTNINDgQ, TxaCwaA = falhSTKZT, tLtSadF end
+				if distance <= fallbackDistance then fallback, fallbackDistance = prompt, distance end
 			end
 		end
 	end
-	
-	return gEvwdms or lLTNINDgQ
+	-- ใช้จุดใกล้ที่สุดเฉพาะเมื่อไม่พบชื่อที่ตรงกันในระยะที่กำหนด
+	return best or fallback
 end
-local function RcbpgpJ(AgoJYIhlU)
-	local NMmOTAtje = AgoJYIhlU:AAZfTWh(string.char(98,116,77,89,105,75,76,83,72))
-	local dNQQHp = NMmOTAtje and NMmOTAtje:AAZfTWh(string.char(83,120,72,65,121,69,67))
-	local KdVXqR = dNQQHp and dNQQHp:AAZfTWh(string.char(105,98,68,73,69,76,116,72,97))
-	local tOLtiyac = KdVXqR and KdVXqR:AAZfTWh(string.char(71,76,120,112,73,78))
-	tOLtiyac = tOLtiyac and tOLtiyac:AAZfTWh(string.char(71,76,120,112,73,78))
-	local ReWuLWI = tOLtiyac and tOLtiyac:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) and KIzNjlAb(tOLtiyac.gerFhc) or 0
-	local ZZSsiwE = KdVXqR and KdVXqR:AAZfTWh(string.char(114,69,83,89,77,85,120,67))
-	local WCcltBql = {}
-	local function ekpMfaoF(kyvHRk)
-		if type(kyvHRk) == string.char(90,102,121,101,78,67,120,108,74) and kyvHRk ~= string.char() then WCcltBql[kyvHRk:BSUREGh():oVUySul(string.char(94,37,99,82,66,115,71,119,68,42,40,46,45,41,37,99,82,66,115,71,119,68,42,36))] = true end
+local function animalDetails(animal)
+	local root = animal:FindFirstChild("RootPart")
+	local attachment = root and root:FindFirstChild("AnimalOverheadAttachment")
+	local overhead = attachment and attachment:FindFirstChild("AnimalOverhead")
+	local cash = overhead and overhead:FindFirstChild("CashPerSecond")
+	cash = cash and cash:FindFirstChild("CashPerSecond")
+	local cps = cash and cash:IsA("TextLabel") and parseMoney(cash.Text) or 0
+	local mutation = overhead and overhead:FindFirstChild("Mutation")
+	local buffs = {}
+	local function add(value)
+		if type(value) == "string" and value ~= "" then buffs[value:lower():match("^%s*(.-)%s*$")] = true end
 	end
-	if ZZSsiwE and ZZSsiwE:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) then ekpMfaoF(ZZSsiwE.gerFhc) end
-	ekpMfaoF(AgoJYIhlU:MCQxulAJS(string.char(122,89,122,115,98,98,117)))
-	ekpMfaoF(AgoJYIhlU:MCQxulAJS(string.char(114,69,83,89,77,85,120,67)))
-	return ReWuLWI or 0, WCcltBql, tOLtiyac and tOLtiyac:AEHHlgP(string.char(117,114,65,108,116,102,76,80,115)) and tOLtiyac.gerFhc
+	if mutation and mutation:IsA("TextLabel") then add(mutation.Text) end
+	add(animal:GetAttribute("AuraMutation"))
+	add(animal:GetAttribute("Mutation"))
+	return cps or 0, buffs, cash and cash:IsA("TextLabel") and cash.Text
 end
-local function QocgnHZV(lksSUCSLL, krLNtv)
-	local hxMWBdXnd = Ontyggkf():oVUySul(string.char(40,37,101,105,105,116,81,79,109,43,41,36))
-	local vqNkPURhc = hxMWBdXnd and string.char(88,90,88,90,75,84,78,115,78) .. hxMWBdXnd
-	if lksSUCSLL == nil then lksSUCSLL = CXVuWtxvd.OPxkNSmws end
-	if krLNtv == nil then krLNtv = CXVuWtxvd.opCResGD end
-	local ZJdKGiNoL = ZolKMNHdw:AAZfTWh(string.char(112,122,99,68,84,120,79,67))
-	if not ZJdKGiNoL then return end
-	local fAmGFbFS, NdDvtBQs = {}, false
-	for NRzHjvyk, AgoJYIhlU in ipairs(ZJdKGiNoL:jsMboNIH()) do
-		local UymKQv = AgoJYIhlU:MCQxulAJS(string.char(73,80,117,75,103,81,114))
-		if AgoJYIhlU:AEHHlgP(string.char(74,89,85,71,87,113,101,99)) and AgoJYIhlU:MCQxulAJS(string.char(90,120,87,89,103,77,102)) == vqNkPURhc
-			and type(UymKQv) == string.char(86,86,88,99,115,102,70,116,80) and UymKQv - ZolKMNHdw:JIAPomZ() > 6 then
-			local ReWuLWI, WCcltBql = RcbpgpJ(AgoJYIhlU)
-			local fbMkQuN = AgoJYIhlU:MCQxulAJS(string.char(99,117,80,81,100,83))
-			local pNRFyzEV
-			if lksSUCSLL then
-				
-				if SFEzMvUe.rriKVtZP ~= nil and ReWuLWI >= SFEzMvUe.rriKVtZP then pNRFyzEV = 1 end
-				if not pNRFyzEV and SFEzMvUe.HbnnPSL[fbMkQuN] then pNRFyzEV = 2 end
+local function chooseAnimal(findMoney, findBuff)
+	local n = activeZone():match("(%d+)$")
+	local zoneId = n and "Zone" .. n
+	if findMoney == nil then findMoney = State.FindMoney end
+	if findBuff == nil then findBuff = State.FindBuff end
+	local folder = workspace:FindFirstChild("AnimalPickups")
+	if not folder then return end
+	local candidates, anyAFK = {}, false
+	for _, animal in ipairs(folder:GetChildren()) do
+		local despawn = animal:GetAttribute("DespawnAtServerTime")
+		if animal:IsA("Model") and animal:GetAttribute("ZoneId") == zoneId
+			and type(despawn) == "number" and despawn - workspace:GetServerTimeNow() > 6 then
+			local cps, buffs = animalDetails(animal)
+			local name = animal:GetAttribute("AnimalName")
+			local rank
+			if findMoney then
+				-- ไม่ตั้งขั้นต่ำ = ปิดเงื่อนไขหลัก แต่ยังรับตัวอันดับ 2
+				if Finder.Minimum ~= nil and cps >= Finder.Minimum then rank = 1 end
+				if not rank and Finder.Secondary[name] then rank = 2 end
 			end
-			local JtrZBJ = false
-			if krLNtv and (next(SFEzMvUe.RbcfQbBB) == nil or SFEzMvUe.RbcfQbBB[fbMkQuN]) then
-				for rAWcont in pairs(SFEzMvUe.OENnmx) do
-					if WCcltBql[rAWcont:BSUREGh()] then JtrZBJ = true break end
+			local buffMatch = false
+			if findBuff and (next(Finder.Animals) == nil or Finder.Animals[name]) then
+				for buff in pairs(Finder.Buffs) do
+					if buffs[buff:lower()] then buffMatch = true break end
 				end
 			end
-			if pNRFyzEV or JtrZBJ then
-				local UjPmSXSv = (pNRFyzEV and SFEzMvUe.EujgVTXsW == string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75))
-					or (JtrZBJ and SFEzMvUe.nDFQfhhyu == string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75))
-				NdDvtBQs = NdDvtBQs or UjPmSXSv
-				cSwXLEa.ygebQasKQ(fAmGFbFS, { xHIiMUIX = AgoJYIhlU, YAmRZdp = ReWuLWI, xqSvgYfd = pNRFyzEV or 3 })
+			if rank or buffMatch then
+				local afk = (rank and Finder.MoneyDestination == "จุด AFK")
+					or (buffMatch and Finder.BuffDestination == "จุด AFK")
+				anyAFK = anyAFK or afk
+				table.insert(candidates, { Animal = animal, Cps = cps, Rank = rank or 3 })
 			end
 		end
 	end
-	local gEvwdms
-	for NRzHjvyk, jYzMGqc in ipairs(fAmGFbFS) do
-		if not gEvwdms or jYzMGqc.YAmRZdp > gEvwdms.YAmRZdp
-			or (jYzMGqc.YAmRZdp == gEvwdms.YAmRZdp and jYzMGqc.xqSvgYfd < gEvwdms.xqSvgYfd) then gEvwdms = jYzMGqc end
+	local best
+	for _, candidate in ipairs(candidates) do
+		if not best or candidate.Cps > best.Cps
+			or (candidate.Cps == best.Cps and candidate.Rank < best.Rank) then best = candidate end
 	end
-	return gEvwdms, NdDvtBQs and string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) or string.char(3585,3621,3633,3610,3610,3657,3634,3609)
+	return best, anyAFK and "จุด AFK" or "กลับบ้าน"
 end
 
-local function LPNHya(AgoJYIhlU, pysWxR, XoYWiWM, VTaRubFpK, dfGSitPG)
-	
-	local OBIyQuLb = type(AgoJYIhlU) == string.char(99,83,119,88,76,69,97) and AgoJYIhlU or {
-		pRPgax = AgoJYIhlU:MCQxulAJS(string.char(112,82,80,103,97,120)), YDRUhpuYE = AgoJYIhlU:MCQxulAJS(string.char(99,117,80,81,100,83)),
+local function stealSameAnimal(animal, timeout, immediate, shouldStop, reselect)
+	-- เก็บตัวตนแยกจากโมเดล เพราะเกมสร้างโมเดลใหม่เมื่อสัตว์ตก
+	local identity = type(animal) == "table" and animal or {
+		HatchId = animal:GetAttribute("HatchId"), Name = animal:GetAttribute("AnimalName"),
 	}
-	local AIFSDxhH, YYjrpiKGp = OBIyQuLb.pRPgax, OBIyQuLb.YDRUhpuYE
-	local nEgeDqQ = type(AgoJYIhlU) ~= string.char(99,83,119,88,76,69,97) and XZJANmr(AgoJYIhlU)
-	local NRzHjvyk, NMmOTAtje = DGwOqlU()
-	local SaxxFyu = XoYWiWM and NMmOTAtje and NMmOTAtje.CoauFDfj or nEgeDqQ
-	local zlvPrx = AgoJYIhlU
-	local function uLMddZ(AIFSDxhH, SaxxFyu)
-		local ZJdKGiNoL = ZolKMNHdw:AAZfTWh(string.char(112,122,99,68,84,120,79,67))
-		if not ZJdKGiNoL then return end
-		
-		if XoYWiWM then
-			local NRzHjvyk, QpIxbKg = DGwOqlU()
-			SaxxFyu = QpIxbKg and QpIxbKg.CoauFDfj
+	local hatchId, targetName = identity.HatchId, identity.Name
+	local position = type(animal) ~= "table" and animalPosition(animal)
+	local _, root = getChar()
+	local nearPos = immediate and root and root.Position or position
+	local selectedAnimal = animal
+	local function findAnimalByHatch(hatchId, nearPos)
+		local folder = workspace:FindFirstChild("AnimalPickups")
+		if not folder then return end
+		-- รอบเก็บซ้ำใช้ตำแหน่งผู้เล่นปัจจุบัน และรับโมเดลที่เพิ่งเกิดชื่อเดียวกัน
+		if immediate then
+			local _, currentRoot = getChar()
+			nearPos = currentRoot and currentRoot.Position
 		end
-		local ZjUagEEv, zihWSaiG = nil, 80
-		for NRzHjvyk, jYzMGqc in ipairs(ZJdKGiNoL:jsMboNIH()) do
-			if jYzMGqc:AEHHlgP(string.char(74,89,85,71,87,113,101,99)) then
-				if AIFSDxhH ~= nil and jYzMGqc:MCQxulAJS(string.char(112,82,80,103,97,120)) == AIFSDxhH then return jYzMGqc end
-				
-				if SaxxFyu and pZdZdgYWZ(YYjrpiKGp) ~= string.char()
-					and pZdZdgYWZ(jYzMGqc:MCQxulAJS(string.char(99,117,80,81,100,83))) == pZdZdgYWZ(YYjrpiKGp) then
-					local tLtSadF = (XZJANmr(jYzMGqc) - SaxxFyu).NbggoNiE
-					if tLtSadF <= zihWSaiG then ZjUagEEv, zihWSaiG = jYzMGqc, tLtSadF end
+		local nearest, bestDistance = nil, 80
+		for _, candidate in ipairs(folder:GetChildren()) do
+			if candidate:IsA("Model") then
+				if hatchId ~= nil and candidate:GetAttribute("HatchId") == hatchId then return candidate end
+				-- เมื่อไม่มี HatchId ใช้ชื่อเดียวกันและระยะจากกึ่งกลางโมเดล
+				if nearPos and normaliseAnimalName(targetName) ~= ""
+					and normaliseAnimalName(candidate:GetAttribute("AnimalName")) == normaliseAnimalName(targetName) then
+					local distance = (animalPosition(candidate) - nearPos).Magnitude
+					if distance <= bestDistance then nearest, bestDistance = candidate, distance end
 				end
 			end
 		end
-		return ZjUagEEv
+		return nearest
 	end
-	local function WWCAFB()
-		local yRpGnUA = uLMddZ(AIFSDxhH, SaxxFyu)
-		local falhSTKZT = yRpGnUA and MpItQVN(yRpGnUA)
-		local NRzHjvyk, QpIxbKg = DGwOqlU()
-		local tLtSadF = falhSTKZT and QpIxbKg and (MJdDeLVZ(falhSTKZT) - QpIxbKg.CoauFDfj).NbggoNiE
-		local ZJdKGiNoL = ZolKMNHdw:AAZfTWh(string.char(108,67,120,121,66,120))
-		bNhZYPf(string.char(3627,3617,3604,3648,3623,3621,3634,3618,3585,32) .. tostring(YYjrpiKGp) .. string.char(32,112,82,80,103,97,120,61) .. tostring(OBIyQuLb.pRPgax)
-			.. string.char(32,99,117,80,81,100,83,61) .. tostring(OBIyQuLb.YDRUhpuYE)
-			.. string.char(32,3614,3610,3592,3640,3604,32,122,84,82,115,88,80,107,90,61) .. tostring(falhSTKZT ~= nil)
-			.. string.char(32,3619,3632,3618,3632,61) .. (tLtSadF and ZfyeNCxlJ.uhBgwIhN(string.char(37,46,49,102), tLtSadF) or string.char(3652,3617,3656,3607,3619,3634,3610))
-			.. string.char(32,3592,3635,3609,3623,3609,3651,3609,32,108,67,120,121,66,120,61) .. tostring(ZJdKGiNoL and #ZJdKGiNoL:jsMboNIH() or 0)
-			.. string.char(32,3649,3626,3604,3591,3611,3640,3656,3617,32,121,116,97,89,115,112,113,61) .. tostring(PhjqEYM()))
+	local function logTimeout()
+		local current = findAnimalByHatch(hatchId, nearPos)
+		local prompt = current and animalPrompt(current)
+		local _, currentRoot = getChar()
+		local distance = prompt and currentRoot and (promptPos(prompt) - currentRoot.Position).Magnitude
+		local folder = workspace:FindFirstChild("CarriedAnimals")
+		finderSay("หมดเวลายก " .. tostring(targetName) .. " HatchId=" .. tostring(identity.HatchId)
+			.. " AnimalName=" .. tostring(identity.Name)
+			.. " พบจุด StealPrompt=" .. tostring(prompt ~= nil)
+			.. " ระยะ=" .. (distance and string.format("%.1f", distance) or "ไม่ทราบ")
+			.. " จำนวนใน CarriedAnimals=" .. tostring(folder and #folder:GetChildren() or 0)
+			.. " แสดงปุ่ม Drop=" .. tostring(dropButtonShown()))
 	end
-	
-	if UFHrKnHa() then return false end
-	AgoJYIhlU = uLMddZ(AIFSDxhH, SaxxFyu)
-	if not XoYWiWM and AgoJYIhlU then
-		local falhSTKZT = MpItQVN(AgoJYIhlU)
-		if falhSTKZT and NMmOTAtje then
-			if not CYiKFuAK(ujazxcr(JDysDE(MJdDeLVZ(falhSTKZT), NMmOTAtje, 2), AgoJYIhlU), VTaRubFpK) then return false end
+	-- เวลาเดินทางรอบแรกแยกจากเวลารอกดเก็บ
+	if isCarrying() then return false end
+	animal = findAnimalByHatch(hatchId, nearPos)
+	if not immediate and animal then
+		local prompt = animalPrompt(animal)
+		if prompt and root then
+			if not tweenTo(onGround(besideCFrame(promptPos(prompt), root, 2), animal), shouldStop) then return false end
 		end
 	end
-	local MNZDxN, NaIlmlP = QiwdENHO.zNPgWxN(), nil
-	local JqLXOn, RCqWMK = -bahPrfK.yJdZksz, nil
-	local aGMUZvSIb = false
-	local function FcQfSSTit() return CXVuWtxvd.adjnIj or VTaRubFpK() or QiwdENHO.zNPgWxN() - MNZDxN >= pysWxR end
-	while not FcQfSSTit() do
-		local XNWvaNYrE = IWYWMRm()
-		if UFHrKnHa() then
-			local glpxjcuYc = XNWvaNYrE and XNWvaNYrE:MCQxulAJS(string.char(112,82,80,103,97,120))
-			if glpxjcuYc == nil or glpxjcuYc == AIFSDxhH
-				or (AIFSDxhH == nil and pZdZdgYWZ(XNWvaNYrE:MCQxulAJS(string.char(99,117,80,81,100,83))) == pZdZdgYWZ(YYjrpiKGp)) then
-				return true, OBIyQuLb, NaIlmlP
+	local started, destination = os.clock(), nil
+	local lastPress, wrongSince = -math.huge, nil
+	local appeared = false
+	local function timedOut() return State.AfkPinned or shouldStop() or os.clock() - started >= timeout end
+	while not timedOut() do
+		local carried = carriedAnimal()
+		if isCarrying() then
+			local carriedHatch = carried and carried:GetAttribute("HatchId")
+			if carriedHatch == nil or carriedHatch == hatchId
+				or (hatchId == nil and normaliseAnimalName(carried:GetAttribute("AnimalName")) == normaliseAnimalName(targetName)) then
+				return true, identity, destination
 			end
-			RCqWMK = RCqWMK or QiwdENHO.zNPgWxN()
-			
-			if QiwdENHO.zNPgWxN() - RCqWMK >= 0.3 then
-				bNhZYPf(string.char(3618,3585,3612,3636,3604,3605,3633,3623,32) .. tostring(XNWvaNYrE:MCQxulAJS(string.char(99,117,80,81,100,83)) or XNWvaNYrE.YDRUhpuYE)
-					.. string.char(32,3623,3634,3591,3626,3633,3605,3623,3660,3649,3621,3632,3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591))
-				local SJUKHkgQr = leWCDdwba:AAZfTWh(string.char(120,107,68,112,101,110,99), true)
-				if SJUKHkgQr and SJUKHkgQr:AEHHlgP(string.char(71,83,111,67,81,105,73,107,79)) then SJUKHkgQr:OqecwLCt() end
+			wrongSince = wrongSince or os.clock()
+			-- เผื่อโฟลเดอร์ฝั่งเซิร์ฟเวอร์อัปเดตคนละเฟรม
+			if os.clock() - wrongSince >= 0.3 then
+				finderSay("ยกผิดตัว " .. tostring(carried:GetAttribute("AnimalName") or carried.Name)
+					.. " วางสัตว์และยกเลิกการส่ง")
+				local drop = ReplicatedStorage:FindFirstChild("DropCarriedRemote", true)
+				if drop and drop:IsA("RemoteEvent") then drop:FireServer() end
 				return false
 			end
 		else
-			RCqWMK = nil
-			AgoJYIhlU = uLMddZ(AIFSDxhH, SaxxFyu)
-			if AgoJYIhlU then aGMUZvSIb = true end
-			
-			if XoYWiWM and not aGMUZvSIb and QiwdENHO.zNPgWxN() - MNZDxN >= 2.5 then break end
-			local NRzHjvyk, QpIxbKg = DGwOqlU()
-			if not QpIxbKg then return false end
-			local falhSTKZT = AgoJYIhlU and MpItQVN(AgoJYIhlU)
-			if falhSTKZT then
-				local xqhcmbbUW = JDysDE(MJdDeLVZ(falhSTKZT), QpIxbKg, 2)
-				if XoYWiWM then QpIxbKg.zmCEDmX = xqhcmbbUW
-				elseif (QpIxbKg.CoauFDfj - xqhcmbbUW.CoauFDfj).NbggoNiE > 4 then
-					if not CYiKFuAK(ujazxcr(xqhcmbbUW, AgoJYIhlU), FcQfSSTit) then
-						if not VTaRubFpK() then WWCAFB() end
+			wrongSince = nil
+			animal = findAnimalByHatch(hatchId, nearPos)
+			if animal then appeared = true end
+			-- รอโมเดลที่ตกปรากฏได้ 2.5 วินาที โดยค้นหาใหม่ทุกเฟรม
+			if immediate and not appeared and os.clock() - started >= 2.5 then break end
+			local _, currentRoot = getChar()
+			if not currentRoot then return false end
+			local prompt = animal and animalPrompt(animal)
+			if prompt then
+				local cf = besideCFrame(promptPos(prompt), currentRoot, 2)
+				if immediate then currentRoot.CFrame = cf
+				elseif (currentRoot.Position - cf.Position).Magnitude > 4 then
+					if not tweenTo(onGround(cf, animal), timedOut) then
+						if not shouldStop() then logTimeout() end
 						return false
 					end
 				end
 			end
-			if FcQfSSTit() then break end
-			
-			if dfGSitPG and JqLXOn == -bahPrfK.yJdZksz then
-				local jYzMGqc
-				jYzMGqc, NaIlmlP = dfGSitPG()
-				if not jYzMGqc then return false end
-				local xwADbn = jYzMGqc.xHIiMUIX:MCQxulAJS(string.char(112,82,80,103,97,120))
-				if jYzMGqc.xHIiMUIX ~= zlvPrx then
-					zlvPrx = jYzMGqc.xHIiMUIX
-					AIFSDxhH, YYjrpiKGp = xwADbn, zlvPrx:MCQxulAJS(string.char(99,117,80,81,100,83))
-					OBIyQuLb = { pRPgax = AIFSDxhH, YDRUhpuYE = YYjrpiKGp }
-					SaxxFyu = XZJANmr(zlvPrx)
-					AGkrliTul
+			if timedOut() then break end
+			-- เลือกค่าสูงสุดอีกครั้งหลังเดินทาง แล้วล็อก HatchId ตั้งแต่กดครั้งแรก
+			if reselect and lastPress == -math.huge then
+				local candidate
+				candidate, destination = reselect()
+				if not candidate then return false end
+				local nextHatch = candidate.Animal:GetAttribute("HatchId")
+				if candidate.Animal ~= selectedAnimal then
+					selectedAnimal = candidate.Animal
+					hatchId, targetName = nextHatch, selectedAnimal:GetAttribute("AnimalName")
+					identity = { HatchId = hatchId, Name = targetName }
+					nearPos = animalPosition(selectedAnimal)
+					continue
 				end
 			end
-			AgoJYIhlU = uLMddZ(AIFSDxhH, SaxxFyu)
-			falhSTKZT = AgoJYIhlU and MpItQVN(AgoJYIhlU)
-			if falhSTKZT and not UFHrKnHa() and QiwdENHO.zNPgWxN() - JqLXOn >= 0.35 then
-				
-				QpIxbKg.zmCEDmX = JDysDE(MJdDeLVZ(falhSTKZT), QpIxbKg, 2)
-				QpIxbKg.WcMVlbnn = qUPpgbVBV.zuTAqkXn
-				if JqLXOn == -bahPrfK.yJdZksz then
-					
-					AIFSDxhH, YYjrpiKGp = AgoJYIhlU:MCQxulAJS(string.char(112,82,80,103,97,120)), AgoJYIhlU:MCQxulAJS(string.char(99,117,80,81,100,83))
-					OBIyQuLb = { pRPgax = AIFSDxhH, YDRUhpuYE = YYjrpiKGp }
-					local ReWuLWI, NRzHjvyk, fnUcBvC = RcbpgpJ(AgoJYIhlU)
-					bNhZYPf(string.char(3648,3621,3639,3629,3585,32) .. tostring(YYjrpiKGp)
-						.. string.char(32) .. (fnUcBvC or (string.char(36) .. ZfyeNCxlJ.uhBgwIhN(string.char(37,46,54,103), ReWuLWI) .. string.char(47,99,82,66,115,71,119,68))))
+			animal = findAnimalByHatch(hatchId, nearPos)
+			prompt = animal and animalPrompt(animal)
+			if prompt and not isCarrying() and os.clock() - lastPress >= 0.35 then
+				-- ยืนติดจุดกดและกดซ้ำจนกว่าเซิร์ฟเวอร์จะยืนยันว่าถือแล้ว
+				currentRoot.CFrame = besideCFrame(promptPos(prompt), currentRoot, 2)
+				currentRoot.AssemblyLinearVelocity = Vector3.zero
+				if lastPress == -math.huge then
+					-- ล็อกตัวตนจากโมเดลบนพื้นก่อนกด รวมถึงตัวชื่อเดิมที่เกิดใหม่
+					hatchId, targetName = animal:GetAttribute("HatchId"), animal:GetAttribute("AnimalName")
+					identity = { HatchId = hatchId, Name = targetName }
+					local cps, _, cashText = animalDetails(animal)
+					finderSay("เลือก " .. tostring(targetName)
+						.. " " .. (cashText or ("$" .. string.format("%.6g", cps) .. "/s")))
 				end
-				JqLXOn = QiwdENHO.zNPgWxN()
-				pmucZW(falhSTKZT)
+				lastPress = os.clock()
+				triggerPrompt(prompt)
 			end
 		end
-		SrYEQZw.YVpolrAK()
+		task.wait()
 	end
-	if not VTaRubFpK() then WWCAFB() end
+	if not shouldStop() then logTimeout() end
 	return false
 end
 
-local rHAxfRgU = -bahPrfK.yJdZksz
-local function KvAmGLn(AgoJYIhlU, NaIlmlP, wTCfQCpro, NDViRH)
-	if CXVuWtxvd.FpIeHOGRu or QiwdENHO.zNPgWxN() - rHAxfRgU < 2 then return end
-	CXVuWtxvd.USXHgXp = wTCfQCpro and NDViRH or Ontyggkf()
-	CXVuWtxvd.FpIeHOGRu = true
-	local WuFpYRcD = CXVuWtxvd.xfYqgLY or (WaNHxCjx and WaNHxCjx.ckCRGHFP())
-	local vaaibbSZ = CXVuWtxvd.AUVOWGvO or disIXrdT.ckCRGHFP()
-	local xYNJCSM = imSKaMlSo.ckCRGHFP()
-	local lksSUCSLL, krLNtv = vvoqmx.ckCRGHFP(), pkuktCbv.ckCRGHFP()
-	local QeAIgw = false
-	local function aWRridU()
-		if NaIlmlP ~= string.char(3585,3621,3633,3610,3610,3657,3634,3609) then return end
-		QeAIgw = true
-		CXVuWtxvd.OPxkNSmws, CXVuWtxvd.opCResGD = false, false
-		vvoqmx.uVoYRFcAw(false)
-		pkuktCbv.uVoYRFcAw(false)
+local deliveryEndedAt = -math.huge
+local function deliverAnimal(animal, destination, alreadyCarrying, carryZone)
+	if State.DeliveryBusy or os.clock() - deliveryEndedAt < 2 then return end
+	State.DeliveryZone = alreadyCarrying and carryZone or activeZone()
+	State.DeliveryBusy = true
+	local gardenWasOn = State.Garden or (gardenToggle and gardenToggle.Get())
+	local farmWasOn = State.AutoFarm or farmToggle.Get()
+	local gemsWereOn = gemToggle.Get()
+	local findMoney, findBuff = moneyToggle.Get(), buffToggle.Get()
+	local finderPaused = false
+	local function pauseFinder()
+		if destination ~= "กลับบ้าน" then return end
+		finderPaused = true
+		State.FindMoney, State.FindBuff = false, false
+		moneyToggle.Set(false)
+		buffToggle.Set(false)
 	end
-	aWRridU()
-	local function NvPHSeIQv()
-		if QeAIgw then return QocgnHZV(lksSUCSLL, krLNtv) end
-		return QocgnHZV()
+	pauseFinder()
+	local function chooseDeliveryAnimal()
+		if finderPaused then return chooseAnimal(findMoney, findBuff) end
+		return chooseAnimal()
 	end
-	local wcBtyZAmT, JVFzIH = Ontyggkf(), qOrbpOhtO.acNGGYyLs
-	local KMGVjG = WuFpYRcD and xfYqgLY.XZXZKTNsN or CXVuWtxvd.XZXZKTNsN
-	local function VTaRubFpK()
-		return CXVuWtxvd.adjnIj or CXVuWtxvd.VKPWyMWkC or (WuFpYRcD and xfYqgLY.XZXZKTNsN or CXVuWtxvd.XZXZKTNsN) ~= KMGVjG or qOrbpOhtO.acNGGYyLs ~= JVFzIH
-			or not DGwOqlU() or (not QeAIgw and not (CXVuWtxvd.OPxkNSmws or CXVuWtxvd.opCResGD))
+	local zone, character = activeZone(), player.Character
+	local selectedZone = gardenWasOn and Garden.Zone or State.Zone
+	local function shouldStop()
+		return State.AfkPinned or State.Closed or (gardenWasOn and Garden.Zone or State.Zone) ~= selectedZone or player.Character ~= character
+			or not getChar() or (not finderPaused and not (State.FindMoney or State.FindBuff))
 	end
-	local ZEPElDSr, gmWnjLCBH = DXClww(function()
-		if wTCfQCpro then
-			bNhZYPf(string.char(3614,3610,3626,3633,3605,3623,3660,3607,3637,3656,3606,3639,3629,3629,3618,3641,3656,58,32) .. tostring(AgoJYIhlU.YDRUhpuYE) .. string.char(32,3585,3635,3621,3633,3591,3614,3634,3652,3611,32) .. NaIlmlP)
+	local ok, err = pcall(function()
+		if alreadyCarrying then
+			finderSay("พบสัตว์ที่ถืออยู่: " .. tostring(animal.Name) .. " กำลังพาไป " .. destination)
 		else
-			bNhZYPf(string.char(3585,3635,3621,3633,3591,3627,3618,3640,3604,3615,3634,3619,3660,3617,3648,3614,3639,3656,3629,3648,3621,3639,3629,3585,3626,3633,3605,3623,3660))
+			finderSay("กำลังหยุดฟาร์มเพื่อเลือกสัตว์")
 		end
-		WaNHxCjx.uVoYRFcAw(false)
-		disIXrdT.uVoYRFcAw(false)
-		imSKaMlSo.uVoYRFcAw(false)
-		
+		gardenToggle.Set(false)
+		farmToggle.Set(false)
+		gemToggle.Set(false)
+		-- Set เรียก callback ในเธรดใหม่ รอทั้งสถานะและเธรดเคลื่อนที่ให้จบ
 		repeat
-			SrYEQZw.YVpolrAK()
-			for LPhJcKXE in pairs(FOBhSyk) do
-				if PpARQBp.TiGdDuQK(LPhJcKXE) == string.char(108,109,74,90,103,72) then FOBhSyk[LPhJcKXE] = nil end
+			task.wait()
+			for thread in pairs(motionLoops) do
+				if coroutine.status(thread) == "dead" then motionLoops[thread] = nil end
 			end
-			if VTaRubFpK() then XiKOteo(string.char(3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591,3626,3633,3605,3623,3660)) end
-		until not CXVuWtxvd.xfYqgLY and not CXVuWtxvd.AUVOWGvO and not CXVuWtxvd.xSxFpDU and next(FOBhSyk) == nil
-		local NRzHjvyk, NRzHjvyk, tPNmFMTh = DGwOqlU()
-		tPNmFMTh:wyOfrAL()
-		if wTCfQCpro then
-			if not UFHrKnHa() then XiKOteo(string.char(3626,3633,3605,3623,3660,3607,3637,3656,3606,3639,3629,3629,3618,3641,3656,3627,3634,3618,3652,3611,3649,3621,3657,3623)) end
+			if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+		until not State.Garden and not State.AutoFarm and not State.CollectGems and next(motionLoops) == nil
+		local _, _, hum = getChar()
+		hum:UnequipTools()
+		if alreadyCarrying then
+			if not isCarrying() then error("สัตว์ที่ถืออยู่หายไปแล้ว") end
 		else
-			if UFHrKnHa() then XiKOteo(string.char(3585,3635,3621,3633,3591,3606,3639,3629,3626,3633,3605,3623,3660,3605,3633,3623,3629,3639,3656,3609,3629,3618,3641,3656)) end
-			local jYzMGqc, yUIHkY = NvPHSeIQv()
-			if not jYzMGqc then
-				bNhZYPf(string.char(3652,3617,3656,3617,3637,3626,3633,3605,3623,3660,3607,3637,3656,3605,3619,3591,3648,3591,3639,3656,3629,3609,3652,3586,3649,3621,3657,3623,32,3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591))
+			if isCarrying() then error("กำลังถือสัตว์ตัวอื่นอยู่") end
+			local candidate, currentDestination = chooseDeliveryAnimal()
+			if not candidate then
+				finderSay("ไม่มีสัตว์ที่ตรงเงื่อนไขแล้ว ยกเลิกการส่ง")
 				return
 			end
-			AgoJYIhlU, NaIlmlP = jYzMGqc.xHIiMUIX, yUIHkY
-			local kPdCMuEc, zlvPrx, vszMrUj = LPNHya(AgoJYIhlU, 5, false, VTaRubFpK, NvPHSeIQv)
-			if not kPdCMuEc then XiKOteo(string.char(3618,3585,3626,3633,3605,3623,3660,3652,3617,3656,3626,3635,3648,3619,3655,3592)) end
-			AgoJYIhlU, NaIlmlP = zlvPrx, vszMrUj
+			animal, destination = candidate.Animal, currentDestination
+			local lifted, selectedAnimal, selectedDestination = stealSameAnimal(animal, 5, false, shouldStop, chooseDeliveryAnimal)
+			if not lifted then error("ยกสัตว์ไม่สำเร็จ") end
+			animal, destination = selectedAnimal, selectedDestination
 		end
-		aWRridU()
-		local NJGVxb = CIqyrB(wcBtyZAmT)
-		if not NJGVxb then XiKOteo(string.char(3652,3617,3656,3614,3610,3612,3641,3657,3614,3636,3607,3633,3585,3625,3660,3586,3629,3591,3650,3595,3609)) end
-		bNhZYPf(string.char(3619,3629,3612,3641,3657,3614,3636,3607,3633,3585,3625,3660,3605,3637,3651,3627,3657,3626,3633,3605,3623,3660,3605,3585))
-		if not uBkxstkY(NJGVxb, VTaRubFpK) or VTaRubFpK() or UFHrKnHa() then
-			XiKOteo(string.char(3612,3641,3657,3614,3636,3607,3633,3585,3625,3660,3618,3633,3591,3652,3617,3656,3607,3635,3651,3627,3657,3626,3633,3605,3623,3660,3605,3585))
+		pauseFinder()
+		local guard = getGuard(zone)
+		if not guard then error("ไม่พบผู้พิทักษ์ของโซน") end
+		finderSay("รอผู้พิทักษ์ตีให้สัตว์ตก")
+		if not waitForGuardHit(guard, shouldStop) or shouldStop() or isCarrying() then
+			error("ผู้พิทักษ์ยังไม่ทำให้สัตว์ตก")
 		end
-		
-		if not LPNHya(AgoJYIhlU, 3, true, VTaRubFpK) then XiKOteo(string.char(3618,3585,3626,3633,3605,3623,3660,3605,3633,3623,3648,3604,3636,3617,3595,3657,3635,3652,3617,3656,3626,3635,3648,3619,3655,3592)) end
-		
-		local NRzHjvyk, mPwTfdU = DGwOqlU()
-		local QQtSbtFu = NaIlmlP == string.char(3585,3621,3633,3610,3610,3657,3634,3609) and mPwTfdU and mPwTfdU.zmCEDmX
-		local BAzXEm = NaIlmlP == string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) and VlKiHUhTl.YxftACnFK or VlKiHUhTl.JwKAdgcTI
-		local uRFPvSQ = false
-		for NRzHjvyk = 1, 3 do
-			if VTaRubFpK() then XiKOteo(string.char(3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591,3626,3633,3605,3623,3660)) end
-			local NRzHjvyk, NMmOTAtje = DGwOqlU()
-			NMmOTAtje.zmCEDmX = BAzXEm
-			NMmOTAtje.WcMVlbnn = qUPpgbVBV.zuTAqkXn
-			NMmOTAtje.SjZtxHUof = qUPpgbVBV.zuTAqkXn
-			ujDKhL(BAzXEm, NaIlmlP == string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) and 2 or 1.2)
-			SrYEQZw.YVpolrAK(0.4)
-			local NRzHjvyk, QpIxbKg = DGwOqlU()
-			if QpIxbKg and (QpIxbKg.CoauFDfj - BAzXEm.CoauFDfj).NbggoNiE <= 40 then uRFPvSQ = true break end
+		-- เก็บตัวเดิมทันทีตอนยังล้ม ห้ามรอให้ลุกก่อนวาร์ป
+		if not stealSameAnimal(animal, 3, true, shouldStop) then error("ยกสัตว์ตัวเดิมซ้ำไม่สำเร็จ") end
+		-- จำจุดฟาร์มทันทีหลังยกซ้ำ ขณะยังล้มอยู่ใกล้ผู้พิทักษ์
+		local _, returnRoot = getChar()
+		local returnCF = destination == "กลับบ้าน" and returnRoot and returnRoot.CFrame
+		local target = destination == "จุด AFK" and CONFIG.AFK or CONFIG.Home
+		local arrived = false
+		for _ = 1, 3 do
+			if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+			local _, root = getChar()
+			root.CFrame = target
+			root.AssemblyLinearVelocity = Vector3.zero
+			root.AssemblyAngularVelocity = Vector3.zero
+			holdAfterTeleport(target, destination == "จุด AFK" and 2 or 1.2)
+			task.wait(0.4)
+			local _, currentRoot = getChar()
+			if currentRoot and (currentRoot.Position - target.Position).Magnitude <= 40 then arrived = true break end
 		end
-		if not uRFPvSQ then XiKOteo(string.char(3606,3641,3585,3604,3638,3591,3585,3621,3633,3610,3627,3621,3633,3591,3623,3634,3619,3660,3611,3588,3619,3610,3626,3634,3617,3588,3619,3633,3657,3591)) end
-		if VTaRubFpK() then XiKOteo(string.char(3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591,3626,3633,3605,3623,3660)) end
-		if NaIlmlP == string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) then
-			CXVuWtxvd.OPxkNSmws, CXVuWtxvd.opCResGD = false, false
-			vvoqmx.uVoYRFcAw(false)
-			pkuktCbv.uVoYRFcAw(false)
-			WaNHxCjx.uVoYRFcAw(false)
-			disIXrdT.uVoYRFcAw(false)
-			imSKaMlSo.uVoYRFcAw(false)
-			if not PRgPtXWOC() then XiKOteo(string.char(3652,3617,3656,3626,3634,3617,3634,3619,3606,3605,3619,3638,3591,3605,3633,3623,3607,3637,3656,3592,3640,3604,32,89,120,102,116,65,67,110,70,75)) end
-			bNhZYPf(string.char(3606,3638,3591,3592,3640,3604,32,89,120,102,116,65,67,110,70,75,32,3649,3621,3657,3623,32,3611,3636,3604,3607,3640,3585,3619,3632,3610,3610))
+		if not arrived then error("ถูกดึงกลับหลังวาร์ปครบสามครั้ง") end
+		if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+		if destination == "จุด AFK" then
+			State.FindMoney, State.FindBuff = false, false
+			moneyToggle.Set(false)
+			buffToggle.Set(false)
+			gardenToggle.Set(false)
+			farmToggle.Set(false)
+			gemToggle.Set(false)
+			if not pinAtAfk() then error("ไม่สามารถตรึงตัวที่จุด AFK") end
+			finderSay("ถึงจุด AFK แล้ว ปิดทุกระบบ")
 		else
-			local MNZDxN = QiwdENHO.zNPgWxN()
-			while UFHrKnHa() and QiwdENHO.zNPgWxN() - MNZDxN < 3 and not VTaRubFpK() do SrYEQZw.YVpolrAK(0.05) end
-			if VTaRubFpK() then XiKOteo(string.char(3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591,3626,3633,3605,3623,3660)) end
-			if UFHrKnHa() then XiKOteo(string.char(3585,3621,3633,3610,3610,3657,3634,3609,3649,3621,3657,3623,3649,3605,3656,3618,3633,3591,3613,3634,3585,3626,3633,3605,3623,3660,3652,3617,3656,3626,3635,3648,3619,3655,3592)) end
-			
-			local gEztLjTq = false
-			for NRzHjvyk = 1, 3 do
-				if VTaRubFpK() then XiKOteo(string.char(3618,3585,3648,3621,3636,3585,3585,3634,3619,3626,3656,3591,3626,3633,3605,3623,3660)) end
-				local NRzHjvyk, NMmOTAtje = DGwOqlU()
-				if not QQtSbtFu or not NMmOTAtje then break end
-				NMmOTAtje.zmCEDmX = QQtSbtFu
-				NMmOTAtje.WcMVlbnn = qUPpgbVBV.zuTAqkXn
-				NMmOTAtje.SjZtxHUof = qUPpgbVBV.zuTAqkXn
-				ujDKhL(QQtSbtFu)
-				SrYEQZw.YVpolrAK(0.4)
-				local NRzHjvyk, QpIxbKg = DGwOqlU()
-				if QpIxbKg and (QpIxbKg.CoauFDfj - QQtSbtFu.CoauFDfj).NbggoNiE <= 40 then
-					gEztLjTq = true
+			local started = os.clock()
+			while isCarrying() and os.clock() - started < 3 and not shouldStop() do task.wait(0.05) end
+			if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+			if isCarrying() then error("กลับบ้านแล้วแต่ยังฝากสัตว์ไม่สำเร็จ") end
+			-- กลับจุดเดิมก่อนเปิดฟาร์ม เพื่อให้การตรวจระยะโซนข้ามช่วงอุ่นเครื่อง
+			local returned = false
+			for _ = 1, 3 do
+				if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+				local _, root = getChar()
+				if not returnCF or not root then break end
+				root.CFrame = returnCF
+				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyAngularVelocity = Vector3.zero
+				holdAfterTeleport(returnCF)
+				task.wait(0.4)
+				local _, currentRoot = getChar()
+				if currentRoot and (currentRoot.Position - returnCF.Position).Magnitude <= 40 then
+					returned = true
 					break
 				end
 			end
-			if not gEztLjTq then bNhZYPf(string.char(3585,3621,3633,3610,3592,3640,3604,3615,3634,3619,3660,3617,3652,3617,3656,3626,3635,3648,3619,3655,3592,32,3651,3627,3657,3615,3634,3619,3660,3617,3648,3619,3636,3656,3617,3605,3634,3617,3586,3633,3657,3609,3605,3629,3609,3611,3585,3605,3636)) end
-			bNhZYPf(string.char(3613,3634,3585,3626,3633,3605,3623,3660,3649,3621,3657,3623,32,3648,3619,3636,3656,3617,3615,3634,3619,3660,3617,3605,3656,3629))
+			if not returned then finderSay("กลับจุดฟาร์มไม่สำเร็จ ให้ฟาร์มเริ่มตามขั้นตอนปกติ") end
+			finderSay("ฝากสัตว์แล้ว เริ่มฟาร์มต่อ")
 		end
 	end)
-	rHAxfRgU = QiwdENHO.zNPgWxN()
-	CXVuWtxvd.FpIeHOGRu = false
-	CXVuWtxvd.USXHgXp = nil
-	if not ZEPElDSr then bNhZYPf(string.char(3626,3656,3591,3626,3633,3605,3623,3660,3652,3617,3656,3626,3635,3648,3619,3655,3592,32) .. tostring(gmWnjLCBH)) end
-	if not CXVuWtxvd.VKPWyMWkC and not CXVuWtxvd.adjnIj and NaIlmlP == string.char(3585,3621,3633,3610,3610,3657,3634,3609)
-		and (WuFpYRcD and xfYqgLY.XZXZKTNsN or CXVuWtxvd.XZXZKTNsN) == KMGVjG then
-		if vaaibbSZ or WuFpYRcD then
-			iDPqQkI = { IHqbEf = lksSUCSLL, kpQixoxHU = krLNtv, hujtoK = not WuFpYRcD and xYNJCSM, xfYqgLY = WuFpYRcD }
-			if WuFpYRcD then WaNHxCjx.uVoYRFcAw(true) else disIXrdT.uVoYRFcAw(true) end
+	deliveryEndedAt = os.clock()
+	State.DeliveryBusy = false
+	State.DeliveryZone = nil
+	if not ok then finderSay("ส่งสัตว์ไม่สำเร็จ " .. tostring(err)) end
+	if not State.Closed and not State.AfkPinned and destination == "กลับบ้าน"
+		and (gardenWasOn and Garden.Zone or State.Zone) == selectedZone then
+		if farmWasOn or gardenWasOn then
+			finderResume = { Money = findMoney, Buff = findBuff, Gems = not gardenWasOn and gemsWereOn, Garden = gardenWasOn }
+			if gardenWasOn then gardenToggle.Set(true) else farmToggle.Set(true) end
 		else
-			if lksSUCSLL then vvoqmx.uVoYRFcAw(true) end
-			if krLNtv then pkuktCbv.uVoYRFcAw(true) end
-			if xYNJCSM then imSKaMlSo.uVoYRFcAw(true) end
+			if findMoney then moneyToggle.Set(true) end
+			if findBuff then buffToggle.Set(true) end
+			if gemsWereOn then gemToggle.Set(true) end
 		end
 	end
 end
 
-
-SrYEQZw.UzBcgssqK(function()
-	local EwzdRUP
-	while OYygnfK.OjQGoB do
-		local ZEPElDSr, gmWnjLCBH = DXClww(function()
-			local hramerVm = UFHrKnHa()
-			if not hramerVm then
-				EwzdRUP = nil
-				CXVuWtxvd.ECpmoz = false
-			elseif CXVuWtxvd.ZRyJnv or CXVuWtxvd.FpIeHOGRu then
-				EwzdRUP = nil
-				CXVuWtxvd.ECpmoz = true
-			elseif (CXVuWtxvd.OPxkNSmws or CXVuWtxvd.opCResGD) and not CXVuWtxvd.VKPWyMWkC and not CXVuWtxvd.adjnIj
-				and not CXVuWtxvd.ECpmoz then
-				EwzdRUP = EwzdRUP or QiwdENHO.zNPgWxN()
-				if QiwdENHO.zNPgWxN() - EwzdRUP < 0.5 or QiwdENHO.zNPgWxN() - rHAxfRgU < 2 then return end
-				
-				CXVuWtxvd.ECpmoz = true
-				local XNWvaNYrE = IWYWMRm()
-				local NRzHjvyk, NMmOTAtje = DGwOqlU()
-				if not XNWvaNYrE or not NMmOTAtje then XiKOteo(string.char(3652,3617,3656,3614,3610,3650,3617,3648,3604,3621,3626,3633,3605,3623,3660,3607,3637,3656,3606,3639,3629,3629,3618,3641,3656)) end
-				local OBIyQuLb = { YDRUhpuYE = XNWvaNYrE:MCQxulAJS(string.char(99,117,80,81,100,83)) or XNWvaNYrE.YDRUhpuYE,
-					pRPgax = XNWvaNYrE:MCQxulAJS(string.char(112,82,80,103,97,120)) }
-				local vqNkPURhc = XNWvaNYrE:MCQxulAJS(string.char(90,120,87,89,103,77,102))
-				if vqNkPURhc == nil then
-					local ZJdKGiNoL = ZolKMNHdw:AAZfTWh(string.char(112,122,99,68,84,120,79,67))
-					local CnlLYpqJ, zihWSaiG = nil, bahPrfK.yJdZksz
-					for NRzHjvyk, jYzMGqc in ipairs(ZJdKGiNoL and ZJdKGiNoL:jsMboNIH() or {}) do
-						if jYzMGqc:AEHHlgP(string.char(74,89,85,71,87,113,101,99)) and jYzMGqc:MCQxulAJS(string.char(90,120,87,89,103,77,102)) ~= nil then
-							local QwEQPGHmS = OBIyQuLb.pRPgax ~= nil and jYzMGqc:MCQxulAJS(string.char(112,82,80,103,97,120)) == OBIyQuLb.pRPgax
-							local CAxjwQsg = OBIyQuLb.pRPgax == nil and pZdZdgYWZ(jYzMGqc:MCQxulAJS(string.char(99,117,80,81,100,83))) == pZdZdgYWZ(OBIyQuLb.YDRUhpuYE)
-							if QwEQPGHmS or CAxjwQsg then
-								local tLtSadF = (XZJANmr(jYzMGqc) - NMmOTAtje.CoauFDfj).NbggoNiE
-								if tLtSadF < zihWSaiG then CnlLYpqJ, zihWSaiG = jYzMGqc, tLtSadF end
+-- รับช่วงสัตว์ที่ผู้เล่นยกเอง โดยไม่ผูกกับฟาร์ม สวน หรือเงื่อนไขเลือกสัตว์
+task.spawn(function()
+	local carrySince
+	while gui.Parent do
+		local ok, err = pcall(function()
+			local carrying = isCarrying()
+			if not carrying then
+				carrySince = nil
+				State.ManualCarryBlocked = false
+			elseif State.ScriptLift or State.DeliveryBusy then
+				carrySince = nil
+				State.ManualCarryBlocked = true
+			elseif (State.FindMoney or State.FindBuff) and not State.Closed and not State.AfkPinned
+				and not State.ManualCarryBlocked then
+				carrySince = carrySince or os.clock()
+				if os.clock() - carrySince < 0.5 or os.clock() - deliveryEndedAt < 2 then return end
+				-- ล็อกจนวางสัตว์ แม้ค้นตัวตนหรือส่งไม่สำเร็จก็ไม่วนส่งซ้ำ
+				State.ManualCarryBlocked = true
+				local carried = carriedAnimal()
+				local _, root = getChar()
+				if not carried or not root then error("ไม่พบโมเดลสัตว์ที่ถืออยู่") end
+				local identity = { Name = carried:GetAttribute("AnimalName") or carried.Name,
+					HatchId = carried:GetAttribute("HatchId") }
+				local zoneId = carried:GetAttribute("ZoneId")
+				if zoneId == nil then
+					local folder = workspace:FindFirstChild("AnimalPickups")
+					local matching, bestDistance = nil, math.huge
+					for _, candidate in ipairs(folder and folder:GetChildren() or {}) do
+						if candidate:IsA("Model") and candidate:GetAttribute("ZoneId") ~= nil then
+							local sameHatch = identity.HatchId ~= nil and candidate:GetAttribute("HatchId") == identity.HatchId
+							local sameName = identity.HatchId == nil and normaliseAnimalName(candidate:GetAttribute("AnimalName")) == normaliseAnimalName(identity.Name)
+							if sameHatch or sameName then
+								local distance = (animalPosition(candidate) - root.Position).Magnitude
+								if distance < bestDistance then matching, bestDistance = candidate, distance end
 							end
 						end
 					end
-					vqNkPURhc = CnlLYpqJ and CnlLYpqJ:MCQxulAJS(string.char(90,120,87,89,103,77,102))
+					zoneId = matching and matching:GetAttribute("ZoneId")
 				end
-				local wcBtyZAmT
-				if vqNkPURhc ~= nil then
-					local VVXcsfFtP = tostring(vqNkPURhc):oVUySul(string.char(40,37,101,105,105,116,81,79,109,43,41,36))
-					wcBtyZAmT = VVXcsfFtP and (string.char(3650,3595,3609,3607,3637,3656,32) .. VVXcsfFtP) or tostring(vqNkPURhc)
+				local zone
+				if zoneId ~= nil then
+					local number = tostring(zoneId):match("(%d+)$")
+					zone = number and ("โซนที่ " .. number) or tostring(zoneId)
 				else
-					wcBtyZAmT = jkqORSkr(NMmOTAtje.CoauFDfj)
+					zone = zoneOfPosition(root.Position)
 				end
-				if not wcBtyZAmT then XiKOteo(string.char(3652,3617,3656,3614,3610,3650,3595,3609,3586,3629,3591,3626,3633,3605,3623,3660,3607,3637,3656,3606,3639,3629,3629,3618,3641,3656)) end
-				local NaIlmlP = CXVuWtxvd.OPxkNSmws and SFEzMvUe.EujgVTXsW or SFEzMvUe.nDFQfhhyu
-				if CXVuWtxvd.opCResGD and SFEzMvUe.nDFQfhhyu == string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) then NaIlmlP = string.char(3592,3640,3604,32,89,120,102,116,65,67,110,70,75) end
-				KvAmGLn(OBIyQuLb, NaIlmlP, true, wcBtyZAmT)
+				if not zone then error("ไม่พบโซนของสัตว์ที่ถืออยู่") end
+				local destination = State.FindMoney and Finder.MoneyDestination or Finder.BuffDestination
+				if State.FindBuff and Finder.BuffDestination == "จุด AFK" then destination = "จุด AFK" end
+				deliverAnimal(identity, destination, true, zone)
 			else
-				EwzdRUP = nil
+				carrySince = nil
 			end
 		end)
-		if not ZEPElDSr then bNhZYPf(string.char(3619,3633,3610,3594,3656,3623,3591,3626,3633,3605,3623,3660,3607,3637,3656,3606,3639,3629,3629,3618,3641,3656,3652,3617,3656,3626,3635,3648,3619,3655,3592,32) .. tostring(gmWnjLCBH)) end
-		SrYEQZw.YVpolrAK(0.25)
+		if not ok then finderSay("รับช่วงสัตว์ที่ถืออยู่ไม่สำเร็จ " .. tostring(err)) end
+		task.wait(0.25)
 	end
 end)
 
-SrYEQZw.UzBcgssqK(function()
-	while OYygnfK.OjQGoB do
-		
-		local wcBtyZAmT = Ontyggkf()
-		local wtZeBuMM = CXVuWtxvd.xfYqgLY and xfYqgLY.oSJZImn == wcBtyZAmT
-			or (not CXVuWtxvd.xfYqgLY and CXVuWtxvd.AUVOWGvO and CXVuWtxvd.oSJZImn == wcBtyZAmT)
-		local fjeLXJ = wtZeBuMM and yZZJxP(wcBtyZAmT)
-		if iDPqQkI and not CXVuWtxvd.VKPWyMWkC and not CXVuWtxvd.FpIeHOGRu and fjeLXJ then
-			local WkYitZe = iDPqQkI
-			iDPqQkI = nil
-			if WkYitZe.IHqbEf then vvoqmx.uVoYRFcAw(true) end
-			if WkYitZe.kpQixoxHU then pkuktCbv.uVoYRFcAw(true) end
-			if WkYitZe.hujtoK and not CXVuWtxvd.xfYqgLY then imSKaMlSo.uVoYRFcAw(true) end
-			uvOWjLcj(string.char(3606,3638,3591,32) .. wcBtyZAmT .. string.char(32,3649,3621,3657,3623,32,3648,3611,3636,3604,3627,3634,3605,3633,3623,3605,3656,3629))
+task.spawn(function()
+	while gui.Parent do
+		-- รอผ่านขั้นเตรียมและวาร์ปจนถึงโซนที่เลือกจริงก่อนเปิดหาตัวต่อ
+		local zone = activeZone()
+		local ready = State.Garden and Garden.ReadyZone == zone
+			or (not State.Garden and State.AutoFarm and State.ReadyZone == zone)
+		local inFarmZone = ready and isNearZone(zone)
+		if finderResume and not State.Closed and not State.DeliveryBusy and inFarmZone then
+			local resume = finderResume
+			finderResume = nil
+			if resume.Money then moneyToggle.Set(true) end
+			if resume.Buff then buffToggle.Set(true) end
+			if resume.Gems and not State.Garden then gemToggle.Set(true) end
+			say("ถึง " .. zone .. " แล้ว เปิดหาตัวต่อ")
 		end
-		if (CXVuWtxvd.OPxkNSmws or CXVuWtxvd.opCResGD) and not CXVuWtxvd.FpIeHOGRu and fjeLXJ and not UFHrKnHa() then
-			local ZEPElDSr, gmWnjLCBH = DXClww(function()
-				local jYzMGqc, NaIlmlP = QocgnHZV()
-				if jYzMGqc then KvAmGLn(jYzMGqc.xHIiMUIX, NaIlmlP)
-				else DXClww(function() kMmTnES.gerFhc = string.char(3626,3606,3634,3609,3632,3627,3634,3605,3633,3623,32,3619,3629,3626,3633,3605,3623,3660,3607,3637,3656,3605,3619,3591,3648,3591,3639,3656,3629,3609,3652,3586) end) end
+		if (State.FindMoney or State.FindBuff) and not State.DeliveryBusy and inFarmZone and not isCarrying() then
+			local ok, err = pcall(function()
+				local candidate, destination = chooseAnimal()
+				if candidate then deliverAnimal(candidate.Animal, destination)
+				else pcall(function() finderStatus.Text = "สถานะหาตัว รอสัตว์ที่ตรงเงื่อนไข" end) end
 			end)
-			if not ZEPElDSr then bNhZYPf(string.char(3605,3619,3623,3592,3627,3634,3626,3633,3605,3623,3660,3652,3617,3656,3626,3635,3648,3619,3655,3592,32) .. tostring(gmWnjLCBH)) end
+			if not ok then finderSay("ตรวจหาสัตว์ไม่สำเร็จ " .. tostring(err)) end
 		end
-		SrYEQZw.YVpolrAK(0.5)
+		task.wait(0.5)
 	end
 end)
 
-
+-- 3) สวน
 do
-	local dNqQbQS = ECjiGM(string.char(3626,3623,3609))
-	local SoRhELytt, GidEUHI
-	local function NoGDXe()
-		if not SoRhELytt then return end
-		xfYqgLY.oRKywi() 
-		local hPALxDEK = Bbqusff(xfYqgLY.XZXZKTNsN)
-		local sueNUhnoN = cSwXLEa.WFAkMJcEp(hPALxDEK, string.char(124))
-		if sueNUhnoN ~= GidEUHI then
-			GidEUHI = sueNUhnoN
-			SoRhELytt.ltnyQNT(hPALxDEK)
+	local gardenPage = addTab("สวน")
+	local gardenEggPicker, lastGardenEggList
+	local function refreshGardenEggList()
+		if not gardenEggPicker then return end
+		Garden.Progress() -- เก็บจำนวนตำแหน่งตั้งแต่หน้า UI ยังไม่เริ่มทำสวน
+		local list = eggTypesOf(Garden.Zone)
+		local key = table.concat(list, "|")
+		if key ~= lastGardenEggList then
+			lastGardenEggList = key
+			gardenEggPicker.SetOptions(list)
 		end
-		
+		-- รายชื่ออาจว่างชั่วคราวระหว่างเกิดใหม่ จึงเก็บชนิดไข่ที่เลือกไว้
 	end
-	cdvYLKT(dNqQbQS, string.char(3648,3621,3639,3629,3585,3650,3595,3609), VlKiHUhTl.AVBMchkv, xfYqgLY.XZXZKTNsN, function(wcBtyZAmT)
-		if xfYqgLY.XZXZKTNsN == wcBtyZAmT then return end
-		xfYqgLY.XZXZKTNsN, xfYqgLY.WkhAtHkdd, xfYqgLY.oSJZImn = wcBtyZAmT, nil, nil
-		WaNHxCjx.uVoYRFcAw(false)
-		SoRhELytt.uVoYRFcAw(nil, true)
-		NoGDXe()
+	makeDropdown(gardenPage, "เลือกโซน", CONFIG.ZoneOrder, Garden.Zone, function(zone)
+		if Garden.Zone == zone then return end
+		Garden.Zone, Garden.Egg, Garden.ReadyZone = zone, nil, nil
+		gardenToggle.Set(false)
+		gardenEggPicker.Set(nil, true)
+		refreshGardenEggList()
 	end)
-	SoRhELytt = cdvYLKT(dNqQbQS, string.char(3648,3621,3639,3629,3585,3652,3586,3656), {}, xfYqgLY.WkhAtHkdd, function(MZbNRVjyK)
-		xfYqgLY.WkhAtHkdd = MZbNRVjyK
+	gardenEggPicker = makeDropdown(gardenPage, "เลือกไข่", {}, Garden.Egg, function(egg)
+		Garden.Egg = egg
 	end)
-	local alENLAqw
-	local function lGAUfY(ZewFqfg)
-		xfYqgLY.OOrKsWV = KIzNjlAb(ZewFqfg) or 0
-		if alENLAqw then alENLAqw.gerFhc = string.char(3586,3633,3657,3609,3605,3656,3635,32) .. ZfyeNCxlJ.uhBgwIhN(string.char(37,46,54,103), xfYqgLY.OOrKsWV) .. string.char(32,77,80,71,80,68,119,75,83,78,32,40,48,32,61,32,3607,3640,3585,3609,3657,3635,3627,3609,3633,3585,41) end
+	local gardenHPNote
+	local function updateGardenHP(text)
+		Garden.MinHP = parseMoney(text) or 0
+		if gardenHPNote then gardenHPNote.Text = "ขั้นต่ำ " .. string.format("%.6g", Garden.MinHP) .. " HP (0 = ทุกน้ำหนัก)" end
 	end
-	local uZtDWJ = qPXGJuI(dNqQbQS, string.char(3609,3657,3635,3627,3609,3633,3585,3586,3633,3657,3609,3605,3656,3635,32,40,77,80,71,80,68,119,75,83,78,41), string.char(), lGAUfY)
-	alENLAqw = RGfqlqziM(dNqQbQS, string.char(3586,3633,3657,3609,3605,3656,3635,32,48,32,77,80,71,80,68,119,75,83,78,32,40,48,32,61,32,3607,3640,3585,3609,3657,3635,3627,3609,3633,3585,41))
-	uZtDWJ:nuwSVgAXm(string.char(103,101,114,70,104,99)):oRlmCQw(function() lGAUfY(uZtDWJ.gerFhc) end)
-	WaNHxCjx = CgAsMfkOA(dNqQbQS, string.char(3648,3619,3636,3656,3617,3607,3635,3626,3623,3609), false, xjXmKDyks.xfYqgLY)
-	xfYqgLY.hASatSK = RGfqlqziM(dNqQbQS, string.char(3605,3619,3591,32,48,47,48,32,3615,3629,3591))
-	NoGDXe()
-	SrYEQZw.UzBcgssqK(function()
-		while OYygnfK.OjQGoB do
-			NoGDXe()
-			SrYEQZw.YVpolrAK(1.5)
+	local gardenHPBox = makeTextBox(gardenPage, "น้ำหนักขั้นต่ำ (HP)", "", updateGardenHP)
+	gardenHPNote = makeNote(gardenPage, "ขั้นต่ำ 0 HP (0 = ทุกน้ำหนัก)")
+	gardenHPBox:GetPropertyChangedSignal("Text"):Connect(function() updateGardenHP(gardenHPBox.Text) end)
+	gardenToggle = makeToggle(gardenPage, "เริ่มทำสวน", false, Callbacks.Garden)
+	Garden.Status = makeNote(gardenPage, "ตรง 0/0 ฟอง")
+	refreshGardenEggList()
+	task.spawn(function()
+		while gui.Parent do
+			refreshGardenEggList()
+			task.wait(1.5)
 		end
 	end)
 
 end
 
-
-local qbVGIIf = ECjiGM(string.char(3648,3614,3636,3656,3617,32,80,114,69,117,112,72,70))
-CgAsMfkOA(qbVGIIf, string.char(3621,3604,3585,3619,3634,3615,3636,3585,32,40,3648,3614,3636,3656,3617,32,80,114,69,117,112,72,70,41), TFiysDfa.ykgMIy.iwlULwcfl, xjXmKDyks.muHjvJq)
-CgAsMfkOA(qbVGIIf, string.char(3611,3621,3604,3621,3655,3629,3585,32,80,114,69,117,112,72,70), TFiysDfa.ykgMIy.dlZJbDG, xjXmKDyks.IDttuz)
-if type(IdzSNoD) ~= string.char(102,117,110,99,116,105,111,110) then
-	RGfqlqziM(qbVGIIf, string.char(42,32,3605,3633,3623,3619,3633,3609,3609,3637,3657,3652,3617,3656,3619,3629,3591,3619,3633,3610,32,73,100,122,83,78,111,68,32,3592,3638,3591,3611,3621,3604,3621,3655,3629,3585,32,80,114,69,117,112,72,70,32,3652,3617,3656,3652,3604,3657))
+-- 4) เพิ่ม FPS
+local fpsPage = addTab("เพิ่ม FPS")
+makeToggle(fpsPage, "ลดกราฟิก (เพิ่ม FPS)", fps.saved.boost, Callbacks.FpsBoost)
+makeToggle(fpsPage, "ปลดล็อก FPS", fps.saved.unlock, Callbacks.UnlockFps)
+if type(setfpscap) ~= "function" then
+	makeNote(fpsPage, "* ตัวรันนี้ไม่รองรับ setfpscap จึงปลดล็อก FPS ไม่ได้")
 end
-TFiysDfa.JWeCZZfa(RGfqlqziM(qbVGIIf, string.char(80,114,69,117,112,72,70,58,32,48)))
+fps.start(makeNote(fpsPage, "FPS: 0"))
 
-SmxLbMf(bxkECnNNd[1])
+selectTab(tabs[1])
 
-
-
-
-
-local function BxokCsmBi(vAsGROHrO)
-	local pFZQJjG, lNYOHhqs, LJTreW, kGRQZTk
-	vAsGROHrO.vshkmHV:oRlmCQw(function(xfHonUL)
-		if xfHonUL.GwgnsTHC == qDcOCKb.GwgnsTHC.VcjpfL
-			or xfHonUL.GwgnsTHC == qDcOCKb.GwgnsTHC.xSqmAo then
-			pFZQJjG, lNYOHhqs, LJTreW, kGRQZTk = true, xfHonUL.CoauFDfj, vAsGROHrO.CoauFDfj, false
-			xfHonUL.PqbuSUhJ:oRlmCQw(function()
-				if xfHonUL.MZUjLr == qDcOCKb.MZUjLr.jVILnPv then pFZQJjG = false end
+---------------------------------------------------------------------
+-- Drag + hotkey
+---------------------------------------------------------------------
+-- ทำให้ลากได้ คืนค่าฟังก์ชันเช็กว่าเพิ่งลากไปหรือเปล่า (กันกดติดตอนลากเสร็จ)
+local function makeDraggable(frame)
+	local dragging, dragStart, startPos, moved
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragging, dragStart, startPos, moved = true, input.Position, frame.Position, false
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then dragging = false end
 			end)
 		end
 	end)
-	MRMHPqy.plFnZpmA:oRlmCQw(function(xfHonUL)
-		if pFZQJjG and (xfHonUL.GwgnsTHC == qDcOCKb.GwgnsTHC.USnseil
-			or xfHonUL.GwgnsTHC == qDcOCKb.GwgnsTHC.xSqmAo) then
-			local eiitQOm = xfHonUL.CoauFDfj - lNYOHhqs
-			if eiitQOm.NbggoNiE > 4 then kGRQZTk = true end
-			vAsGROHrO.CoauFDfj = RTbBaU.vMEhDl(LJTreW.dsddlTF.VfPcixn, LJTreW.dsddlTF.rtTqIp + eiitQOm.dsddlTF, LJTreW.jMlaBVxZz.VfPcixn, LJTreW.jMlaBVxZz.rtTqIp + eiitQOm.jMlaBVxZz)
+	UIS.InputChanged:Connect(function(input)
+		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch) then
+			local d = input.Position - dragStart
+			if d.Magnitude > 4 then moved = true end
+			frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
 		end
 	end)
-	return function() return kGRQZTk end
+	return function() return moved end
 end
 
-BxokCsmBi(BtbpJi)
-local DCxfIywos = BxokCsmBi(FTEvomw)
+makeDraggable(main)
+local floatMoved = makeDraggable(floatLogo)
 
-iJyUlgMo.hnFBaPKH:oRlmCQw(function() upoOGG(true) end)
-FTEvomw.hnFBaPKH:oRlmCQw(function()
-	if not DCxfIywos() then upoOGG(false) end
+logo.MouseButton1Click:Connect(function() setMinimized(true) end)
+floatLogo.MouseButton1Click:Connect(function()
+	if not floatMoved() then setMinimized(false) end
 end)
 
-MRMHPqy.vshkmHV:oRlmCQw(function(xfHonUL, RKKvcZINj)
-	if not RKKvcZINj and xfHonUL.dWNJFsKiP == VlKiHUhTl.rgCiyF then
-		upoOGG(BtbpJi.bCuISnY)
+UIS.InputBegan:Connect(function(input, processed)
+	if not processed and input.KeyCode == CONFIG.ToggleKey then
+		setMinimized(main.Visible)
 	end
 end)
+
