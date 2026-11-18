@@ -1,12 +1,3147 @@
-local v0=game:GetService("Players");local v1=game:GetService("UserInputService");local v2=game:GetService("TweenService");local v3=game:GetService("Lighting");local v4=game:GetService("RunService");local v5=game:GetService("ReplicatedStorage");local v6=game:GetService("VirtualUser");local v7=v0.LocalPlayer;local v8={Title="Malmon Hub",LogoImage="",ToggleKey=Enum.KeyCode.RightControl,HitInterval=0.2 -0 ,EggTimeout=769 -(12 + 737) ,GemRadius=210 -150 ,GemStay=0.25,TeleportRetries=1 + 2 ,NoWarpDist=351 -(12 + 39) ,TeleportVia={[13 + 0 ]=36 -24 },SwingPressGap=0.8 -0 ,TweenSpeed=89 + 211 ,LiftWait=7 + 5 ,LiftRadius=60,LiftPromptWords={"steal","pick","carry","grab","lift"},ToolKeyword="Pickaxe",GuardTimeout=78 -48 ,KnockbackDist=725 -(164 + 549) ,Home=CFrame.new( -(1508.7790527 -(1059 + 379)),2.72415328 -0 ,2.12843513 + 1 ,0.12112426 + 0 ,392 -(145 + 247) , -0.992637336,0,1 + 0 ,0,0.992637336,0,0.12112426),AFK=CFrame.new( -748.049316,18.724147799999997 + 19 ,417.6633 -276 ,0.978355706,0 + 0 ,0.206930265 + 0 ,0 -0 ,721 -(254 + 466) ,0, -(560.206930265 -(544 + 16)),0 -0 ,0.978355706),ZoneOrder={},ZoneModels={}};local v9="2026-11-16 r57";local v10="ทั้งหมด";local function v11(v207) local v208=0;local v209;local v210;local v211;local v212;local v213;local v214;while true do if (v208==(628 -(294 + 334))) then v209=tostring(v207):lower():gsub("/s",""):gsub("[$,%s]","");v210,v211=v209:match("^(%d*%.?%d+)(%a*)$");v208=254 -(236 + 17) ;end if (v208==1) then v212={qa=999999986992915 -(1716 + 95) ,qi=1000000000000000000,sx=1e+21 --15408774 ,sp=1.0000000138484279E+24,oc=9.999999884841548E+26,no=1.0000000150474662E+30,dc=9.999999944957273E+32 -(9 + 8) ,k=1000,m=525381 + 474619 ,b=2338265923 -1338265923 ,t=999999995904 -0 };v213=((v211=="") and 1) or v212[v211] ;v208=1972 -(582 + 1388) ;end if (v208==3) then if (v214<math.huge) then return v214;end break;end if (v208==2) then if ( not v210 or  not v213) then return nil;end v214=tonumber(v210) * v213 ;v208=4 -1 ;end end end do local v215=0 + 0 ;local v216;local v217;local v218;while true do if (v215==(365 -(326 + 38))) then local v1062=0 -0 ;while true do if (v1062==1) then v215=2;break;end if (v1062==(0 -0)) then v218={};if v217 then for v1614,v1615 in ipairs(v217:GetChildren()) do local v1616=tonumber(v1615.Name:match("^Zone(%d+)$"));if v1616 then table.insert(v218,v1616);end end end v1062=621 -(47 + 573) ;end end end if ((0 + 0)==v215) then local v1063=0;while true do if (v1063==(4 -3)) then v215=1;break;end if (v1063==0) then v216=workspace:FindFirstChild("Build");v217=v216 and v216:FindFirstChild("ZoneBuilds") ;v1063=1;end end end if (v215==(2 -0)) then table.sort(v218);for v1175,v1176 in ipairs(v218) do local v1177=1664 -(1269 + 395) ;local v1178;while true do if (v1177==0) then local v1464=492 -(76 + 416) ;while true do if (v1464==(444 -(319 + 124))) then v1177=2 -1 ;break;end if (v1464==(1007 -(564 + 443))) then v1178="โซนที่ "   .. v1176 ;table.insert(v8.ZoneOrder,v1178);v1464=1;end end end if (v1177==(2 -1)) then v8.ZoneModels[v1178]=v217:FindFirstChild("Zone"   .. v1176 );break;end end end v215=461 -(337 + 121) ;end if (v215==3) then if ( #v8.ZoneOrder==(0 -0)) then local v1296=0 -0 ;local v1297;while true do if (v1296==(1911 -(1261 + 650))) then v1297=0;while true do if (v1297==(0 + 0)) then v8.ZoneOrder={"ไม่พบโซน"};warn("[FarmHub] ไม่พบ workspace.Build.ZoneBuilds");break;end end break;end end end break;end end end local function v12(v219) local v220,v221,v222={},{},{};local v223=v8.ZoneModels[v219];local v224=v223 and v223:FindFirstChild("Eggs") ;if v224 then for v1064,v1065 in ipairs(v224:GetChildren()) do local v1066=1817 -(772 + 1045) ;local v1067;local v1068;while true do if ((0 + 0)==v1066) then v1067,v1068=v1065.Name:match("^(%d+):%s*(.+)$");if (v1068 and  not v222[v1068]) then local v1531=144 -(102 + 42) ;local v1532;while true do if (v1531==(1844 -(1524 + 320))) then v1532=0;while true do if (v1532==(1270 -(1049 + 221))) then v222[v1068]=true;table.insert(v221,{tonumber(v1067),v1068});break;end end break;end end end break;end end end end table.sort(v221,function(v854,v855) return v854[1103 -(67 + 1035) ]<v855[1] ;end);for v856,v857 in ipairs(v221) do table.insert(v220,v857[2]);end return v220;end local v13={Zone=v8.ZoneOrder[349 -(136 + 212) ],Eggs={},AutoFarm=false,Garden=false,GardenRun=0,CollectGems=false,ScriptLift=false,ManualCarryBlocked=false,AfkPinned=false,Debug=false,FarmRun=0 -0 ,ReadyZone=nil,SwingWant=false,GemRun=0 + 0 ,Priority="ใกล้สุดก่อน"};local v14={Zone=v8.ZoneOrder[1 + 0 ],Egg=nil,MinHP=1604 -(240 + 1364) ,ReadyZone=nil,Spots={}};local v15,v16,v17;local function v18() return v13.DeliveryZone or (v13.Garden and v14.Zone) or v13.Zone ;end local function v19() local v225=1082 -(1050 + 32) ;local v226;local v227;local v228;while true do if (v225==(3 -2)) then v228=v226 and v226:FindFirstChildOfClass("Humanoid") ;if (v227 and v228 and (v228.Health>0)) then return v226,v227,v228;end break;end if (v225==(0 + 0)) then v226=v7.Character;v227=v226 and v226:FindFirstChild("HumanoidRootPart") ;v225=1056 -(331 + 724) ;end end end local function v20(...) if v13.Debug then print("[FarmHub]",...);end end local function v21() local v229=0 + 0 ;local v230;local v231;local v232;local v233;local v234;local v235;local v236;while true do if (v229==(647 -(269 + 375))) then v236=nil;while true do if (v230==(726 -(267 + 458))) then v234=v8.ToolKeyword:lower();v235=v231:FindFirstChildOfClass("Tool");v230=1 + 1 ;end if ((5 -2)==v230) then if v236 then for v1617,v1618 in ipairs(v236:GetChildren()) do if (v1618:IsA("Tool") and v1618.Name:lower():find(v234,819 -(667 + 151) ,true)) then local v1692=1497 -(1410 + 87) ;while true do if (v1692==0) then v20("ถือ:",v1618.Name);v233:EquipTool(v1618);v1692=1;end if (v1692==(1898 -(1504 + 393))) then return v1618;end end end end end v20("ไม่พบ Tool ที่ชื่อมี '"   .. v8.ToolKeyword   .. "' ในกระเป๋า" );break;end if (v230==(0 -0)) then v231,v232,v233=v19();if  not v231 then return;end v230=2 -1 ;end if (v230==(798 -(461 + 335))) then if (v235 and v235.Name:lower():find(v234,1 + 0 ,true)) then return v235;end v236=v7:FindFirstChild("Backpack");v230=1764 -(1730 + 31) ;end end break;end if (v229==(1668 -(728 + 939))) then v232=nil;v233=nil;v229=6 -4 ;end if (v229==2) then v234=nil;v235=nil;v229=3;end if (v229==(0 -0)) then v230=0 -0 ;v231=nil;v229=1069 -(138 + 930) ;end end end local function v22(v237) local v238=0;local v239;while true do if ((1 + 0)==v238) then return (v239~=nil) and v239.Enabled ;end if (v238==0) then v239=v237;while v239 and  not v239:IsA("LayerCollector")  do local v1179=0 + 0 ;while true do if (v1179==0) then if (v239:IsA("GuiObject") and  not v239.Visible) then return false;end v239=v239.Parent;break;end end end v238=1 + 0 ;end end end local function v23(v240) return (v240:lower():gsub("%s",""));end local function v24(v241,v242) local v243=0 -0 ;local v244;local v245;local v246;while true do if (v243==2) then function v246(v1180) local v1181=1766 -(459 + 1307) ;while true do if (v1181==1) then return v1180:find(v245,1871 -(474 + 1396) ,true)~=nil ;end if (v1181==(0 -0)) then v1180=v23(v1180);if v242 then return v1180==v245 ;end v1181=1 + 0 ;end end end for v1182,v1183 in ipairs(v244:GetDescendants()) do if (v1183:IsA("GuiObject") and  not v1183:IsDescendantOf(v244:FindFirstChild("FarmHubUI") or v1183 )) then local v1364=0;local v1365;while true do if (v1364==0) then v1365=((v1183:IsA("TextLabel") or v1183:IsA("TextButton")) and v1183.Text) or "" ;if (v246(v1365) or v246(v1183.Name)) then local v1693=0 + 0 ;local v1694;while true do if (v1693==(0 -0)) then v1694=(v1183:IsA("GuiButton") and v1183) or v1183:FindFirstAncestorWhichIsA("GuiButton") ;if (v1694 and v22(v1694)) then return v1694;end break;end end end break;end end end end break;end if (v243==(1 + 0)) then v245=v23(v241);v246=nil;v243=2;end if (v243==(0 -0)) then local v1070=0 -0 ;while true do if (v1070==1) then v243=1;break;end if (v1070==(591 -(562 + 29))) then v244=v7:FindFirstChild("PlayerGui");if  not v244 then return;end v1070=1;end end end end end local function v25(v247,v248) local v249=0 + 0 ;local v250;local v251;local v252;local v253;while true do local v858=0;while true do if (v858==2) then if (v249==0) then v248=v248 or 1 ;if ((v248==1) or (v248==2)) then local v1533=1419 -(374 + 1045) ;local v1534;while true do if (v1533==(0 + 0)) then v1534=0;while true do if (v1534==(0 -0)) then if getconnections then local v1825=638 -(448 + 190) ;local v1826;local v1827;while true do if (v1825==(1 + 0)) then if ( #v1827>(0 + 0)) then local v1859=0;while true do if (v1859==(0 + 0)) then local v1865=0;while true do if (v1865==0) then for v1870,v1871 in ipairs(v1827) do pcall(function() if v1871.Function then v1871.Function();else v1871:Fire();end end);end return true;end end end end end break;end if (0==v1825) then v1826=((v248==(3 -2)) and v247.MouseButton1Click) or v247.Activated ;v1827=getconnections(v1826);v1825=1;end end end return false;end end break;end end elseif (v248==(8 -5)) then local v1649=0;while true do if (v1649==(1494 -(1307 + 187))) then if firesignal then local v1817=0;while true do if (v1817==(0 -0)) then pcall(firesignal,v247.MouseButton1Click);pcall(firesignal,v247.Activated);v1817=2 -1 ;end if (v1817==1) then return true;end end end return false;end end end v249=1;end break;end if (v858==1) then if (v249==(2 -1)) then v250=game:GetService("VirtualInputManager");v251=v247:FindFirstAncestorWhichIsA("ScreenGui");v249=685 -(232 + 451) ;end if (v249==(4 + 0)) then local v1366=0 + 0 ;while true do if ((564 -(510 + 54))==v1366) then v250:SendMouseButtonEvent(v253.X,v253.Y,0 -0 ,false,game,36 -(13 + 23) );return true;end end end v858=3 -1 ;end if (v858==(0 -0)) then if (v249==2) then v252=(v251 and v251.IgnoreGuiInset and Vector2.zero) or game:GetService("GuiService"):GetGuiInset() ;v253=v247.AbsolutePosition + (v247.AbsoluteSize/(3 -1)) + v252 ;v249=1091 -(830 + 258) ;end if ((10 -7)==v249) then v250:SendMouseButtonEvent(v253.X,v253.Y,0,true,game,0 + 0 );task.wait(0.05);v249=4;end v858=1 + 0 ;end end end end local v26;local function v27() local v254=1441 -(860 + 581) ;local v255;local v256;while true do if (v254==(3 -2)) then v256=v255 and v255:FindFirstChild("MainGUI") ;v26=(v256 and v256:FindFirstChild("AutoSwing")) or v24("Auto Swing") ;v254=2 + 0 ;end if (v254==(241 -(237 + 4))) then if (v26 and v26.Parent) then return v26;end v255=v7:FindFirstChild("PlayerGui");v254=2 -1 ;end if (v254==(4 -2)) then return v26;end end end local function v28() local v257=0 -0 ;local v258;while true do if (v257==(0 + 0)) then v258=setthreadidentity or set_thread_identity or setidentity ;if (type(v258)=="function") then pcall(v258,5 + 3 );end break;end end end local function v29(v259,...) local v260,v261=coroutine.wrap(function(...) return pcall(v259,...);end)(...);v28();return v260,v261;end local v30,v31={},{};do local v262=0;local v263;local v264;local v265;local v266;local v267;while true do if (v262==(7 -5)) then if v266 then v31=v267;end break;end if (v262==0) then local v1071=0 + 0 ;while true do if ((1 + 0)==v1071) then v262=1427 -(85 + 1341) ;break;end if (v1071==(0 -0)) then v263=v5:FindFirstChild("Shared");v264,v265=v29(function() local v1467=0 -0 ;local v1468;local v1469;while true do local v1535=372 -(45 + 327) ;while true do if ((0 -0)==v1535) then if (v1467==(503 -(444 + 58))) then local v1755=0;while true do if ((0 + 0)==v1755) then v1469={};for v1845,v1846 in pairs(v1468.Zones) do assert((type(v1845)=="number") and (type(v1846)=="table") ,"ข้อมูลโซนไม่ถูกต้อง");local v1847={};for v1851,v1852 in ipairs(v1846) do local v1853=0 + 0 ;while true do if (v1853==(0 + 0)) then assert((type(v1852)=="table") and (type(v1852.Name)=="string") and (type(v1852.Rarity)=="string") and (type(v1852.Cash)=="number") ,"ข้อมูลสัตว์ไม่ถูกต้อง");v1847[v1852.Name]={Rarity=v1852.Rarity,Cash=v1852.Cash};break;end end end v1469["Zone"   .. v1845 ]=v1847;end v1755=1;end if (v1755==1) then v1467=5 -3 ;break;end end end if ((1732 -(64 + 1668))==v1467) then v1468=require(v263 and v263:FindFirstChild("ZoneAnimalsConfig") );assert((type(v1468)=="table") and (type(v1468.Zones)=="table") ,"ไม่พบตาราง Zones");v1467=1974 -(1227 + 746) ;end v1535=2 -1 ;end if (1==v1535) then if (2==v1467) then for v1799,v1800 in pairs(v1468.BorrowedRosters or {} ) do v1469["Zone"   .. v1799 ]=assert(v1469["Zone"   .. v1800 ],"ไม่พบโซนต้นทาง");end return v1469;end break;end end end end);v1071=1 -0 ;end end end if (v262==(495 -(415 + 79))) then if v264 then v30=v265;else print("[FarmHub] โหลดรายชื่อสัตว์ไม่ได้ ใช้เฉพาะสัตว์ที่เคยพบ:",v265);end v266,v267=v29(function() local v1184=0;local v1185;local v1186;local v1187;while true do if (v1184==(1 + 0)) then v1187=nil;while true do if (v1185==(492 -(142 + 349))) then v1187={};for v1695,v1696 in ipairs(v1186.RarityOrder) do local v1697=0 + 0 ;local v1698;while true do if (v1697==0) then v1698=0 -0 ;while true do if ((0 + 0)==v1698) then assert(type(v1696)=="string" ,"ความหายากไม่ถูกต้อง");v1187[v1696]=v1695;break;end end break;end end end v1185=2 + 0 ;end if (v1185==(5 -3)) then return v1187;end if (v1185==(1864 -(1710 + 154))) then v1186=require(v263 and v263:FindFirstChild("IndexConfig") );assert((type(v1186)=="table") and (type(v1186.RarityOrder)=="table") and ( #v1186.RarityOrder>(318 -(200 + 118))) ,"ไม่พบลำดับความหายาก");v1185=1 + 0 ;end end break;end if (v1184==(0 -0)) then v1185=0;v1186=nil;v1184=1 -0 ;end end end);v262=2;end end end local v32,v33=nil,false;local function v34() local v268=0 + 0 ;local v269;local v270;local v271;local v272;local v273;local v274;local v275;while true do local v859=0 + 0 ;while true do if (v859==(1 + 0)) then if (v268==(1 + 0)) then v271=v270 and v270:FindFirstChild("Controllers") ;v272=v271 and v271:FindFirstChild("AutoSwingController") ;if  not v272 then local v1536=0;while true do if (v1536==(0 -0)) then print("[FarmHub] ไม่พบ AutoSwingController");return nil;end end end v273,v274=v29(require,v272);v268=2;end if (v268==(1252 -(363 + 887))) then if ( not v273 or (type(v274)~="table")) then local v1537=0;while true do if (0==v1537) then print("[FarmHub] require AutoSwingController ไม่ได้:",v274);return nil;end end end v275={};for v1470,v1471 in pairs(v274) do table.insert(v275,tostring(v1470)   .. "="   .. typeof(v1471)   .. (((type(v1471)~="function") and (type(v1471)~="table") and ("("   .. tostring(v1471)   .. ")")) or "") );end print("[FarmHub] AutoSwingController:",table.concat(v275,", "));v268=3;end break;end if (v859==(0 -0)) then if (v268==(0 -0)) then if v33 then return v32;end v33=true;v269=v7:FindFirstChild("PlayerScripts");v270=v269 and v269:FindFirstChild("Client") ;v268=1 + 0 ;end if (v268==3) then v32=v274;return v274;end v859=2 -1 ;end end end end local function v35() local v276=0 + 0 ;local v277;local v278;local v279;while true do if (v276==3) then return nil;end if (v276==(1664 -(674 + 990))) then v277=v34();if ( not v277 or (type(v277.IsOn)~="function")) then return nil;end v276=1 + 0 ;end if ((1 + 0)==v276) then v278,v279=v29(v277.IsOn);if (v278 and (type(v279)=="boolean")) then return v279;end v276=2;end if ((2 -0)==v276) then v278,v279=v29(v277.IsOn,v277);if (v278 and (type(v279)=="boolean")) then return v279;end v276=1058 -(507 + 548) ;end end end local function v36(v280) local v281=837 -(289 + 548) ;local v282;while true do if (v281==(1820 -(821 + 997))) then v29(v282.SetOn,v282,v280);return v35()==v280 ;end if (v281==(256 -(195 + 60))) then v29(v282.SetOn,v280);if (v35()==v280) then return true;end v281=1 + 1 ;end if (v281==(1501 -(251 + 1250))) then v282=v34();if ( not v282 or (type(v282.SetOn)~="function")) then return false;end v281=2 -1 ;end end end local function v37() local v283=0 + 0 ;local v284;local v285;local v286;while true do if (v283==(1033 -(809 + 223))) then local v1072=0;while true do if (v1072==(1 -0)) then v283=5 -3 ;break;end if (v1072==(0 -0)) then v286=v285 and v285:FindFirstChild("AutoSwingState") ;if  not v286 then return v284;end v1072=1;end end end if (0==v283) then local v1073=0;while true do if (v1073==(1 + 0)) then v283=1 + 0 ;break;end if (v1073==0) then v284={};v285=v5:FindFirstChild("Assets");v1073=618 -(14 + 603) ;end end end if (v283==(131 -(118 + 11))) then for v1188,v1189 in ipairs(v286:GetDescendants()) do local v1190=((v1189:IsA("ImageLabel") or v1189:IsA("ImageButton")) and v1189.Image) or ((v1189:IsA("Decal") or v1189:IsA("Texture")) and v1189.Texture) or (v1189:IsA("StringValue") and v1189.Value) ;if (v1190 and (v1190~="")) then local v1367=0 + 0 ;local v1368;while true do if (v1367==(0 + 0)) then v1368=v1189.Name:lower();if (v1368:find("off") or v1368:find("disable") or v1368:find("inactive") or v1368:find("red")) then v284[v1190]=false;elseif (v1368:find("on") or v1368:find("enable") or v1368:find("active") or v1368:find("green")) then v284[v1190]=true;end break;end end end end return v284;end end end local function v38(v287) local v288=0 -0 ;local v289;local v290;local v291;local v292;local v293;local v294;local v295;while true do if (v288==(950 -(551 + 398))) then v291=v287:GetDescendants();table.insert(v291,v287);v292=v37();for v1191,v1192 in ipairs(v291) do if ((v1192:IsA("ImageLabel") or v1192:IsA("ImageButton")) and v1192.Visible and (v292[v1192.Image]~=nil)) then return v292[v1192.Image];end end v288=2;end if (v288==(2 + 0)) then v293,v294=0 + 0 ,0 + 0 ;v295=nil;function v295(v1193) if ((v1193.R-v1193.G)>(0.25 -0)) then v293+=(2 -1) elseif ((v1193.G-v1193.R)>(0.25 + 0)) then v294+=(3 -2) end end for v1194,v1195 in ipairs(v291) do if (v1195:IsA("GuiObject") and v1195.Visible) then local v1369=0 + 0 ;while true do if (v1369==(89 -(40 + 49))) then if (v1195.BackgroundTransparency<(3 -2)) then v295(v1195.BackgroundColor3);end if ((v1195:IsA("ImageLabel") or v1195:IsA("ImageButton")) and (v1195.ImageTransparency<(491 -(99 + 391)))) then v295(v1195.ImageColor3);end v1369=1 + 0 ;end if (v1369==(4 -3)) then if ((v1195:IsA("TextLabel") or v1195:IsA("TextButton")) and (v1195.TextTransparency<(2 -1))) then v295(v1195.TextColor3);end break;end end elseif (v1195:IsA("UIGradient") and v1195.Enabled) then for v1619,v1620 in ipairs(v1195.Color.Keypoints) do v295(v1620.Value);end elseif (v1195:IsA("UIStroke") and v1195.Enabled) then v295(v1195.Color);end end v288=3;end if (v288==(3 + 0)) then if (v294>v293) then return true;end if (v293>v294) then return false;end return nil;end if (v288==(0 -0)) then local v1074=0;while true do if (v1074==(1605 -(1032 + 572))) then v290=v287:FindFirstChild("AutoSwingColorAlpha");if (v290 and v290:IsA("NumberValue")) then return v290.Value>(417.05 -(203 + 214)) ;end v1074=1819 -(568 + 1249) ;end if (v1074==(2 + 0)) then v288=2 -1 ;break;end if (v1074==(0 -0)) then v289=v35();if (v289~=nil) then return v289;end v1074=1307 -(913 + 393) ;end end end end end local function v39(v296) if  not writefile then return;end local v297={"VERSION "   .. v9 ,"isOn = "   .. tostring(v38(v296)) };local function v298(v860) return string.format("(%.2f,%.2f,%.2f)",v860.R,v860.G,v860.B);end local v299=v296:GetDescendants();table.insert(v299,1,v296);for v861,v862 in ipairs(v299) do local v863=0;local v864;while true do if (v863==(1 -0)) then if (v862:IsA("ImageLabel") or v862:IsA("ImageButton")) then(v864..=" img=")   .. v862.Image   .. " imgC="   .. v298(v862.ImageColor3) end if (v862:IsA("TextLabel") or v862:IsA("TextButton")) then(v864..=" tc=")   .. v298(v862.TextColor3) end v863=2;end if (v863==(413 -(269 + 141))) then if v862:IsA("ValueBase") then(v864..=" value=")   .. tostring(v862.Value) end table.insert(v297,v864);break;end if (v863==(0 -0)) then v864=v862:GetFullName()   .. " ["   .. v862.ClassName   .. "]" ;if v862:IsA("GuiObject") then(v864..=" vis=")   .. tostring(v862.Visible)   .. " bg="   .. v298(v862.BackgroundColor3)   .. " bgT="   .. v862.BackgroundTransparency end v863=1982 -(362 + 1619) ;end if (v863==(1627 -(950 + 675))) then if v862:IsA("UIGradient") then local v1370=0;local v1371;while true do if (v1370==(0 + 0)) then v1371={};for v1650,v1651 in ipairs(v862.Color.Keypoints) do v1371[ #v1371 + (1180 -(216 + 963)) ]=v298(v1651.Value);end v1370=1288 -(485 + 802) ;end if (v1370==(560 -(432 + 127))) then(v864..=" grad=")   .. table.concat(v1371,",") break;end end end if v862:IsA("UIStroke") then(v864..=" stroke=")   .. v298(v862.Color) end v863=1076 -(1065 + 8) ;end end end local v300=v5:FindFirstChild("Assets");local v301=v300 and v300:FindFirstChild("AutoSwingState") ;table.insert(v297,"--- AutoSwingState");if v301 then for v1075,v1076 in ipairs(v301:GetDescendants()) do local v1077=0 + 0 ;local v1078;while true do if (v1077==0) then v1078=v1076:GetFullName()   .. " ["   .. v1076.ClassName   .. "]" ;if (v1076:IsA("ImageLabel") or v1076:IsA("ImageButton")) then(v1078..=" img=")   .. v1076.Image end v1077=1602 -(635 + 966) ;end if (v1077==(2 + 0)) then table.insert(v297,v1078);break;end if (v1077==(43 -(5 + 37))) then if (v1076:IsA("Decal") or v1076:IsA("Texture")) then(v1078..=" tex=")   .. v1076.Texture end if v1076:IsA("ValueBase") then(v1078..=" value=")   .. tostring(v1076.Value) end v1077=4 -2 ;end end end end pcall(appendfile or writefile ,"FarmHub_autoswing.txt",table.concat(v297,"\n")   .. "\n\n" );end local v40,v41="init",0 + 0 ;local v42,v43,v44=0 -0 ,1 + 0 ,nil;local function v45() local v302=0 -0 ;local v303;local v304;while true do if (v302==(7 -5)) then if v36(v13.SwingWant) then local v1298=0 -0 ;local v1299;while true do if ((0 -0)==v1298) then v1299=0 + 0 ;while true do if (v1299==1) then return;end if (v1299==(529 -(318 + 211))) then v20((v13.SwingWant and "เปิด Auto Swing (SetOn)") or "ปิด Auto Swing (SetOn)" );v44=nil;v1299=1;end end break;end end end if ((os.clock() -v42)<v8.SwingPressGap) then return;end if (v44==v13.SwingWant) then local v1300=0;while true do if (v1300==0) then v43=(v43%(19 -15)) + (1588 -(963 + 624)) ;print("[FarmHub] ปุ่ม Auto Swing ไม่ตอบสนอง ลองวิธีกดแบบที่",v43);break;end end end v302=2 + 1 ;end if (v302==(846 -(518 + 328))) then local v1079=0 -0 ;while true do if (v1079==(0 -0)) then v303=v27();if ( not v303 or  not v22(v303)) then return;end v1079=318 -(301 + 16) ;end if (v1079==(2 -1)) then v304=v38(v303);v302=2 -1 ;break;end end end if (v302==(2 -1)) then local v1080=0 + 0 ;while true do if (v1080==(0 + 0)) then if ((v304~=v40) and (v41<(25 -13))) then local v1538=0 + 0 ;while true do if (0==v1538) then v40,v41=v304,v41 + 1 + 0 ;v39(v303);break;end end end if (v304==nil) then return;end v1080=3 -2 ;end if (v1080==(1 + 0)) then if (v304==v13.SwingWant) then local v1539=0;local v1540;while true do if (v1539==(1019 -(829 + 190))) then v1540=0;while true do if (0==v1540) then v44=nil;return;end end break;end end end v302=7 -5 ;break;end end end if (v302==3) then v42,v44=os.clock(),v13.SwingWant;v20((v13.SwingWant and "เปิด Auto Swing") or "ปิด Auto Swing" ,"วิธี",v43);if  not v25(v303,v43) then v43=(v43%4) + (1 -0) ;end break;end end end local function v46(v305) local v306=0 -0 ;while true do if (0==v306) then if (v13.SwingWant~=v305) then local v1301=0;local v1302;while true do if (v1301==2) then if ((v1302~=nil) and v36(v305)) then local v1653=0 -0 ;while true do if (v1653==(0 + 0)) then v42=os.clock();return;end end end break;end if (v1301==0) then v42=0 + 0 ;v13.SwingWant=v305;v1301=2 -1 ;end if (v1301==(1 + 0)) then v1302=v35();if (v1302==v305) then return;end v1301=2;end end end v45();break;end end end local function v47() local v307=613 -(520 + 93) ;local v308;local v309;local v310;while true do if (v307==(276 -(259 + 17))) then v308=workspace:FindFirstChild("CarriedAnimals");v309,v310=v19();v307=1 + 0 ;end if (v307==(1 + 0)) then if ( not v308 or  not v310) then return;end for v1196,v1197 in ipairs(v308:GetDescendants()) do if v1197:IsA("Model") then for v1472,v1473 in ipairs(v1197:GetDescendants()) do if v1473:IsA("BasePart") then local v1621=0 -0 ;while true do if (v1621==(591 -(396 + 195))) then if (v1473:IsDescendantOf(v309) or ((v1473.Position-v310.Position).Magnitude<=(43 -28))) then return v1197;end for v1757,v1758 in ipairs(v1473:GetConnectedParts(true)) do if v1758:IsDescendantOf(v309) then return v1197;end end break;end end end end end end break;end end end local v48,v49=nil,1761 -(440 + 1321) ;local function v50() local v311=1829 -(1059 + 770) ;local v312;while true do if (v311==0) then v312=0 -0 ;while true do if (v312==(545 -(424 + 121))) then if (v48 and v48.Parent) then return v22(v48);end if (os.clock()<v49) then return false;end v312=1 + 0 ;end if (v312==(1349 -(641 + 706))) then return (v48~=nil) and v22(v48) ;end if (v312==(1 + 0)) then v49=os.clock() + (440.3 -(249 + 191)) ;v48=v24("Drop",true);v312=8 -6 ;end end break;end end end local function v51() return (v47()~=nil) or v50() ;end local v52=setmetatable({},{__mode="k"});local function v53(v313) return v313 and (v313.Parent~=nil) and  not (v52[v313] and ((os.clock() -v52[v313])<(3 + 2))) and (v313:GetAttribute("Broken")~=true) and ((v313:GetAttribute("Health") or (3 -2))>(427 -(183 + 244))) ;end local v54={"Common","Uncommon","Rare","Epic","Legendary","Mythic","Divine","Cosmic","Secret","Celestial","Inferno","Void","Omega","Spectral","Ethereal","Primordial"};local v55={};for v314,v315 in ipairs(v54) do v55[v315]=v314;end local function v56(v317) local v318=483 -(397 + 86) ;while true do if ((876 -(423 + 453))==v318) then local v1082=0 + 0 ;while true do if (v1082==(0 + 0)) then if (type(v317)~="string") then return  -math.huge;end return v31[v317] or v55[v317] or  -math.huge ;end end end end end local v57,v58,v59="ใกล้สุดก่อน","หายากสุดก่อน","Luck สูงสุดก่อน";local function v60(v319) return v319:GetAttribute("EggInfoRarity") or "?" ;end local function v61(v320) return v320:GetAttribute("HatchLuck") or v320:GetAttribute("Luck") or (0 + 0) ;end local function v62(v321) local v322=0;local v323;while true do if (v322==(0 + 0)) then v323=0 + 0 ;while true do if (v323==0) then if (next(v13.Eggs)==nil) then return true;end return v13.Eggs[v321:GetAttribute("EggType")]==true ;end end break;end end end local v63=game:GetService("HttpService");local v64="FarmHub_zones.json";local v65={};pcall(function() if (isfile and isfile(v64)) then for v1083,v1084 in pairs(v63:JSONDecode(readfile(v64))) do v65[v1083]=Vector3.new(v1084[1191 -(50 + 1140) ],v1084[2 + 0 ],v1084[2 + 1 ]);end end end);local v66=0;local function v67(v324,v325) local v326=0;while true do if (v326==(0 + 0)) then v65[v324]=v325;if (writefile and (os.clock()>v66)) then local v1303=0 -0 ;local v1304;while true do if (v1303==0) then v66=os.clock() + 20 ;v1304={};v1303=1 + 0 ;end if (v1303==(597 -(157 + 439))) then for v1622,v1623 in pairs(v65) do v1304[v1622]={v1623.X,v1623.Y,v1623.Z};end pcall(writefile,v64,v63:JSONEncode(v1304));break;end end end break;end end end local function v68(v327) local v328=0 -0 ;local v329;local v330;local v331;while true do if (v328==(919 -(782 + 136))) then v331=nil;while true do local v1198=0;while true do if (v1198==0) then if (v329==(855 -(112 + 743))) then local v1625=1171 -(1026 + 145) ;while true do if (v1625==(1 + 0)) then v329=719 -(493 + 225) ;break;end if (v1625==(0 -0)) then v330,v331=nil;for v1759,v1760 in pairs(v65) do local v1761=0 + 0 ;local v1762;while true do if (0==v1761) then v1762=(v1760-v327).Magnitude;if ( not v331 or (v1762<v331)) then v330,v331=v1759,v1762;end break;end end end v1625=1;end end end if (v329==1) then return v330;end break;end end end break;end if (v328==0) then v329=0 -0 ;v330=nil;v328=1;end end end local function v69() local v332=0 + 0 ;local v333;local v334;while true do if (v332==1) then return v334 and v68(v334.Position) ;end if (v332==(0 -0)) then if v13.AutoFarm then return v13.Zone;end v333,v334=v19();v332=1;end end end local function v70(v335,v336,v337,v338) local v339=v8.ZoneModels[v335];local v340=v339 and v339:FindFirstChild("Eggs") ;local v341,v342=v19();if ( not v340 or  not v342) then return;end local v343=(v337 and v13.Priority) or v57 ;local v344,v345,v346;local v347,v348=Vector3.zero,0 + 0 ;for v865,v866 in ipairs(v340:GetChildren()) do local v867=v866:FindFirstChild("Egg");if (v867 and v867:IsA("BasePart")) then local v1087=0;while true do if (v1087==(0 -0)) then v347+=v867.Position v348+=(1596 -(210 + 1385)) break;end end end if (v867 and v867:IsA("BasePart") and v53(v867) and ((v336==v10) or (v867:GetAttribute("EggType")==v336)) and ( not v337 or v62(v867)) and ( not v338 or v338(v867))) then local v1088=1689 -(1201 + 488) ;local v1089;local v1090;while true do if (v1088==(0 + 0)) then v1089=(v867.Position-v342.Position).Magnitude;v1090=0;v1088=1;end if (v1088==1) then if (v343==v58) then v1090=v55[v60(v867)] or 0 ;elseif (v343==v59) then v1090=v61(v867);end if ( not v344 or (v1090>v346) or ((v1090==v346) and (v1089<v345))) then v344,v345,v346=v867,v1089,v1090;end break;end end end end if (v348>0) then v67(v335,v347/v348 );end return v344,v345;end local function v71(v349) local v350=0;local v351;local v352;local v353;while true do if (v350==(1 -0)) then return v351,v352;end if (v350==(0 -0)) then v351,v352,v353=nil;for v1199 in pairs(v8.ZoneModels) do local v1200=585 -(352 + 233) ;local v1201;local v1202;local v1203;while true do if (v1200==(2 -1)) then v1203=nil;while true do if (v1201==(0 + 0)) then v1202,v1203=v70(v1199,v10,false,v349);if (v1202 and ( not v353 or (v1203<v353))) then v351,v352,v353=v1202,v1199,v1203;end break;end end break;end if (v1200==0) then v1201=0 -0 ;v1202=nil;v1200=575 -(489 + 85) ;end end end v350=1502 -(277 + 1224) ;end end end local function v72(v354) local v355=1493 -(663 + 830) ;local v356;while true do if (v355==0) then v356=v8.ZoneModels[v354];if  not v356 then return;end v355=1 + 0 ;end if (v355==(2 -1)) then for v1204,v1205 in ipairs(v356:GetChildren()) do if (v1205:IsA("Model") and (v1205:GetAttribute("ChaseState")~=nil)) then return v1205;end end break;end end end local function v73(v357,v358,v359) local v360=875 -(461 + 414) ;local v361;local v362;local v363;while true do if (v360==1) then v363=v357 + (v362 * v359) ;return CFrame.lookAt(v363,Vector3.new(v357.X,v363.Y,v357.Z));end if (v360==0) then v361=Vector3.new(v358.Position.X-v357.X ,0,v358.Position.Z-v357.Z );v362=((v361.Magnitude>0.1) and v361.Unit) or Vector3.new(0 + 0 ,0,1 + 0 ) ;v360=1 + 0 ;end end end local v74=RaycastParams.new();v74.FilterType=Enum.RaycastFilterType.Exclude;v74.RespectCanCollide=true;local function v78(v364,v365) local v366=0;local v367;local v368;local v369;local v370;local v371;local v372;local v373;local v374;local v375;while true do if (v366==3) then v373=nil;v374=nil;v366=4 + 0 ;end if (v366==(251 -(172 + 78))) then v369=nil;v370=nil;v366=2 -0 ;end if (v366==(0 + 0)) then v367=0 -0 ;v368=nil;v366=1 + 0 ;end if (v366==(2 + 2)) then v375=nil;while true do if (v367==(0 -0)) then v368=v7.Character;v369={v368};if v365 then table.insert(v369,v365);end v370=workspace:FindFirstChild("EggGemDrops");v367=1 + 0 ;end if (v367==(1 + 0)) then if v370 then table.insert(v369,v370);end v74.FilterDescendantsInstances=v369;v371=workspace:Raycast(v364.Position + Vector3.new(0 + 0 ,8,0 -0 ) ,Vector3.new(0 -0 , -80,0 + 0 ),v74);if  not v371 then return v364;end v367=2 + 0 ;end if ((449 -(133 + 314))==v367) then local v1375=0;while true do if (v1375==(0 + 0)) then v372,v373,v374=v19();v375=3;v1375=214 -(199 + 14) ;end if (v1375==(3 -2)) then if (v374 and v373) then v375=(v373.Size.Y/(1551 -(647 + 902))) + (((v374.RigType==Enum.HumanoidRigType.R6) and (5 -3)) or v374.HipHeight) ;end return v364 + Vector3.new(233 -(85 + 148) ,(v371.Position.Y + v375) -v364.Position.Y ,1289 -(426 + 863) ) ;end end end end break;end if (v366==(9 -7)) then v371=nil;v372=nil;v366=3;end end end local function v79(v376,v377) local v378=1654 -(873 + 781) ;local v379;local v380;while true do if ((1 -0)==v378) then return v78(v379,v380);end if (v378==0) then v379=v73(v376.Position,v377,(math.max(v376.Size.X,v376.Size.Z)/(4 -2)) + 1.5 + 1 );v380=v376.Parent and v376.Parent.Parent ;v378=3 -2 ;end end end local v80,v81=nil,{};local function v82() local v381=0 -0 ;local v382;while true do if (v381==(0 -0)) then v382=1947 -(414 + 1533) ;while true do if (v382==(0 + 0)) then v13.AfkPinned=false;for v1474,v1475 in ipairs(v81) do v1475:Disconnect();end v382=556 -(443 + 112) ;end if (v382==(1481 -(888 + 591))) then v80=nil;break;end if (v382==1) then table.clear(v81);if (v80 and v80.Parent) then v80.Anchored=false;end v382=5 -3 ;end end break;end end end local function v83() local v383=0 + 0 ;local v384;local v385;local v386;local v387;while true do if (v383==(3 -2)) then v80=v385;v13.AfkPinned=true;v385.CFrame=v387;v385.AssemblyLinearVelocity=Vector3.zero;v383=1 + 1 ;end if (2==v383) then v385.AssemblyAngularVelocity=Vector3.zero;v385.Anchored=true;table.insert(v81,v1.JumpRequest:Connect(v82));table.insert(v81,v386.Died:Connect(v82));v383=2 + 1 ;end if (3==v383) then local v1099=0;while true do if ((1 + 0)==v1099) then table.insert(v81,v4.Heartbeat:Connect(function() local v1476=0 -0 ;while true do if (v1476==2) then v385.AssemblyLinearVelocity=Vector3.zero;v385.AssemblyAngularVelocity=Vector3.zero;break;end if (v1476==(1 -0)) then v385.Anchored=true;if (v385.CFrame~=v387) then v385.CFrame=v387;end v1476=1680 -(136 + 1542) ;end if (v1476==(0 -0)) then if ((v7.Character~=v384) or  not v385.Parent or (v386.Health<=0)) then local v1733=0;while true do if (v1733==(0 + 0)) then local v1818=0;while true do if (v1818==0) then v82();return;end end end end end if (v386.MoveDirection.Magnitude>0.1) then local v1734=0 -0 ;while true do if (v1734==(0 + 0)) then local v1819=0;while true do if (v1819==0) then v82();return;end end end end end v1476=487 -(68 + 418) ;end end end));return true;end if (v1099==(0 -0)) then table.insert(v81,v7.CharacterRemoving:Connect(v82));table.insert(v81,v7.CharacterAdded:Connect(v82));v1099=1 -0 ;end end end if (v383==0) then v384,v385,v386=v19();if ( not v385 or v13.Closed) then return false;end v82();v387=v78(v8.AFK,workspace:FindFirstChild("CarriedAnimals"));v383=1;end end end local v84=false;local function v85(v388,v389) local v390=0 + 0 ;local v391;local v392;local v393;local v394;local v395;local v396;local v397;local v398;local v399;while true do if (v390==2) then v397=v2:Create(v392,TweenInfo.new(v393,Enum.EasingStyle.Linear),{CFrame=v388});v398=false;v399=v397.Completed:Connect(function() v398=true;end);v84=true;v390=1095 -(770 + 322) ;end if ((1 + 2)==v390) then v397:Play();while  not v398 and  not v13.AfkPinned and  not (v389 and v389()) and v392.Parent  do task.wait();end if  not v398 then v397:Cancel();end v84=false;v390=2 + 2 ;end if (v390==(1 + 0)) then if (v393<(0.05 -0)) then local v1305=0 -0 ;while true do if (v1305==(0 -0)) then local v1543=0 -0 ;while true do if (v1543==0) then v392.CFrame=v388;return true;end end end end end v394=v4.Heartbeat:Connect(function() local v1206=0 + 0 ;while true do if ((0 -0)==v1206) then if v13.AfkPinned then return;end v392.AssemblyLinearVelocity=Vector3.zero;v1206=1 + 0 ;end if (v1206==(1 + 0)) then v392.AssemblyAngularVelocity=Vector3.zero;break;end end end);v395=v392.Parent;v396=v4.Stepped:Connect(function() local v1207=0 + 0 ;while true do if (v1207==0) then if v13.AfkPinned then return;end for v1544,v1545 in ipairs(v395:GetDescendants()) do if v1545:IsA("BasePart") then v1545.CanCollide=false;end end break;end end end);v390=2;end if (v390==0) then if v13.AfkPinned then return false;end v391,v392=v19();if  not v392 then return false;end v393=(v392.Position-v388.Position).Magnitude/v8.TweenSpeed ;v390=3 -2 ;end if (4==v390) then v399:Disconnect();v394:Disconnect();v396:Disconnect();return v398;end end end local v86;local v87;local v88;local function v89() return  not v13.Garden and  not v13.AfkPinned and  not v13.DeliveryBusy and  not v13.Closed and ( not v13.AutoFarm or ((v13.ReadyZone==v13.Zone) and v88(v13.Zone))) ;end local v90=v5:FindFirstChild("EggHitRequest");local v91=v5:FindFirstChild("MasteryPickaxeSwing");local v92,v93=0,v8.HitInterval;do local v400=0 -0 ;local v401;local v402;while true do if (v400==0) then v401=v5:FindFirstChild("EggHitConfirmed");if (v401 and v401:IsA("RemoteEvent")) then v401.OnClientEvent:Connect(function(v1377,v1378,v1379) local v1380=0;while true do if (v1380==0) then if ((type(v1378)=="number") and (v1378>v92)) then v92=v1378;end if ((typeof(v1377)=="Instance") and (type(v1379)=="number") and (v1379<=(0 + 0))) then v52[v1377]=os.clock();end break;end end end);end v400=1;end if (v400==(4 -3)) then v402=v5:FindFirstChild("EggHitRejected");if (v402 and v402:IsA("RemoteEvent")) then v402.OnClientEvent:Connect(function(...) print("[FarmHub] ตีไม่ผ่าน (EggHitRejected):",...);end);end break;end end end local function v94(v403) local v404=0;while true do if (v404==(6 -4)) then return true;end if (v404==0) then if  not v90 then return false;end v92+=(1 + 0) v404=1;end if (v404==(4 -3)) then if v91 then v91:FireServer();end v90:FireServer(v403,v92);v404=833 -(762 + 69) ;end end end local function v95() return v89() and (v87~=nil) and v87(v8.GemRadius) ;end local function v96(v405) local v406=0 -0 ;while true do if (v406==(0 + 0)) then if  not (v13.CollectGems and v86 and v95()) then return;end v46(false);v406=1 + 0 ;end if (v406==(2 -1)) then v86(v405,v8.GemRadius);break;end end end local function v97(v407,v408,v409) if  not v409 then v96(v408);end local v410,v411=v19();v21();v46(false);if ( not v411 or  not v85(v79(v407,v411),v408)) then return false;end v20("ตีไข่:",v407:GetAttribute("EggType"),"HP",v407:GetAttribute("Health"));if (v408() or  not v53(v407)) then return false;end local v412=v79(v407,v411);v46(true);local v413,v414,v415=os.clock(),0 + 0 ,0;while v53(v407) and  not v13.AfkPinned and  not v408() and ((os.clock() -v413)<v8.EggTimeout)  do local v868=0 + 0 ;local v869;local v870;local v871;local v872;while true do if (v868==(11 -8)) then if ( not v872 and ((os.clock() -v414)>=v93)) then local v1381=0;while true do if (v1381==(157 -(8 + 149))) then v414=os.clock();v21();v1381=1;end if (v1381==(1321 -(1199 + 121))) then if  not v94(v407) then local v1702=0 -0 ;local v1703;while true do if (v1702==0) then v1703=v21();if v1703 then v1703:Activate();end break;end end end break;end end end task.wait();break;end if ((4 -2)==v868) then local v1208=0 + 0 ;while true do if (v1208==(3 -2)) then v868=3;break;end if (v1208==(0 -0)) then v871=v27();v872=v871 and v38(v871) ;v1208=1 + 0 ;end end end if (1==v868) then if v870 then local v1382=1807 -(518 + 1289) ;local v1383;while true do if (v1382==0) then v1383=Vector3.new(v870.Position.X-v412.Position.X ,0,v870.Position.Z-v412.Position.Z );if ((v1383.Magnitude>2) or (math.abs(v870.Position.Y-v412.Position.Y )>(6 -2))) then local v1704=0 + 0 ;while true do if (v1704==(0 -0)) then v870.CFrame=v412;v870.AssemblyLinearVelocity=Vector3.zero;break;end end end break;end end end v45();v868=2 + 0 ;end if (v868==(469 -(304 + 165))) then if ( not v409 and ((os.clock() -v415)>(0.15 + 0))) then local v1384=0;local v1385;while true do if (v1384==(160 -(54 + 106))) then v1385=1969 -(1618 + 351) ;while true do if (v1385==(0 + 0)) then v415=os.clock();if (v13.CollectGems and v95()) then local v1805=1016 -(10 + 1006) ;local v1806;local v1807;while true do if (v1805==(1 + 0)) then if v1807 then v85(v412,v408);end v46(true);break;end if (v1805==(0 + 0)) then v96(v408);v1806,v1807=v19();v1805=1;end end end break;end end break;end end end v869,v870=v19();v868=3 -2 ;end end end v46(false);return  not v53(v407);end local function v98(v416) local v417=0;local v418;while true do if (v417==0) then local v1101=1033 -(912 + 121) ;while true do if (v1101==0) then v418=v416.Parent;if  not v418 then return;end v1101=1;end if (v1101==(1 + 0)) then v417=1290 -(1140 + 149) ;break;end end end if (v417==2) then if v418:IsA("Model") then return v418:GetPivot().Position;end break;end if (v417==(1 + 0)) then if v418:IsA("Attachment") then return v418.WorldPosition;end if v418:IsA("BasePart") then return v418.Position;end v417=2;end end end local function v99(v419) local v420=0 -0 ;local v421;while true do if (v420==(1 + 0)) then return false;end if (v420==(0 -0)) then v421=(v419.ActionText   .. " "   .. v419.ObjectText   .. " "   .. v419.Name):lower();for v1209,v1210 in ipairs(v8.LiftPromptWords) do if v421:find(v1210,1 -0 ,true) then return true;end end v420=1 + 0 ;end end end local function v100(v422) local v423=0 -0 ;local v424;while true do if (v423==(188 -(165 + 21))) then task.wait(111.05 -(61 + 50) );v424:SendKeyEvent(false,v422.KeyboardKeyCode,false,game);break;end if (v423==(0 + 0)) then v422.HoldDuration=0 -0 ;if fireproximityprompt then local v1306=0 -0 ;while true do if (v1306==(0 + 0)) then fireproximityprompt(v422);return;end end end v423=1;end if (v423==1) then local v1103=1460 -(1295 + 165) ;while true do if (v1103==(1 + 0)) then v423=1 + 1 ;break;end if (v1103==(1397 -(819 + 578))) then v424=game:GetService("VirtualInputManager");v424:SendKeyEvent(true,v422.KeyboardKeyCode,false,game);v1103=1;end end end end end local function v101() local v425=1402 -(331 + 1071) ;local v426;local v427;local v428;while true do if ((743 -(588 + 155))==v425) then v426=1282 -(546 + 736) ;v427=nil;v425=1938 -(1834 + 103) ;end if (v425==1) then v428=nil;while true do if ((1 + 0)==v426) then return v427,function() v428:Disconnect();end;end if (v426==(0 -0)) then local v1387=0;while true do if (v1387==(1767 -(1536 + 230))) then v426=492 -(128 + 363) ;break;end if (v1387==(0 + 0)) then v427={};v428=workspace.DescendantAdded:Connect(function(v1659) if v1659:IsA("ProximityPrompt") then table.insert(v427,v1659);end end);v1387=1;end end end end break;end end end local v102;local function v103(...) local v429=0 -0 ;local v430;while true do if (v429==(0 + 0)) then v430=0 -0 ;while true do if (v430==0) then print("[FarmHub]",...);if v102 then local v1546=0 -0 ;local v1547;while true do if (v1546==1) then pcall(function() v102.Text="สถานะ: "   .. table.concat(v1547," ") ;end);break;end if (v1546==0) then v1547={};for v1736=2 -1 ,select("#",...) do v1547[v1736]=tostring((select(v1736,...)));end v1546=1 + 0 ;end end end break;end end break;end end end local function v104(v431,v432) local v433,v434;for v873,v874 in ipairs(v431) do if (v874.Parent and v874.Enabled and v99(v874)) then local v1104=0;local v1105;local v1106;while true do if (v1104==(1009 -(615 + 394))) then v1105=v98(v874);v1106=v1105 and (v1105-v432).Magnitude ;v1104=1;end if (v1104==1) then if (v1106 and (v1106<v8.LiftRadius) and ( not v434 or (v1106<v434))) then v433,v434=v874,v1106;end break;end end end end return v433;end local function v105(v435,v436,v437) local v438,v439=os.clock(),0 + 0 ;local v440=os.clock() + 1.5 + 0 ;while ((os.clock() -v438)<v8.LiftWait) and  not v13.AfkPinned and  not v437()  do local v875=v104(v436,v435);if  not v875 then local v1107=0 -0 ;local v1108;while true do if (v1107==(0 -0)) then v1108=workspace:FindFirstChild("AnimalPickups");if v1108 then local v1548=651 -(59 + 592) ;local v1549;while true do if (v1548==(2 -1)) then v875=v104(v1549,v435);break;end if (v1548==0) then local v1705=0 -0 ;while true do if (v1705==(1 + 0)) then v1548=172 -(70 + 101) ;break;end if (v1705==(0 -0)) then v1549={};for v1820,v1821 in ipairs(v1108:GetDescendants()) do if v1821:IsA("ProximityPrompt") then table.insert(v1549,v1821);end end v1705=1 + 0 ;end end end end end break;end end end if ( not v875 and (os.clock()>v440)) then local v1109=0 -0 ;local v1110;while true do if ((241 -(123 + 118))==v1109) then v440=os.clock() + 1 + 0 ;v1110={};v1109=1 + 0 ;end if (1==v1109) then for v1481,v1482 in ipairs(workspace:GetDescendants()) do if v1482:IsA("ProximityPrompt") then table.insert(v1110,v1482);end end v875=v104(v1110,v435);break;end end end if v875 then local v1111=0;local v1112;local v1113;local v1114;local v1115;while true do if (v1111==3) then v439+=(1400 -(653 + 746)) v1115=os.clock();v1111=4;end if (v1111==(1 -0)) then v1114=v98(v875);if (v1113 and v1114) then v1113.CFrame=v73(v1114,v1113,1.5 -0 );v1113.AssemblyLinearVelocity=Vector3.zero;end v1111=5 -3 ;end if (v1111==(0 + 0)) then if (v439==0) then v103("ยกสัตว์: กด",v875.ActionText,"ที่",v875:GetFullName());end v1112,v1113=v19();v1111=1;end if (v1111==2) then v13.ScriptLift=true;v100(v875);v1111=3;end if (v1111==(3 + 1)) then while (os.clock() -v1115)<0.3  do local v1483=0 + 0 ;while true do if (v1483==(0 + 0)) then if ( not v875.Parent or  not v875.Enabled or v51()) then local v1738=0;while true do if (v1738==0) then v103(string.format("ยกสัตว์แล้ว (%.2f วิ, กด %d ครั้ง)",os.clock() -v438 ,v439));return true;end end end task.wait();break;end end end break;end end else task.wait();end end v103(((v439>(0 + 0)) and "กด Steal แล้วแต่ยังยกไม่ได้") or "ไม่เจอปุ่ม Steal ใกล้ไข่ที่ตีแตก" );return false;end local function v106(v441,v442) local v443=0;local v444;local v445;local v446;local v447;local v448;local v449;local v450;local v451;local v452;local v453;while true do if (v443==5) then return v447;end if (v443==(4 -2)) then table.insert(v448,v446.Died:Connect(function() v447=true;end));v451=v5:FindFirstChild("CatchFlingRemote");if (v451 and v451:IsA("RemoteEvent")) then table.insert(v448,v451.OnClientEvent:Connect(function(...) local v1389=0 + 0 ;local v1390;while true do if (v1389==0) then v1390=0;while true do if (v1390==0) then v20("<- CatchFlingRemote",...);v447= not v449;break;end end break;end end end));end v443=3;end if (v443==0) then v444,v445,v446=v19();if  not v445 then return false;end v447,v448=false,{};v443=1 -0 ;end if (v443==4) then v453=os.clock();while  not v452() and v441.Parent and ((os.clock() -v453)<v8.GuardTimeout)  do local v1211,v1212=v19();if  not v1212 then v447=true;break;end local v1213=v78(v73(v441:GetPivot().Position,v1212,1237 -(885 + 349) ),v441);v1212.CFrame=v1213;v1212.AssemblyLinearVelocity=Vector3.zero;task.wait();if (v449 and  not v51()) then local v1391=0;local v1392;while true do if (0==v1391) then v1392=0;while true do if (v1392==0) then v20("ผู้พิทักษ์แย่งสัตว์ไปแล้ว");v447=true;break;end end break;end end end if ( not v449 and v1212.Parent and ((v1212.Position-v1213.Position).Magnitude>v8.KnockbackDist)) then local v1393=0;while true do if (v1393==0) then v20("ถูกกระเด็นออกจากจุดที่ยืน");v447=true;break;end end end end for v1217,v1218 in ipairs(v448) do v1218:Disconnect();end v443=4 + 1 ;end if (v443==1) then v449=v51();v450=v446.Health;table.insert(v448,v446.HealthChanged:Connect(function(v1219) local v1220=0 -0 ;while true do if (v1220==0) then if (v1219<v450) then local v1626=0 -0 ;local v1627;while true do if (0==v1626) then v1627=968 -(915 + 53) ;while true do if (0==v1627) then v20("เลือดลด:",v450,"->",v1219);v447= not v449;break;end end break;end end end v450=v1219;break;end end end));v443=803 -(768 + 33) ;end if (v443==(11 -8)) then table.insert(v448,v441:GetAttributeChangedSignal("ChaseState"):Connect(function() v20("ผู้พิทักษ์ ChaseState =",v441:GetAttribute("ChaseState"));end));function v452() return v13.AfkPinned or v447 or v442() ;end v85(v78(v73(v441:GetPivot().Position,v445,5 -2 ),v441),v452);v443=332 -(287 + 41) ;end end end local function v107(v454,v455) local v456=0;local v457;local v458;local v459;local v460;local v461;local v462;local v463;while true do if (v456==(848 -(638 + 209))) then v460,v461=v101();v97(v457,function() return v454() or (v455 and  not v455(v457)) ;end,true);if (v455 and v53(v457) and  not v455(v457)) then local v1307=0;local v1308;while true do if (v1307==0) then v1308=0 + 0 ;while true do if ((1686 -(96 + 1590))==v1308) then v461();return;end end break;end end end if  not v454() then local v1309=1672 -(741 + 931) ;while true do if (v1309==0) then v103("ขั้นที่ 2: ยกสัตว์");v105(v459,v460,v454);break;end end end v456=1 + 1 ;end if (v456==4) then return v458;end if (v456==(0 -0)) then v457,v458=v71(v455);if  not v457 then v103("ไม่พบไข่ใกล้ ๆ ข้ามขั้นผู้พิทักษ์");return;end v103("ขั้นที่ 1: ขุดไข่ใน",v458);v459=v457.Position;v456=1;end if ((13 -10)==v456) then v103("ขั้นที่ 3: พุ่งไปหาผู้พิทักษ์",v462.Name);v463=v106(v462,v454);v103((v463 and "ผู้พิทักษ์ตีแล้ว") or "หมดเวลารอผู้พิทักษ์" );if  not v19() then local v1310=0;local v1311;while true do if (v1310==0) then v1311=0 + 0 ;while true do if (v1311==(0 + 0)) then v7.CharacterAdded:Wait();task.wait(1 + 0 );break;end end break;end end end v456=14 -10 ;end if (v456==2) then v461();if v454() then return;end v462=v72(v458);if  not v462 then local v1312=0;while true do if (v1312==(0 + 0)) then v103("ไม่พบผู้พิทักษ์ใน",v458);return v458;end end end v456=2 + 1 ;end end end local function v108(v464,v465) local v466=0;local v467;local v468;local v469;local v470;local v471;local v472;local v473;local v474;local v475;while true do local v876=0 -0 ;while true do if (v876==(1 + 0)) then if (v466==(497 -(64 + 430))) then v103("ยังไม่รู้ตำแหน่ง",v464,"ใช้กึ่งกลางโมเดลโซน");return v78(CFrame.new(v475.Position + Vector3.new(0 + 0 ,368 -(106 + 257) ,0) ));end if (v466==(1 + 0)) then v469=workspace:FindFirstChild("Build");v470=v469 and v469:FindFirstChild("ZoneHitboxes") ;v471=v470 and v468 and (v470:FindFirstChild("Zone"   .. v468 ) or v470:FindFirstChild(v468)) ;if v471 then local v1553=721 -(496 + 225) ;local v1554;while true do if (v1553==(0 -0)) then v1554=(v471:IsA("BasePart") and v471.Position) or (v471:IsA("Model") and v471:GetBoundingBox().Position) ;if v1554 then return v78(CFrame.new(v1554 + Vector3.new(0 -0 ,1663 -(256 + 1402) ,1899 -(30 + 1869) ) ));end break;end end end v466=1371 -(213 + 1156) ;end break;end if (v876==0) then if (v466==2) then local v1394=0;while true do if ((190 -(96 + 92))==v1394) then v466=1 + 2 ;break;end if (v1394==(900 -(142 + 757))) then v473,v474=pcall(v472.GetBoundingBox,v472);v475=(v473 and v474) or v472:GetPivot() ;v1394=2 + 0 ;end if (v1394==(0 + 0)) then v472=v8.ZoneModels[v464];if  not v472 then return;end v1394=80 -(32 + 47) ;end end end if (0==v466) then v467=v70(v464,v10,true) or v70(v464,v10) ;if v467 then return v79(v467,v465);end if v65[v464] then return v78(CFrame.new(v65[v464] + Vector3.new(1977 -(1053 + 924) ,5 + 0 ,0 -0 ) ));end v468=v464:match("(%d+)");v466=1649 -(685 + 963) ;end v876=1 -0 ;end end end end local function v109(v476,v477) local v478=0;local v479;local v480;local v481;while true do if (v478==0) then v479,v480=v19();if  not v480 then return;end v478=1;end if (v478==1) then v481=os.clock();while (os.clock() -v481)<(v477 or (1.2 -0))  do local v1221=1709 -(541 + 1168) ;local v1222;local v1223;while true do if (v1221==3) then v480.AssemblyAngularVelocity=Vector3.zero;break;end if (v1221==(1598 -(645 + 952))) then v1222=v480.Position;v1223=Vector3.new(v1222.X-v476.Position.X ,838 -(669 + 169) ,v1222.Z-v476.Position.Z );v1221=6 -4 ;end if (v1221==(0 -0)) then v4.Heartbeat:Wait();if (v13.AfkPinned or (v7.Character~=v479) or  not v479.Parent or  not v480.Parent) then return;end v1221=1;end if (2==v1221) then if (v1223.Magnitude>(1 + 0)) then v480.CFrame=v476 + Vector3.new(0,math.max(0,v1222.Y-v476.Position.Y ),0) ;end v480.AssemblyLinearVelocity=Vector3.zero;v1221=1 + 2 ;end end end break;end end end local function v110(v482) local v483=765 -(181 + 584) ;while true do if (v483==(1395 -(665 + 730))) then for v1224=2 -1 ,v8.TeleportRetries do local v1225=0 -0 ;local v1226;local v1227;local v1228;while true do if (v1225==2) then local v1489=1350 -(540 + 810) ;while true do if (1==v1489) then task.wait(0.4);v1225=3;break;end if (v1489==(0 -0)) then v1227.AssemblyLinearVelocity=Vector3.zero;v109(v1228);v1489=2 -1 ;end end end if (v1225==(1 + 0)) then v1228=v108(v482,v1227);if  not v1228 then return false;end v1227.CFrame=v1228;v1225=205 -(166 + 37) ;end if (v1225==0) then local v1491=1881 -(22 + 1859) ;while true do if (v1491==1) then if  not v1227 then return false;end v1225=1;break;end if (v1491==0) then if v13.AfkPinned then return false;end v1226,v1227=v19();v1491=1773 -(843 + 929) ;end end end if (v1225==(265 -(30 + 232))) then if (v1227.Parent and ((v1227.Position-v1228.Position).Magnitude<(114 -74))) then return true;end v103("เกมดึงตัวกลับหลังวาร์ป ลองใหม่ (ครั้งที่ "   .. v1224   .. ")" );break;end end end return false;end end end local function v111(v484,v485) local v486=777 -(55 + 722) ;local v487;local v488;while true do if (v486==0) then v487=tonumber(v484:match("(%d+)"));v488=v487 and v8.TeleportVia[v487] ;v486=1 -0 ;end if ((1676 -(78 + 1597))==v486) then if v488 then local v1313=0;local v1314;local v1315;local v1316;local v1317;while true do if (v1313==(1 + 0)) then v110(v1314);v1315,v1316=v19();v1313=2 + 0 ;end if (v1313==(0 + 0)) then local v1555=0;while true do if (v1555==(550 -(305 + 244))) then v1313=1;break;end if (v1555==(0 + 0)) then v1314="โซนที่ "   .. v488 ;v103("วาร์ปไป",v1314,"ก่อน");v1555=106 -(95 + 10) ;end end end if (v1313==2) then v1317=v1316 and v108(v484,v1316) ;if v1317 then local v1662=0 + 0 ;while true do if (v1662==(0 -0)) then v103("Tween ต่อไป",v484);v85(v1317,v485);break;end end end break;end end else local v1318=0 -0 ;while true do if (v1318==0) then v103("วาร์ปไป",v484);v110(v484);break;end end end task.wait(762.3 -(592 + 170) );break;end end end function v88(v489) local v490,v491=v19();if  not v491 then return false;end local v492=v65[v489];if  not v492 then local v1009=0 -0 ;local v1010;local v1011;local v1012;while true do if (v1009==(0 -0)) then v1010=0 + 0 ;v1011=nil;v1009=1 + 0 ;end if (v1009==(2 -1)) then v1012=nil;while true do if ((0 + 0)==v1010) then local v1556=0 -0 ;while true do if (v1556==(507 -(353 + 154))) then v1011,v1012=v71();return v1012==v489 ;end end end end break;end end end if ((v492-v491.Position).Magnitude<=v8.NoWarpDist) then return true;end local v493,v494;for v877,v878 in pairs(v65) do local v879=0 -0 ;local v880;while true do if (v879==(0 -0)) then v880=(v878-v491.Position).Magnitude;if ( not v494 or (v880<v494)) then v493,v494=v877,v880;end break;end end end return v493==v489 ;end local v112;local v113={};local v114={};local function v115(v495) local v496=0 + 0 ;while true do if (v496==0) then repeat local v1230=0;local v1231;while true do if (v1230==0) then v1231=0 + 0 ;while true do if (v1231==(0 + 0)) then task.wait();for v1706 in pairs(v114) do if (coroutine.status(v1706)=="dead") then v114[v1706]=nil;end end v1231=1 -0 ;end if (v1231==1) then if v495() then return false;end break;end end break;end end until  not v13.AutoFarm and  not v13.CollectGems and (next(v114)==nil)  return true;end end end local function v116(v497,v498,v499) local v500=0;local v501;local v502;while true do local v881=0 -0 ;while true do if (v881==(0 -0)) then if (v500==(87 -(7 + 79))) then v13.ScriptLift=false;v13.ManualCarryBlocked=v51();v500=2;end if ((0 + 0)==v500) then if v88(v497) then return true;end v501,v502=pcall(function() local v1492=181 -(24 + 157) ;local v1493;while true do if (v1492==1) then if (v1493~=v497) then v111(v497,v498);end break;end if (v1492==(0 -0)) then local v1663=0 -0 ;while true do if (v1663==0) then v1493=v107(v498,v499);if v498() then return;end v1663=1 + 0 ;end if (v1663==1) then v1492=2 -1 ;break;end end end end end);v500=381 -(262 + 118) ;end v881=1;end if (v881==(1084 -(1038 + 45))) then if (v500==2) then local v1397=0 -0 ;while true do if (v1397==0) then if  not v501 then error(v502);end return  not v498() and (v19()~=nil) ;end end end break;end end end end v14.Say=function(v503) if (v14.Status and  not v13.Closed) then v14.Status.Text=v503;end end;v14.Matches=function(v504) local v505=0;local v506;while true do if ((231 -(19 + 211))==v505) then return (v504:GetAttribute("EggType")==v14.Egg) and ((tonumber(v506) or 0)>=v14.MinHP) ;end if (v505==(113 -(88 + 25))) then v506=v504:GetAttribute("MaxHealth");if (v506==nil) then v506=v504:GetAttribute("Health");end v505=2 -1 ;end end end;v14.Progress=function() local v507=v8.ZoneModels[v14.Zone];local v508=v507 and v507:FindFirstChild("Eggs") ;local v509,v510=v19();local v511,v512,v513,v514=0,0 + 0 ,nil,math.huge;for v882,v883 in ipairs((v508 and v508:GetChildren()) or {} ) do local v884=0 + 0 ;local v885;while true do if ((1036 -(1007 + 29))==v884) then v885=v883:FindFirstChild("Egg");if (v885 or v883.Name:match("^%d+:")) then v511+=1 end v884=1;end if (v884==1) then if (v885 and v885:IsA("BasePart") and v53(v885)) then if v14.Matches(v885) then v512+=(1 + 0) elseif v510 then local v1664=0;local v1665;while true do if (v1664==(0 -0)) then v1665=(v510.Position-v885.Position).Magnitude;if (v1665<v514) then v513,v514=v885,v1665;end break;end end end end break;end end end local v515=math.max(v14.Spots[v14.Zone] or 0 ,v511);v14.Spots[v14.Zone]=v515;return v513,v512,v515;end;v113.Garden=function(v517) if (v517 and ( not v14.Egg or v13.DeliveryBusy or v13.Closed)) then local v1014=0 -0 ;while true do if (v1014==(0 + 0)) then v14.Say("กรุณาเลือกไข่ก่อนเริ่มทำสวน");v17.Set(false);v1014=1;end if (v1014==1) then return;end end end v13.Garden=v517;v13.GardenRun+=(812 -(340 + 471)) v14.ReadyZone=nil;local v520=v13.GardenRun;if  not v517 then local v1015=0 -0 ;while true do if (v1015==(589 -(276 + 313))) then v112=nil;v46(false);v1015=1;end if (v1015==1) then return;end end end v82();v14.Progress();local function v521() return v13.Closed or v13.AfkPinned or v13.DeliveryBusy or  not v13.Garden or (v13.GardenRun~=v520) ;end v16.Set(false);v15.Set(false);v14.Say("กำลังหยุดฟาร์มและเพชร");if  not v115(v521) then return;end local v522=coroutine.running();v114[v522]=true;local v524=v7.CharacterAdded:Connect(function() if  not v521() then v14.ReadyZone=nil;end end);task.spawn(function() while  not v521() do local v1016=0 -0 ;while true do if (v1016==(0 + 0)) then if  not v51() then v21();end task.wait(0.2 + 0 );break;end end end end);local v525,v526=false,nil;local v527,v528=pcall(function() while  not v521() do if  not v19() then local v1232=0 + 0 ;while true do if (v1232==(1972 -(495 + 1477))) then v14.ReadyZone=nil;task.wait(0.5);break;end end elseif (v14.ReadyZone~=v14.Zone) then local v1398=0 -0 ;local v1399;local v1400;while true do if (1==v1398) then function v1400() return v521() or (v14.Zone~=v1399) ;end v14.Say("กำลังเดินทางไป "   .. v1399 );v1398=2 + 0 ;end if (v1398==(405 -(342 + 61))) then if v116(v1399,v1400,function(v1666) return  not v14.Matches(v1666);end) then v14.ReadyZone=v1399;end break;end if (v1398==(0 + 0)) then local v1630=0;while true do if (v1630==(165 -(4 + 161))) then v1399=v14.Zone;v1400=nil;v1630=1 + 0 ;end if (1==v1630) then v1398=3 -2 ;break;end end end end else local v1401,v1402,v1403=v14.Progress();v14.Say("ตรง "   .. v1402   .. "/"   .. v1403   .. " ฟอง" );if ((v1403>(0 -0)) and (v1402==v1403)) then v526=v526 or os.clock() ;if (((os.clock() -v526)>=(502 -(322 + 175))) and  not v112) then v525=true;break;end else v526=nil;end if (v1401 and  not v51()) then local v1557=0;local v1558;local v1559;while true do if (v1557==(563 -(173 + 390))) then v1558,v1559=v14.Zone,v7.Character;v97(v1401,function() return v521() or (v14.Zone~=v1558) or (v14.ReadyZone~=v1558) or (v7.Character~=v1559) or  not v19() or v51() or v14.Matches(v1401) ;end,true);break;end end else task.wait(0.3 + 0 );end end task.wait();end end);v524:Disconnect();v46(false);v114[v522]=nil;if (v13.GardenRun==v520) then local v1017=314 -(203 + 111) ;while true do if (v1017==(0 + 0)) then v17.Set(false);if v525 then v14.Say("สวนเสร็จแล้ว");elseif  not v527 then v14.Say("สวนหยุด: "   .. tostring(v528) );end break;end end end end;v113.ZoneChanged=function(v529) v20("เลือกโซน:",v529);end;v113.EggChanged=function(v530) v20("เลือกไข่:",v530);end;v113.AutoFarm=function(v531) v13.AutoFarm=v531;v13.FarmRun+=(1 + 0) v13.ReadyZone=nil;if  not v531 then if  not v13.Garden then v112=nil;end return;end local v534=coroutine.running();v114[v534]=true;local v536=v13.FarmRun;task.spawn(function() while v13.AutoFarm and (v13.FarmRun==v536)  do if  not v51() then v21();end task.wait(0.2);end end);local function v537() return v13.AfkPinned or  not v13.AutoFarm or (v13.FarmRun~=v536) ;end local v538=v7.CharacterAdded:Connect(function() if  not v537() then local v1119=0 -0 ;while true do if (v1119==0) then v103("ตัวละครเกิดใหม่ เริ่มรอบใหม่");v13.ReadyZone=nil;break;end end end end);local v539=true;while  not v537() do local v886=0;while true do if (v886==(0 + 0)) then if  not v19() then task.wait(706.5 -(57 + 649) );elseif (v13.ReadyZone~=v13.Zone) then local v1560=v13.Zone;if v116(v1560,function() return v537() or (v13.Zone~=v1560) ;end) then v13.ReadyZone=v1560;end else local v1561=384 -(328 + 56) ;local v1562;while true do if (v1561==(0 + 0)) then v1562=v70(v13.Zone,v10,true);if v1562 then local v1765=0;while true do if (v1765==(512 -(433 + 79))) then if v539 then local v1854=0;while true do if (v1854==(0 + 0)) then v103("ตีไข่:",v1562:GetAttribute("EggType"),v1562:GetAttribute("EggInfoRarity"));v539=false;break;end end end v97(v1562,function() return v537() or (v13.ReadyZone~=v13.Zone) ;end);break;end end else local v1766=0 + 0 ;while true do if (v1766==(0 -0)) then if  not v539 then local v1855=0 -0 ;while true do if (v1855==(0 + 0)) then v103("ไม่มีไข่ตามตัวกรองใน",v13.Zone,"รอไข่เกิด");v539=true;break;end end end task.wait(0.5);break;end end end break;end end end task.wait();break;end end end v538:Disconnect();v114[v534]=nil;end;local v124=false;local function v125(v540) local v541=0 + 0 ;local v542;while true do if (v541==0) then v542=1036 -(562 + 474) ;while true do if ((0 -0)==v542) then if v540:IsA("BasePart") then return v540;end return v540:FindFirstChildWhichIsA("BasePart",true);end end break;end end end local function v126(v543) local v544=0;local v545;local v546;while true do if (v544==(0 -0)) then v545,v546={},{};for v1233,v1234 in pairs(v543:GetAttributes()) do table.insert(v545,v1233   .. "="   .. tostring(v1234) );end v544=906 -(76 + 829) ;end if (v544==1) then for v1235,v1236 in ipairs(v543:GetDescendants()) do table.insert(v546,v1236.Name   .. "["   .. v1236.ClassName   .. "]" );end v103("เพชร:",v543:GetFullName(),v543.ClassName,"| attrs:",table.concat(v545,", "),"| ข้างใน:",table.concat(v546,", "));break;end end end local function v127(v547,v548) local v549=0;local v550;local v551;local v552;local v553;while true do if (v549==(1675 -(1506 + 167))) then local v1120=0;while true do if (v1120==1) then v549=5 -2 ;break;end if ((266 -(58 + 208))==v1120) then v553=next(v65)~=nil ;for v1495,v1496 in ipairs(v550:GetChildren()) do local v1497=0 + 0 ;local v1498;while true do if (v1497==(0 + 0)) then v1498=v125(v1496);if (v1498 and ((v553 and (v68(v1498.Position)==v552)) or ( not v553 and ((v1498.Position-v547.Position).Magnitude<=(v548 or v8.GemRadius))))) then table.insert(v551,v1496);end break;end end end v1120=1;end end end if (v549==(0 + 0)) then local v1121=0;while true do if (v1121==(0 -0)) then v550=workspace:FindFirstChild("EggGemDrops");v551={};v1121=338 -(258 + 79) ;end if (v1121==1) then v549=1 + 0 ;break;end end end if (v549==3) then return v551;end if (v549==1) then if  not v550 then return v551;end v552=v69();v549=3 -1 ;end end end local v128=setmetatable({},{__mode="k"});function v87(v554) local v555,v556=v19();if  not v556 then return false;end for v887,v888 in ipairs(v127(v556,v554)) do if  not (v128[v888] and (os.clock()<v128[v888])) then return true;end end return false;end function v86(v557,v558) local function v559() return  not v13.CollectGems or  not v89() or (v557 and v557()) ;end local v560=0;while  not v559() do local v889,v890=v19();if  not v890 then break;end local v891,v892;for v1018,v1019 in ipairs(v127(v890,v558)) do local v1020=v125(v1019);if (v1020 and  not (v128[v1019] and (os.clock()<v128[v1019]))) then local v1237=(v1020.Position-v890.Position).Magnitude;if ( not v892 or (v1237<v892)) then v891,v892=v1019,v1237;end end end if  not v891 then break;end local v893=v125(v891);if  not v124 then local v1122=0;while true do if (v1122==0) then v124=true;v126(v891);break;end end end if (v560==0) then v103("เก็บเพชร: ไปหาเพชรที่ตก");end if ( not v85(v78(CFrame.new(v893.Position)),v559) or v559()) then break;end v890.AssemblyLinearVelocity=Vector3.zero;if (firetouchinterest and v893.Parent) then local v1123=1470 -(1219 + 251) ;local v1124;while true do if (v1123==(1671 -(1231 + 440))) then v1124=58 -(34 + 24) ;while true do if (v1124==(0 + 0)) then firetouchinterest(v890,v893,0 -0 );firetouchinterest(v890,v893,1 + 0 );break;end end break;end end end local v896=v891:FindFirstChildWhichIsA("ProximityPrompt",true);if v896 then v100(v896);end local v897=os.clock();while v891.Parent and ((os.clock() -v897)<v8.GemStay) and  not v559()  do local v1021=0 -0 ;local v1022;while true do if (v1021==(0 -0)) then v1022=0 -0 ;while true do if (v1022==0) then if v893.Parent then v890.CFrame=v78(CFrame.new(v893.Position));end task.wait();break;end end break;end end end if v891.Parent then v128[v891]=os.clock() + (100 -70) ;else v560+=(2 -1) end end if (v560>(1589 -(877 + 712))) then v103("เก็บเพชรได้",v560,"เม็ด");end end v113.CollectGems=function(v561) local v562=0 + 0 ;local v563;local v564;while true do if (v562==(754 -(242 + 512))) then v13.CollectGems=v561;v13.GemRun+=1 v562=1;end if (v562==(3 -1)) then v114[v563]=true;v564=v13.GemRun;v562=630 -(92 + 535) ;end if (v562==(3 + 0)) then v103("เปิดเก็บเพชรในโซนที่ฟาร์ม (ถ้าไม่ได้ฟาร์ม ใช้โซนที่ตัวละครอยู่)");while v13.CollectGems and (v13.GemRun==v564)  do local v1238=0;local v1239;while true do if (v1238==(0 -0)) then v1239=0;while true do if (v1239==(0 + 0)) then if ( not v13.AutoFarm and v89()) then v86(function() return  not v13.CollectGems or v13.AutoFarm ;end);end task.wait(0.2);break;end end break;end end end v562=4;end if (1==v562) then if  not v561 then return;end v563=coroutine.running();v562=7 -5 ;end if (v562==(4 + 0)) then v114[v563]=nil;break;end end end;local v130=false;v113.Debug=function(v565) v13.Debug=v565;if ( not v565 or v130) then return;end v130=true;for v898,v899 in ipairs({"EggGemDropRemote","EggHitConfirmed","EggHitRejected","EggHitLanded"}) do local v900=1785 -(1476 + 309) ;local v901;while true do if (v900==0) then v901=v5:FindFirstChild(v899);if (v901 and v901:IsA("RemoteEvent")) then v901.OnClientEvent:Connect(function(...) if v13.Debug then print("[FarmHub] <-",v899,...);end end);end break;end end end if (hookmetamethod and getnamecallmethod) then local v1023=0;local v1024;local v1025;while true do if (v1023==(1285 -(299 + 985))) then v1025=hookmetamethod(game,"__namecall",function(v1405,...) local v1406=0 + 0 ;while true do if (v1406==(0 -0)) then if (v13.Debug and (getnamecallmethod()=="FireServer") and (typeof(v1405)=="Instance") and v1024[v1405.Name]) then print("[FarmHub] ->",v1405.Name,...);end return v1025(v1405,...);end end end);break;end if ((93 -(86 + 7))==v1023) then local v1319=0 -0 ;while true do if ((0 + 0)==v1319) then v1024={EggHitRequest=true,BatHitRequest=true,MasteryPickaxeSwing=true};v1025=nil;v1319=881 -(672 + 208) ;end if ((1 + 0)==v1319) then v1023=133 -(14 + 118) ;break;end end end end end end;local v132={boost=false,unlock=false,alive=true,saved={}};do local v567=setmetatable({},{__mode="k"});local v568={};local v569=0;local v570=game:GetService("HttpService");local v571="FarmHub_fps.json";pcall(function() local v902=0;local v903;while true do if (v902==(445 -(339 + 106))) then v903=v570:JSONDecode(readfile(v571));if (type(v903)=="table") then local v1407=0;local v1408;while true do if (v1407==0) then v1408=0 + 0 ;while true do if (v1408==0) then v132.saved.boost=v903.boost==true ;v132.saved.unlock=v903.unlock==true ;break;end end break;end end end break;end end end);local function v572() pcall(function() writefile(v571,v570:JSONEncode({boost=v132.boost,unlock=v132.unlock}));end);end local function v573(v904,v905,v906) pcall(function() local v1026=0 + 0 ;local v1027;local v1028;local v1029;while true do if (v1026==0) then v1027=0;v1028=nil;v1026=1396 -(440 + 955) ;end if (v1026==(1 + 0)) then v1029=nil;while true do if (v1027==0) then local v1563=0 -0 ;while true do if (v1563==(1 + 0)) then v1027=1;break;end if (v1563==(0 -0)) then v1028=v904[v905];if (v1028==v906) then return;end v1563=1;end end end if (v1027==(1 + 0)) then v1029=v567[v904];if  not v1029 then local v1669=353 -(260 + 93) ;while true do if (v1669==(0 + 0)) then v1029={};v567[v904]=v1029;break;end end end v1027=4 -2 ;end if (2==v1027) then if (v1029[v905]==nil) then v1029[v905]=v1028;end v904[v905]=v906;break;end end break;end end end);end local function v574(v907) local v908=0 -0 ;local v909;while true do if (v908==(1974 -(1181 + 793))) then v909=v567[v907];if  not v909 then return;end v908=1 + 0 ;end if (v908==(308 -(105 + 202))) then for v1320,v1321 in pairs(v909) do pcall(function() v907[v1320]=v1321;end);end v567[v907]=nil;break;end end end local function v575(v910) local v911=0 + 0 ;local v912;while true do local v1030=810 -(352 + 458) ;while true do if (v1030==(0 -0)) then if (v911==1) then return false;end if (0==v911) then v912=v910;while v912 and (v912~=workspace) and (v912~=v3)  do if (v912:IsA("LayerCollector") or v912:IsA("GuiObject")) then return true;end v912=v912.Parent;end v911=1;end break;end end end end local function v576(v913,v914) local v915=0 -0 ;local v916;while true do if (v915==(1 + 0)) then return false;end if (v915==(0 -0)) then v916=v913;while v916 and (v916~=workspace)  do local v1322=949 -(438 + 511) ;while true do if (v1322==(1383 -(1262 + 121))) then if ((v916.Name=="AnimalPickups") or (v916.Name=="CarriedAnimals") or (v914 and (v916.Name=="Eggs"))) then return true;end if v916:IsA("Model") then if (v916:FindFirstChildOfClass("Humanoid") or v0:GetPlayerFromCharacter(v916)) then return true;end end v1322=1;end if (v1322==(1069 -(728 + 340))) then v916=v916.Parent;break;end end end v915=1791 -(816 + 974) ;end end end local v577={BloomEffect=true,BlurEffect=true,SunRaysEffect=true,DepthOfFieldEffect=true,ColorCorrectionEffect=true};local v578={ParticleEmitter=true,Trail=true,Beam=true,Smoke=true,Fire=true,Sparkles=true};local function v579(v917) local v918=0 -0 ;while true do if (v918==0) then if ( not v132.alive or  not v132.boost or v575(v917)) then return;end if v577[v917.ClassName] then local v1410=workspace.CurrentCamera;if (v917:IsDescendantOf(v3) or (v1410 and v917:IsDescendantOf(v1410))) then v573(v917,"Enabled",false);end elseif v917:IsA("Atmosphere") then local v1568=0 -0 ;while true do if (v1568==(339 -(163 + 176))) then v573(v917,"Density",0);v573(v917,"Haze",0 -0 );v1568=1;end if (v1568==(4 -3)) then v573(v917,"Glare",0);break;end end elseif (v917:IsA("Clouds") and (v917.Parent==workspace.Terrain)) then v573(v917,"Enabled",false);elseif v578[v917.ClassName] then v573(v917,"Enabled",false);elseif v917:IsA("Explosion") then v573(v917,"Visible",false);elseif (v917:IsA("BasePart") and  not v576(v917,false)) then local v1829=0 + 0 ;while true do if (v1829==(1810 -(1564 + 246))) then v573(v917,"CastShadow",false);v573(v917,"Material",Enum.Material.SmoothPlastic);v1829=1;end if (v1829==(346 -(124 + 221))) then v573(v917,"Reflectance",0);break;end end elseif (v917:IsA("Decal") or v917:IsA("Texture")) then if (v917.Parent and v917.Parent:IsA("BasePart") and  not v576(v917,true)) then v573(v917,"Transparency",1);end elseif (v917:IsA("PointLight") or v917:IsA("SpotLight") or v917:IsA("SurfaceLight")) then v573(v917,"Shadows",false);end break;end end end local function v580() local v919=0;while true do if (v919==(0 + 0)) then for v1323,v1324 in ipairs(v568) do v1324:Disconnect();end table.clear(v568);break;end end end v113.FpsBoost=function(v920) if  not v132.alive then return;end v920=v920==true ;if (v132.boost==v920) then return;end v132.boost=v920;v569=v569 + (452 -(115 + 336)) ;v580();v572();if  not v920 then local v1130=0 -0 ;while true do if (v1130==(0 + 0)) then for v1499 in pairs(v567) do v574(v1499);end return;end end end v573(v3,"GlobalShadows",false);v573(v3,"FogEnd",1000000046 -(45 + 1) );v573(v3,"ShadowSoftness",0 + 0 );v573(v3,"EnvironmentDiffuseScale",0);v573(v3,"EnvironmentSpecularScale",1990 -(1282 + 708) );pcall(function() v573(settings().Rendering,"QualityLevel",Enum.QualityLevel.Level01);end);pcall(function() v573(UserSettings():GetService("UserGameSettings"),"SavedQualityLevel",Enum.SavedQualitySetting.QualityLevel1);end);local v922=workspace.Terrain;v573(v922,"WaterWaveSize",1212 -(583 + 629) );v573(v922,"WaterWaveSpeed",0 + 0 );v573(v922,"WaterReflectance",0);v573(v922,"Decoration",false);local v923=v569;local v924,v925={},setmetatable({},{__mode="k"});local v926,v927=2 -1 ,0 + 0 ;local function v928(v1031) local v1032=1170 -(943 + 227) ;while true do if (1==v1032) then v927=v927 + 1 + 0 ;v924[v927]=v1031;break;end if ((1631 -(1539 + 92))==v1032) then if v925[v1031] then return;end v925[v1031]=true;v1032=1947 -(706 + 1240) ;end end end table.insert(v568,workspace.DescendantAdded:Connect(v928));table.insert(v568,v3.ChildAdded:Connect(v928));table.insert(v568,v3.DescendantAdded:Connect(v928));table.insert(v568,workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function() local v1033=workspace.CurrentCamera;if v1033 then for v1327,v1328 in ipairs(v1033:GetDescendants()) do v928(v1328);end end end));task.spawn(function() local v1034=0;while true do if (v1034==(258 -(81 + 177))) then for v1411,v1412 in ipairs(workspace:GetDescendants()) do v928(v1412);end for v1413,v1414 in ipairs(v3:GetDescendants()) do v928(v1414);end v1034=1;end if (v1034==(2 -1)) then while v132.alive and v132.boost and (v923==v569)  do local v1415=257 -(212 + 45) ;local v1416;while true do if (v1415==0) then v1416=math.min(v926 + 399 ,v927);while v926<=v1416  do local v1671=0 -0 ;local v1672;while true do if (v1671==(1946 -(708 + 1238))) then local v1768=0 + 0 ;while true do if (v1768==(0 + 0)) then v1672=v924[v926];v924[v926]=nil;v1768=1;end if (v1768==(1668 -(586 + 1081))) then v1671=512 -(348 + 163) ;break;end end end if (v1671==(2 + 0)) then pcall(function() if (v1672:IsDescendantOf(workspace) or v1672:IsDescendantOf(v3)) then v579(v1672);end end);break;end if (v1671==(281 -(215 + 65))) then v926=v926 + (2 -1) ;v925[v1672]=nil;v1671=1861 -(1541 + 318) ;end end end v1415=1;end if (v1415==(1 + 0)) then if (v926>v927) then v926,v927=1 + 0 ,0 + 0 ;end task.wait();break;end end end break;end end end);end;local function v582(v929) if (type(setfpscap)~="function") then return;end if v929 then local v1131=0;local v1132;while true do if (0==v1131) then v1132=pcall(setfpscap,0);if  not v1132 then pcall(setfpscap,2749 -(1036 + 714) );end break;end end else pcall(setfpscap,40 + 20 );end end v113.UnlockFps=function(v930) local v931=0 + 0 ;while true do if (v931==(1281 -(883 + 397))) then v582(v132.unlock);v572();break;end if (v931==0) then if  not v132.alive then return;end v132.unlock=v930==true ;v931=591 -(563 + 27) ;end end end;v132.start=function(v932) local v933,v934,v935={},3 -2 ,1986 -(1369 + 617) ;local v936=os.clock();local v937,v938,v939=v936,v936,v936;v132.render=v4.RenderStepped:Connect(function() local v1035=os.clock();v935=v935 + 1 ;v933[v935]=v1035;while (v934<=v935) and (v933[v934]<=(v1035-(1488 -(85 + 1402))))  do local v1133=0 + 0 ;while true do if (v1133==(0 -0)) then v933[v934]=nil;v934=v934 + (404 -(274 + 129)) ;break;end end end if ((v1035-v937)>=(217.5 -(12 + 205))) then local v1243=(v935-v934) + 1 ;v132.value=math.floor((v1243/math.min(v1035-v936 ,1)) + 0.5 + 0 );v932.Text="FPS: "   .. v132.value ;v937=v1035;local v1246={};for v1329=v934,v935 do v1246[ #v1246 + (3 -2) ]=v933[v1329];end v933,v934,v935=v1246,1 + 0 , #v1246;end if ((v1035-v939)>=(389 -(27 + 357))) then local v1247=480 -(91 + 389) ;while true do if (v1247==(297 -(90 + 207))) then if v132.unlock then v582(true);end v939=v1035;break;end end end if ((v1035-v938)>=10) then local v1248=0;while true do if (v1248==(0 + 0)) then if (v132.boost or v132.unlock) then print("[FarmHub] FPS: "   .. (v132.value or 0) );end v938=v1035;break;end end end end);if v132.saved.boost then v113.FpsBoost(true);end if v132.saved.unlock then v113.UnlockFps(true);end end;v132.cleanup=function() local v941=861 -(706 + 155) ;while true do if (v941==(1797 -(730 + 1065))) then if v132.unlock then v582(false);end v132.boost,v132.unlock,v132.alive=false,false,false;break;end if (v941==(1564 -(1339 + 224))) then if v132.render then v132.render:Disconnect();end for v1332 in pairs(v567) do v574(v1332);end v941=2;end if (v941==(0 + 0)) then v569=v569 + 1 + 0 ;v580();v941=1 -0 ;end end end;end local v133={Bg=Color3.fromRGB(881 -(268 + 575) ,1322 -(919 + 375) ,24),Side=Color3.fromRGB(87 -55 ,994 -(180 + 791) ,1825 -(323 + 1482) ),Row=Color3.fromRGB(48,1954 -(1177 + 741) ,31),Input=Color3.fromRGB(5 + 61 ,187 -137 ,17 + 26 ),Accent=Color3.fromRGB(245,325 -179 ,40),Off=Color3.fromRGB(9 + 87 ,187 -(96 + 13) ,70),Knob=Color3.fromRGB(1956 -(962 + 959) ,54 -32 ,3 + 13 ),Text=Color3.fromRGB(1601 -(461 + 890) ,177 + 63 ,888 -660 ),SubText=Color3.fromRGB(205,428 -(19 + 224) ,170)};local v134=Enum.Font.GothamMedium;local function v135(v586,v587) local v588=0;local v589;local v590;while true do if (v588==(0 + 0)) then local v1134=0;while true do if (v1134==(199 -(37 + 161))) then v588=1 + 0 ;break;end if (v1134==0) then v589=Instance.new(v586);v590=v587.Parent;v1134=1 + 0 ;end end end if ((1 + 0)==v588) then v587.Parent=nil;for v1252,v1253 in pairs(v587) do v589[v1252]=v1253;end v588=2;end if (v588==2) then v589.Parent=v590;return v589;end end end local function v136(v591,v592) v135("UICorner",{CornerRadius=UDim.new(61 -(60 + 1) ,v592 or (931 -(826 + 97)) ),Parent=v591});end local function v137(v593,v594,v595) v2:Create(v593,TweenInfo.new(v595 or (0.18 + 0) ,Enum.EasingStyle.Quad),v594):Play();end local function v138(v596,v597,v598) local v599=0 -0 ;local v600;while true do if (v599==0) then v600={BackgroundTransparency=1 -0 ,Font=v134,Text=v597,TextSize=701 -(375 + 310) ,TextColor3=v133.Text,TextXAlignment=Enum.TextXAlignment.Left,Parent=v596};for v1255,v1256 in pairs(v598 or {} ) do v600[v1255]=v1256;end v599=1;end if (v599==1) then return v135("TextLabel",v600);end end end local v139=(gethui and gethui()) or v7:WaitForChild("PlayerGui") ;local v140=v139:FindFirstChild("FarmHubUI");if v140 then v140:Destroy();end local v141=v135("ScreenGui",{Name="FarmHubUI",ResetOnSpawn=false,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,Parent=v139});local v142=v135("Frame",{AnchorPoint=Vector2.new(0.5,0.5),Position=UDim2.fromScale(0.5,1999.5 -(1864 + 135) ),Size=UDim2.fromOffset(580,360),BackgroundColor3=v133.Bg,Active=true,Parent=v141});v136(v142,30 -18 );v135("UIStroke",{Color=v133.Input,Thickness=1,Parent=v142});local v143=v135("ImageLabel",{Size=UDim2.fromScale(1 + 0 ,1 + 0 ),BackgroundTransparency=1,ScaleType=Enum.ScaleType.Crop,ImageTransparency=1,Parent=v142});v136(v143,29 -17 );local v144=v135("Frame",{Size=UDim2.fromScale(1,1),BackgroundColor3=Color3.fromRGB(1171 -(314 + 817) ,13 + 9 ,228 -(32 + 182) ),BackgroundTransparency=1 + 0 ,Parent=v142});v136(v144,12);local v145;task.spawn(function() local v601=0 -0 ;local v602;local v603;local v604;local v605;local v606;while true do if (v601==0) then v602=65 -(39 + 26) ;v603=nil;v601=145 -(54 + 90) ;end if (v601==(200 -(45 + 153))) then v606=nil;while true do if (v602==(0 + 0)) then local v1419=552 -(457 + 95) ;while true do if (v1419==(1 + 0)) then v602=1;break;end if (v1419==(0 -0)) then v603="MalmonHub_bg.jpg";v604="https://raw.githubusercontent.com/Malmon01/Mhub/main/assets/malmon_bg.jpg";v1419=1;end end end if (v602==2) then v606=pcall(function() local v1500=0 -0 ;local v1501;while true do if (v1500==(0 -0)) then v1501=0;while true do if (v1501==(0 + 0)) then if  not (isfile and isfile(v603)) then writefile(v603,game:HttpGet(v604));end v143.Image=v605(v603);break;end end break;end end end);if v606 then local v1569=0 -0 ;while true do if (v1569==(2 -1)) then v144.BackgroundTransparency=748.45 -(485 + 263) ;if v145 then v145.BackgroundTransparency=707.3 -(575 + 132) ;end break;end if (v1569==0) then v143.ImageTransparency=861 -(750 + 111) ;v142.BackgroundTransparency=1011 -(445 + 565) ;v1569=1 + 0 ;end end else print("[FarmHub] โหลดรูปพื้นหลังไม่ได้ ใช้พื้นสีเดิม");end break;end if (v602==1) then v605=getcustomasset or getsynasset ;if ((type(v605)~="function") or  not writefile) then return;end v602=1 + 1 ;end end break;end if (v601==1) then v604=nil;v605=nil;v601=2;end end end);v145=v135("Frame",{Size=UDim2.new(0 -0 ,51 + 99 ,1,310 -(189 + 121) ),BackgroundTransparency=0.3 + 0 ,BackgroundColor3=v133.Side,Parent=v142});v136(v145,1359 -(634 + 713) );v138(v145,v8.Title,{Position=UDim2.fromOffset(552 -(493 + 45) ,978 -(493 + 475) ),Size=UDim2.new(1 + 0 , -(812 -(158 + 626)),0 + 0 ,49 -19 ),TextSize=18,Font=Enum.Font.GothamBold,TextColor3=v133.Accent});v138(v145,"v "   .. v9 ,{AnchorPoint=Vector2.new(0 + 0 ,1 + 0 ),Position=UDim2.new(0,1105 -(1035 + 56) ,1, -8),Size=UDim2.new(1, -28,0,975 -(114 + 845) ),TextSize=11,TextColor3=v133.SubText});print("[FarmHub] โหลดเวอร์ชัน",v9);local v146=v135("Frame",{Position=UDim2.fromOffset(10,21 + 31 ),Size=UDim2.new(1, -(51 -31),1 + 0 , -(1111 -(179 + 870))),BackgroundTransparency=1 -0 ,Parent=v145});v135("UIListLayout",{Padding=UDim.new(878 -(827 + 51) ,21 -13 ),SortOrder=Enum.SortOrder.LayoutOrder,Parent=v146});local v147=v135("Frame",{Position=UDim2.fromOffset(76 + 74 ,473 -(95 + 378) ),Size=UDim2.new(1 + 0 , -(212 -62),1 + 0 ,1011 -(334 + 677) ),BackgroundTransparency=3 -2 ,Parent=v142});local v148=v138(v147,"",{Position=UDim2.fromOffset(18,1070 -(1049 + 7) ),Size=UDim2.new(4 -3 , -(225 -105),0 + 0 ,74 -46 ),TextSize=40 -20 ,Font=Enum.Font.GothamBold});local function v149(v607,v608,v609) local v610=0 + 0 ;local v611;local v612;local v613;while true do if ((1421 -(1004 + 416))==v610) then v612=v135("ImageButton",v611);v136(v612,v608/2 );v610=2;end if (v610==(1959 -(1621 + 336))) then local v1137=1939 -(337 + 1602) ;while true do if ((1518 -(1014 + 503))==v1137) then v610=1018 -(446 + 569) ;break;end if (0==v1137) then v613=v135("UIStroke",{Color=v133.Accent,Thickness=1 + 1 ,Parent=v612});if (v8.LogoImage=="") then v138(v612,"Logo",{Size=UDim2.fromScale(1,2 -1 ),TextXAlignment=Enum.TextXAlignment.Center,TextSize=5 + 9 });end v1137=1 -0 ;end end end if (v610==(0 + 0)) then v611={Size=UDim2.fromOffset(v608,v608),BackgroundColor3=v133.Row,Image=v8.LogoImage,AutoButtonColor=false,Parent=v607};for v1258,v1259 in pairs(v609 or {} ) do v611[v1258]=v1259;end v610=506 -(223 + 282) ;end if ((1 + 3)==v610) then return v612;end if (v610==(4 -1)) then v612.MouseEnter:Connect(function() v137(v613,{Thickness=4 -1 });end);v612.MouseLeave:Connect(function() v137(v613,{Thickness=672 -(623 + 47) });end);v610=49 -(32 + 13) ;end end end local v150=v149(v147,34 + 26 ,{AnchorPoint=Vector2.new(1 + 0 ,1801 -(1070 + 731) ),Position=UDim2.new(1 + 0 , -(1444 -(1257 + 147)),0 + 0 ,15 -7 )});local v151=v149(v141,193 -(98 + 35) ,{AnchorPoint=Vector2.new(1,0),Position=UDim2.new(1, -(7 + 9),0 -0 ,8),Visible=false});task.spawn(function() local v614=0;local v615;local v616;local v617;local v618;local v619;while true do if (v614==(3 -2)) then v617=getcustomasset or getsynasset ;if ((type(v617)~="function") or  not writefile) then return;end v614=2;end if (v614==(2 + 0)) then v618,v619=pcall(function() local v1261=0 + 0 ;while true do if (v1261==(0 + 0)) then if  not (isfile and isfile(v615)) then writefile(v615,game:HttpGet(v616));end return v617(v615);end end end);if  not v618 then local v1333=557 -(395 + 162) ;while true do if (v1333==0) then print("[FarmHub] โหลดรูปโลโก้ไม่ได้ ใช้โลโก้ตัวอักษรเดิม");return;end end end v614=3 + 0 ;end if (0==v614) then v615="MalmonHub_logo.png";v616="https://raw.githubusercontent.com/Malmon01/Mhub/main/assets/malmon_logo.png";v614=1;end if (v614==3) then for v1262,v1263 in ipairs({v150,v151}) do local v1264=0 -0 ;local v1265;while true do if ((1148 -(701 + 447))==v1264) then v1265=0;while true do if (v1265==(0 -0)) then v1263.Image=v619;for v1714,v1715 in ipairs(v1263:GetChildren()) do if v1715:IsA("TextLabel") then v1715:Destroy();end end break;end end break;end end end break;end end end);local function v152(v620) local v621=0;while true do if (v621==(0 -0)) then v142.Visible= not v620;v151.Visible=v620;break;end end end local v153=v4.Stepped:Connect(function() local v622=0;local v623;while true do if ((1342 -(391 + 950))==v622) then if v623 then for v1420,v1421 in ipairs(v623:GetDescendants()) do if v1421:IsA("BasePart") then v1421.CanCollide=false;end end end break;end if (v622==(0 -0)) then if v13.AfkPinned then return;end v623=v7.Character;v622=2 -1 ;end end end);local v154=v4.Heartbeat:Connect(function() local v624=0 -0 ;local v625;local v626;local v627;local v628;local v629;local v630;local v631;local v632;local v633;local v634;while true do if (0==v624) then if v13.AfkPinned then return;end v625,v626,v627=v19();if ( not v626 or v84 or (v627:GetState()==Enum.HumanoidStateType.Seated)) then return;end v624=1;end if (v624==(3 + 0)) then v632=workspace:FindFirstChild("CarriedAnimals");if v632 then table.insert(v630,v632);end v74.FilterDescendantsInstances=v630;v624=3 + 1 ;end if (v624==2) then v630={v625};v631=workspace:FindFirstChild("EggGemDrops");if v631 then table.insert(v630,v631);end v624=10 -7 ;end if (v624==4) then v633=workspace:Raycast(v626.Position + Vector3.new(0,v629 + (1524 -(251 + 1271)) ,0 + 0 ) ,Vector3.new(0 -0 , -60,0),v74);if  not v633 then return;end v634=v633.Position.Y + v629 ;v624=12 -7 ;end if (v624==(1 -0)) then v628=v627:GetState();if ((v627.MoveDirection.Magnitude<0.1) and (v628~=Enum.HumanoidStateType.Jumping) and (v628~=Enum.HumanoidStateType.Freefall)) then local v1334=0;local v1335;while true do if (v1334==(1260 -(1147 + 112))) then v626.AssemblyAngularVelocity=Vector3.zero;break;end if (0==v1334) then v1335=v626.AssemblyLinearVelocity;v626.AssemblyLinearVelocity=Vector3.new(0,v1335.Y,0 + 0 );v1334=1 -0 ;end end end v629=(v626.Size.Y/(1 + 1)) + (((v627.RigType==Enum.HumanoidRigType.R6) and (699 -(335 + 362))) or v627.HipHeight) ;v624=2;end if (v624==(5 + 0)) then if (v626.Position.Y<(v634-(0.25 -0))) then local v1336=0 -0 ;local v1337;while true do if (v1336==0) then v626.CFrame=v626.CFrame + Vector3.new(0 -0 ,v634-v626.Position.Y ,0 -0 ) ;v1337=v626.AssemblyLinearVelocity;v1336=1;end if (v1336==1) then v626.AssemblyLinearVelocity=Vector3.new(v1337.X,math.max(0 -0 ,v1337.Y),v1337.Z);break;end end end break;end end end);local v155=v1.JumpRequest:Connect(function() local v635=566 -(237 + 329) ;local v636;local v637;while true do if (v635==(3 -2)) then if v637 then v637:ChangeState(Enum.HumanoidStateType.Jumping);end break;end if (v635==0) then if v13.AfkPinned then return;end v636,v636,v637=v19();v635=1;end end end);local v156=v7.Idled:Connect(function() pcall(function() local v942=0 + 0 ;while true do if (v942==(0 + 0)) then v6:CaptureController();v6:ClickButton2(Vector2.new());break;end end end);end);v141.Destroying:Connect(function() local v638=0;while true do if (v638==(1127 -(408 + 716))) then v153:Disconnect();v154:Disconnect();v155:Disconnect();break;end if (v638==2) then v113.Garden(false);v113.CollectGems(false);v156:Disconnect();v638=11 -8 ;end if (v638==(821 -(344 + 477))) then v132.cleanup();v13.Closed=true;v82();v638=1;end if (v638==(1 + 0)) then v112=nil;v13.FindMoney,v13.FindBuff=false,false;v13.AutoFarm=false;v638=1763 -(1188 + 573) ;end end end);local v157=v135("TextButton",{AnchorPoint=Vector2.new(1,0 -0 ),Position=UDim2.new(1 + 0 , -(25 -17),0,12 -4 ),Size=UDim2.fromOffset(58 -34 ,1553 -(508 + 1021) ),BackgroundColor3=v133.Row,Font=Enum.Font.GothamBold,Text="X",TextSize=14,TextColor3=v133.SubText,AutoButtonColor=true,Parent=v147});v136(v157,6);v157.MouseButton1Click:Connect(function() local v639=0 + 0 ;while true do if (v639==(1166 -(228 + 938))) then v13.AutoFarm,v13.Debug=false,false;v113.CollectGems(false);v639=686 -(332 + 353) ;end if (v639==(1 -0)) then v141:Destroy();break;end end end);local v158=v135("Frame",{Position=UDim2.fromOffset(36 -22 ,73 + 3 ),Size=UDim2.new(1 + 0 , -(111 -83),424 -(18 + 405) , -(41 + 47)),BackgroundTransparency=1,Parent=v147});local v159={};local function v160(v640) local v641=0 + 0 ;local v642;while true do if ((0 -0)==v641) then v642=978 -(194 + 784) ;while true do if ((1770 -(694 + 1076))==v642) then for v1502,v1503 in ipairs(v159) do local v1504=1904 -(122 + 1782) ;local v1505;while true do if (v1504==(1 + 0)) then v137(v1503.button,{BackgroundColor3=(v1505 and v133.Accent) or v133.Row });v1503.button.TextColor3=(v1505 and v133.Knob) or v133.Text ;break;end if (v1504==(0 + 0)) then v1505=v1503==v640 ;v1503.page.Visible=v1505;v1504=1 + 0 ;end end end v148.Text=v640.name;break;end end break;end end end local function v161(v643) local v644=0 + 0 ;local v645;local v646;local v647;while true do local v943=0 -0 ;while true do if (v943==(0 + 0)) then if (1==v644) then local v1424=0;while true do if (v1424==0) then v646=v135("ScrollingFrame",{Size=UDim2.fromScale(1971 -(214 + 1756) ,1),BackgroundTransparency=4 -3 ,BorderSizePixel=0 + 0 ,ScrollBarThickness=1 + 2 ,ScrollBarImageColor3=v133.Accent,CanvasSize=UDim2.new(),AutomaticCanvasSize=Enum.AutomaticSize.Y,Visible=false,Parent=v158});v135("UIListLayout",{Padding=UDim.new(585 -(217 + 368) ,8),SortOrder=Enum.SortOrder.LayoutOrder,Parent=v646});v1424=2 -1 ;end if (v1424==(1 + 0)) then v644=2;break;end end end if (v644==(2 + 0)) then v135("UIPadding",{PaddingRight=UDim.new(0,6),Parent=v646});v647={name=v643,button=v645,page=v646};v644=3;end v943=1;end if (v943==2) then if (v644==(0 + 0)) then v645=v135("TextButton",{Size=UDim2.new(890 -(844 + 45) ,284 -(242 + 42) ,0 -0 ,83 -47 ),LayoutOrder= #v159 + (1201 -(132 + 1068)) ,BackgroundColor3=v133.Row,AutoButtonColor=false,Font=v134,Text=v643,TextSize=25 -9 ,TextColor3=v133.Text,Parent=v146});v136(v645,8);v644=1;end break;end if (v943==1) then if (3==v644) then table.insert(v159,v647);v645.MouseButton1Click:Connect(function() v160(v647);end);v644=4;end if (v644==(1627 -(214 + 1409))) then return v646;end v943=2;end end end end local v162=0 + 0 ;local function v163() v162+=1 return v162;end local function v164(v648,v649) local v650=1634 -(497 + 1137) ;local v651;while true do local v944=940 -(9 + 931) ;while true do if (v944==(289 -(181 + 108))) then if (v650==(0 + 0)) then v651=v135("Frame",{Size=UDim2.new(1,0,0,v649 or 40 ),LayoutOrder=v163(),BackgroundColor3=v133.Row,BackgroundTransparency=0.3 -0 ,ClipsDescendants=true,Parent=v648});v136(v651,23 -15 );v650=1;end if (v650==(1 + 0)) then return v651;end break;end end end end local function v165(v652,v653,v654,v655) local v656=0 + 0 ;local v657;local v658;local v659;local v660;local v661;while true do if (v656==(477 -(296 + 180))) then local v1148=1403 -(1183 + 220) ;while true do if (v1148==(1266 -(1037 + 228))) then v660=false;v661=nil;v1148=2;end if (v1148==(0 -0)) then v659=v135("Frame",{Size=UDim2.fromOffset(51 -33 ,18),Position=UDim2.new(0 -0 ,737 -(527 + 207) ,0.5, -(536 -(187 + 340))),BackgroundColor3=v133.Text,Parent=v658});v136(v659,1879 -(1298 + 572) );v1148=1;end if (v1148==(4 -2)) then v656=172 -(144 + 26) ;break;end end end if (v656==(4 -2)) then local v1149=0 -0 ;while true do if (v1149==(1 + 0)) then v661(v654 or false ,true);return {Set=v661,Get=function() return v660;end};end if (v1149==(0 -0)) then function v661(v1506,v1507) v660=v1506;v137(v658,{BackgroundColor3=(v1506 and v133.Accent) or v133.Off });v137(v659,{Position=(v1506 and UDim2.new(2 -1 , -(101 -80),0.5 + 0 , -(11 -2))) or UDim2.new(0 + 0 ,2 + 1 ,0.5, -9) ,BackgroundColor3=(v1506 and v133.Knob) or v133.Text });if ( not v1507 and v655) then task.spawn(v655,v1506);end end v658.MouseButton1Click:Connect(function() v661( not v660);end);v1149=203 -(5 + 197) ;end end end if (v656==(686 -(339 + 347))) then local v1150=0 -0 ;while true do if (v1150==2) then v656=3 -2 ;break;end if (v1150==1) then v658=v135("TextButton",{AnchorPoint=Vector2.new(377 -(365 + 11) ,0.5 + 0 ),Position=UDim2.new(3 -2 , -12,0.5 -0 ,924 -(837 + 87) ),Size=UDim2.fromOffset(80 -32 ,24),BackgroundColor3=v133.Off,Text="",AutoButtonColor=false,Parent=v657});v136(v658,1682 -(837 + 833) );v1150=2;end if (v1150==(0 + 0)) then v657=v164(v652);v138(v657,v653,{Position=UDim2.fromOffset(1399 -(356 + 1031) ,0 + 0 ),Size=UDim2.new(1, -(1726 -(73 + 1573)),0,40)});v1150=1;end end end end end local function v166(v662,v663,v664) local v665=0;local v666;local v667;local v668;while true do if (v665==0) then v666=1388 -(1307 + 81) ;v667=nil;v665=235 -(7 + 227) ;end if (v665==(1 -0)) then v668=nil;while true do if (v666==(166 -(90 + 76))) then v667=v164(v662);v668=v135("TextButton",{Size=UDim2.fromScale(3 -2 ,1 + 0 ),BackgroundTransparency=1 + 0 ,Font=v134,Text=v663,TextSize=14 + 2 ,TextColor3=v133.Accent,Parent=v667});v666=3 -2 ;end if (v666==1) then v668.MouseButton1Click:Connect(function() local v1508=0;while true do if (v1508==(260 -(197 + 63))) then v137(v667,{BackgroundColor3=v133.Input},0.08 + 0 );task.delay(0.1 + 0 ,function() v137(v667,{BackgroundColor3=v133.Row});end);v1508=1 + 0 ;end if (v1508==1) then if v664 then task.spawn(v664);end break;end end end);break;end end break;end end end local function v167(v669,v670) return v138(v669,v670,{Size=UDim2.new(1 + 0 ,0,0 -0 ,18),LayoutOrder=v163(),TextSize=13,TextColor3=v133.SubText});end local function v168(v671,v672,v673,v674) local v675=1369 -(618 + 751) ;local v676;local v677;local v678;while true do if (v675==(0 + 0)) then v676=1910 -(206 + 1704) ;v677=nil;v675=1 -0 ;end if (v675==1) then v678=nil;while true do if (v676==2) then v678.FocusLost:Connect(function() if v674 then v674(v678.Text);end end);return v678;end if (v676==(0 -0)) then local v1425=0 + 0 ;while true do if ((1275 -(155 + 1120))==v1425) then v677=v164(v671);v138(v677,v672,{Position=UDim2.fromOffset(1518 -(396 + 1110) ,0 -0 ),Size=UDim2.new(0.45, -(4 + 8),1,0 + 0 )});v1425=1 + 0 ;end if (v1425==(977 -(230 + 746))) then v676=602 -(473 + 128) ;break;end end end if ((49 -(39 + 9))==v676) then v678=v135("TextBox",{Position=UDim2.new(266.45 -(38 + 228) ,0 -0 ,473 -(106 + 367) ,1 + 5 ),Size=UDim2.new(0.55, -8,0,1890 -(354 + 1508) ),BackgroundColor3=v133.Input,Font=v134,Text=v673 or "" ,TextSize=48 -33 ,TextColor3=v133.Text,ClearTextOnFocus=false,Parent=v677});v136(v678,5 + 1 );v676=2 + 0 ;end end break;end end end local function v169(v679,v680,v681,v682,v683) local v684,v685,v686=53 -13 ,1272 -(334 + 910) ,4;local v687=v164(v679,v684);v138(v687,v680,{Position=UDim2.fromOffset(907 -(92 + 803) ,0 + 0 ),Size=UDim2.new(1181.45 -(1035 + 146) , -12,616 -(230 + 386) ,v684)});local v688=v135("TextButton",{AnchorPoint=Vector2.new(1 + 0 ,1510 -(353 + 1157) ),Position=UDim2.new(1115 -(53 + 1061) , -(1643 -(1568 + 67)),0 + 0 ,1 + 5 ),Size=UDim2.new(0.55, -(20 -12),0 -0 ,v684-(30 -18) ),BackgroundColor3=v133.Input,Text="",AutoButtonColor=false,Parent=v687});v136(v688,6);local v689=v138(v688,"",{Position=UDim2.fromOffset(10,0 + 0 ),Size=UDim2.new(1213 -(615 + 597) , -(31 + 3),1 -0 ,0),TextSize=15});local v690=v138(v688,"v",{AnchorPoint=Vector2.new(1 + 0 ,0),Position=UDim2.new(1 + 0 , -10,0 + 0 ,0),Size=UDim2.new(1899 -(1056 + 843) ,34 -18 ,1,0 -0 ),TextXAlignment=Enum.TextXAlignment.Right,TextColor3=v133.Accent,Font=Enum.Font.GothamBold});local v691=v135("Frame",{AnchorPoint=Vector2.new(2 -1 ,0 + 0 ),Position=UDim2.new(1977 -(286 + 1690) , -8,911 -(98 + 813) ,v684),Size=UDim2.new(0.55, -(3 + 5),0 -0 ,0 + 0 ),BackgroundTransparency=1,Parent=v687});v135("UIListLayout",{Padding=UDim.new(507 -(263 + 244) ,v686),SortOrder=Enum.SortOrder.LayoutOrder,Parent=v691});local v692,v693,v694=false,nil,{};local function v695(v945) local v946=0 + 0 ;local v947;while true do if (v946==0) then v692=v945;v947=(v945 and (v684 + ( #v694 * (v685 + v686)) + (1691 -(1502 + 185)))) or v684 ;v946=1 + 0 ;end if (v946==(4 -3)) then v137(v687,{Size=UDim2.new(2 -1 ,0,0,v947)});v690.Text=(v945 and "^") or "v" ;break;end end end local function v696(v948,v949) local v950=1527 -(629 + 898) ;while true do if (v950==1) then if ( not v949 and v683) then task.spawn(v683,v948);end break;end if (v950==(0 -0)) then v693=v948;v689.Text=v948 or "-- เลือก --" ;v950=1;end end end local function v697(v951) v694=v951 or {} ;for v1037,v1038 in ipairs(v691:GetChildren()) do if v1038:IsA("TextButton") then v1038:Destroy();end end v691.Size=UDim2.new(0.55 -0 , -(373 -(12 + 353)),1911 -(1680 + 231) , #v694 * (v685 + v686) );for v1039,v1040 in ipairs(v694) do local v1041=0 + 0 ;local v1042;while true do if (v1041==(1 + 0)) then v1042.MouseButton1Click:Connect(function() local v1426=1149 -(212 + 937) ;while true do if (v1426==(0 + 0)) then v696(v1040);v695(false);break;end end end);break;end if (v1041==(1062 -(111 + 951))) then v1042=v135("TextButton",{Size=UDim2.new(1 + 0 ,27 -(18 + 9) ,0 + 0 ,v685),LayoutOrder=v1039,BackgroundColor3=v133.Input,AutoButtonColor=true,Font=v134,Text=v1040,TextSize=548 -(31 + 503) ,TextColor3=v133.Text,Parent=v691});v136(v1042,1638 -(595 + 1037) );v1041=1445 -(189 + 1255) ;end end end if v692 then v695(true);end end v688.MouseButton1Click:Connect(function() v695( not v692);end);v697(v681);v696(v682,true);return {Set=v696,Get=function() return v693;end,SetOptions=v697};end local function v170(v698,v699,v700,v701,v702,v703,v704,v705) local v706,v707,v708=15 + 25 ,42 -14 ,1283 -(1170 + 109) ;local v709=v703 or "ล้าง (ทั้งหมด)" ;local v710=v164(v698,v706);v138(v710,v699,{Position=UDim2.fromOffset(1829 -(348 + 1469) ,0),Size=UDim2.new(1289.45 -(1115 + 174) , -12,0 -0 ,v706)});local v711=v135("TextButton",{AnchorPoint=Vector2.new(1,1014 -(85 + 929) ),Position=UDim2.new(1, -(5 + 3),1867 -(1151 + 716) ,6),Size=UDim2.new(0.55 + 0 , -8,0 + 0 ,v706-(1716 -(95 + 1609)) ),BackgroundColor3=v133.Input,Text="",AutoButtonColor=false,Parent=v710});v136(v711,6);local v712=v138(v711,"",{Position=UDim2.fromOffset(36 -26 ,0),Size=UDim2.new(1, -(792 -(364 + 394)),1 + 0 ,0 + 0 ),TextSize=4 + 11 ,TextTruncate=Enum.TextTruncate.AtEnd});local v713=v138(v711,"v",{AnchorPoint=Vector2.new(1 + 0 ,0 + 0 ),Position=UDim2.new(1 + 0 , -(4 + 6),0 + 0 ,0 + 0 ),Size=UDim2.new(0,972 -(719 + 237) ,2 -1 ,0 + 0 ),TextXAlignment=Enum.TextXAlignment.Right,TextColor3=v133.Accent,Font=Enum.Font.GothamBold});local v714=v135("Frame",{AnchorPoint=Vector2.new(2 -1 ,0),Position=UDim2.new(2 -1 , -(18 -10),1991 -(761 + 1230) ,v706),Size=UDim2.new(193.55 -(80 + 113) , -(5 + 3),0 + 0 ,0 + 0 ),BackgroundTransparency=3 -2 ,Parent=v710});v135("UIListLayout",{Padding=UDim.new(0,v708),SortOrder=Enum.SortOrder.LayoutOrder,Parent=v714});local v715,v716,v717=false,nil,{};local function v718() local v953={};for v1043,v1044 in ipairs(v716) do if v701[v1044] then table.insert(v953,v1044);end end for v1045 in pairs(v701) do if  not table.find(v953,v1045) then table.insert(v953,v1045);end end v712.Text=(( #v953==0) and (v704 or "ทั้งหมด")) or table.concat(v953,", ") ;for v1046,v1047 in pairs(v717) do local v1048=0 + 0 ;local v1049;local v1050;local v1051;while true do if (v1048==(1 + 0)) then v1051=nil;while true do if (v1049==(1245 -(965 + 278))) then v1047.TextStrokeColor3=Color3.new(0,1729 -(1391 + 338) ,0);v1047.TextStrokeTransparency=(v1051 and 0) or (2 -1) ;break;end if (v1049==(0 + 0)) then v1050=v701[v1046]==true ;v1047.BackgroundColor3=(v1050 and v133.Accent) or v133.Input ;v1049=1 -0 ;end if (v1049==1) then v1051=v705 and v705[v1046] ;v1047.TextColor3=v1051 or (v1050 and v133.Knob) or v133.Text ;v1049=2;end end break;end if (v1048==(0 + 0)) then v1049=1408 -(496 + 912) ;v1050=nil;v1048=3 -2 ;end end end end local function v719(v955) local v956=0 + 0 ;local v957;while true do if (v956==(1 -0)) then v137(v710,{Size=UDim2.new(1331 -(1190 + 140) ,0 + 0 ,718 -(317 + 401) ,v957)});v713.Text=(v955 and "^") or "v" ;break;end if (v956==0) then v715=v955;v957=(v955 and (v706 + (( #v716 + 1) * (v707 + v708)) + (953 -(303 + 646)))) or v706 ;v956=3 -2 ;end end end local function v720() local v958=0;local v959;while true do if ((1732 -(1675 + 57))==v958) then v959=0;while true do if (v959==0) then v718();if v702 then task.spawn(v702,v701);end break;end end break;end end end local function v721(v960,v961) local v962=0;local v963;local v964;local v965;while true do if (v962==(0 + 0)) then v960=v960 or {} ;v963=v961 or v705 ;v964=(v716~=nil) and ( #v716== #v960) ;if v964 then for v1509,v1510 in ipairs(v960) do if ((v716[v1509]~=v1510) or ((v705 and v705[v1510])~=(v963 and v963[v1510]))) then v964=false;break;end end end v962=1;end if (v962==1) then if (v961~=nil) then v705=v961;end if v964 then local v1427=0 -0 ;while true do if (v1427==(0 + 0)) then local v1631=0;while true do if (v1631==(977 -(338 + 639))) then v718();return;end end end end end v716=v960;for v1338,v1339 in ipairs(v714:GetChildren()) do if v1339:IsA("TextButton") then v1339:Destroy();end end v962=381 -(320 + 59) ;end if (v962==(2 + 1)) then v965.MouseButton1Click:Connect(function() local v1340=732 -(628 + 104) ;local v1341;while true do if (v1340==0) then v1341=0;while true do if (v1341==(0 -0)) then for v1742 in pairs(v701) do v701[v1742]=nil;end v720();break;end end break;end end end);for v1342,v1343 in ipairs(v716) do local v1344=1891 -(439 + 1452) ;local v1345;while true do if (v1344==(1948 -(105 + 1842))) then v717[v1343]=v1345;v1345.MouseButton1Click:Connect(function() local v1632=0 -0 ;local v1633;while true do if (v1632==0) then v1633=0;while true do if (v1633==(0 -0)) then v701[v1343]= not v701[v1343] or nil ;v720();break;end end break;end end end);break;end if ((0 -0)==v1344) then v1345=v135("TextButton",{Size=UDim2.new(1,0,0 + 0 ,v707),LayoutOrder=v1342,BackgroundColor3=v133.Input,AutoButtonColor=true,Font=v134,Text=v1343,TextSize=23 -9 ,TextColor3=v133.Text,Parent=v714});v136(v1345,4 + 2 );v1344=1165 -(274 + 890) ;end end end v718();if v715 then v719(true);end break;end if (v962==(2 + 0)) then v717={};v714.Size=UDim2.new(0.55, -(7 + 1),0,( #v716 + 1) * (v707 + v708) );v965=v135("TextButton",{Size=UDim2.new(1,0,0 + 0 ,v707),LayoutOrder=0 + 0 ,BackgroundColor3=v133.Row,AutoButtonColor=true,Font=v134,Text=v709,TextSize=9 + 5 ,TextColor3=v133.SubText,Parent=v714});v136(v965,7 -1 );v962=3;end end end v711.MouseButton1Click:Connect(function() v719( not v715);end);v721(v700);return {SetOptions=v721};end local v171=v161("ฟาร์ม");local v172,v173;local v174;local function v175() local v722=819 -(731 + 88) ;local v723;local v724;while true do if (v722==(1 + 0)) then v724=table.concat(v723,"|");if (v724~=v173) then local v1346=0 + 0 ;while true do if (v1346==(0 + 0)) then v173=v724;v172.SetOptions(v723);break;end end end break;end if (v722==0) then if  not v172 then return;end v723=v12(v13.Zone);v722=1 -0 ;end end end v169(v171,"เลือกโซน",v8.ZoneOrder,v13.Zone,function(v725) local v726=0 -0 ;while true do if (v726==2) then if v174 then v174();end v113.ZoneChanged(v725);break;end if (v726==(0 -0)) then v13.Zone=v725;for v1270 in pairs(v13.Eggs) do v13.Eggs[v1270]=nil;end v726=1;end if (v726==1) then v173=nil;v175();v726=3 -1 ;end end end);v16=v165(v171,"เริ่มฟาร์ม",false,function(v727) local v728=0 + 0 ;while true do if (v728==1) then if (v727 and v13.Garden) then local v1347=0 + 0 ;while true do if (v1347==(0 + 0)) then v17.Set(false);if  not v115(function() return v13.Closed or v13.DeliveryBusy or  not v16.Get() ;end) then return;end break;end end end if v15 then v15.Set(v727 and  not v112 );end v728=2 + 0 ;end if (v728==2) then v113.AutoFarm(v727);break;end if (v728==(158 -(139 + 19))) then if v727 then v82();end if (v727 and (v13.DeliveryBusy or v13.Closed)) then local v1348=0 + 0 ;while true do if (v1348==(1993 -(1687 + 306))) then v16.Set(false);return;end end end v728=3 -2 ;end end end);v15=v165(v171,"เก็บเพชร",false,function(v729) local v730=1154 -(1018 + 136) ;local v731;while true do if (0==v730) then v731=0 + 0 ;while true do if (v731==0) then if v729 then v82();end if (v729 and (v13.Garden or v13.DeliveryBusy or v13.Closed)) then local v1582=0 -0 ;local v1583;while true do if (v1582==(815 -(117 + 698))) then v1583=481 -(305 + 176) ;while true do if (0==v1583) then local v1808=0 + 0 ;while true do if (v1808==(0 + 0)) then v15.Set(false);return;end end end end break;end end end v731=1 -0 ;end if (v731==1) then v113.CollectGems(v729);break;end end break;end end end);v172=v170(v171,"เลือกไข่",{},v13.Eggs,function() v103("เลือกไข่:",(next(v13.Eggs) and "ตั้งแล้ว") or "ทุกชนิด" );end,"ล้าง (ทุกชนิด)");v175();task.spawn(function() while v141.Parent do local v966=0 + 0 ;local v967;while true do if (v966==0) then v967=0 -0 ;while true do if (v967==(0 -0)) then v175();task.wait(1.5 -0 );break;end end break;end end end end);v169(v171,"ลำดับการตี",{v57,v58,v59},v13.Priority,function(v732) local v733=0;local v734;while true do if (v733==(0 + 0)) then v734=0 -0 ;while true do if (v734==(0 -0)) then v13.Priority=v732;v103("ลำดับการตี:",v732);break;end end break;end end end);v167(v171,"* รายชื่อไข่อัปเดตเองตามโซนที่เลือก (เลือกได้หลายชนิด)");v102=v138(v171,"สถานะ: พร้อม",{Size=UDim2.new(1,0 + 0 ,266 -(112 + 154) ,20),LayoutOrder=v163(),TextSize=30 -17 ,TextColor3=v133.Accent,TextTruncate=Enum.TextTruncate.AtEnd});local v176=v161("หาตัว");local v177={Minimum=nil,Secondary={},Animals={},Buffs={},MoneyDestination="กลับบ้าน",BuffDestination="กลับบ้าน"};local v178="FarmHub_animals.json";local v179,v180,v181,v182={},{},false,31 -(21 + 10) ;pcall(function() if (isfile and isfile(v178)) then local v1052=0;local v1053;while true do if (v1052==(1720 -(531 + 1188))) then for v1429,v1430 in pairs(v1053) do if ((v1429~="rarityColors") and (type(v1429)=="string") and (type(v1430)=="table")) then local v1584=0 + 0 ;while true do if ((663 -(96 + 567))==v1584) then v179[v1429]={};for v1744,v1745 in pairs(v1430) do if ((type(v1744)=="number") and (type(v1745)=="string")) then v179[v1429][v1745]={};elseif ((type(v1744)=="string") and (type(v1745)=="table")) then local v1831=0;local v1832;while true do if (v1831==(1 -0)) then if (v1832 and (v1832~="") and  not v180[v1832] and (type(v1745.Color)=="string") and v1745.Color:match("^%x%x%x%x%x%x$")) then v180[v1832],v181=v1745.Color,true;end break;end if (v1831==(0 + 0)) then v179[v1429][v1744]={Rarity=((type(v1745.Rarity)=="string") and v1745.Rarity) or nil };v1832=v179[v1429][v1744].Rarity;v1831=1;end end end end break;end end end end break;end if (v1052==0) then v1053=v63:JSONDecode(readfile(v178));if (type(v1053.rarityColors)=="table") then for v1585,v1586 in pairs(v1053.rarityColors) do if ((type(v1585)=="string") and (type(v1586)=="string") and v1586:match("^%x%x%x%x%x%x$")) then v180[v1585]=v1586;end end end v1052=1;end end end end);pcall(function() local v735=0 -0 ;local v736;while true do if (v735==(1695 -(867 + 828))) then local v1152=0 -0 ;while true do if (v1152==(0 -0)) then v736=v5:FindFirstChild("Rarities");if  not v736 then return;end v1152=1;end if (v1152==1) then v735=2 -1 ;break;end end end if (v735==(1 -0)) then for v1272,v1273 in ipairs(v736:GetChildren()) do if v1273:IsA("UIGradient") then local v1431=0;local v1432;local v1433;while true do if (v1431==(0 + 0)) then local v1634=0 -0 ;while true do if (v1634==(771 -(134 + 637))) then v1432,v1433=nil, -(1 + 0);for v1772,v1773 in ipairs(v1273.Color.Keypoints) do local v1774=1157 -(775 + 382) ;local v1775;local v1776;local v1777;local v1778;while true do if (v1774==0) then v1775,v1776,v1777=v1773.Value:ToHSV();v1778=v1776 * v1777 ;v1774=1 -0 ;end if (v1774==(608 -(45 + 562))) then if (v1778>v1433) then v1432,v1433=v1773.Value,v1778;end break;end end end v1634=863 -(545 + 317) ;end if (v1634==(1 -0)) then v1431=1;break;end end end if (v1431==1) then if v1432 then local v1717=1026 -(763 + 263) ;local v1718;local v1719;local v1720;local v1721;while true do if (v1717==(0 + 0)) then v1718,v1719,v1720=v1432:ToHSV();v1432=Color3.fromHSV(v1718,v1719,math.max(v1720,1750.85 -(512 + 1238) ));v1717=1;end if (v1717==(1595 -(272 + 1322))) then v1721=v1432:ToHex();if (v180[v1273.Name]~=v1721) then v180[v1273.Name],v181=v1721,true;end break;end end end break;end end end end break;end end end);local function v183() local v737=0 -0 ;local v738;while true do if (v737==(1246 -(533 + 713))) then local v1153=28 -(14 + 14) ;while true do if (v1153==(825 -(499 + 326))) then v738=v13.Zone:match("(%d+)$");return v738 and ("Zone"   .. v738) ;end end end end end v167(v176,"หาตามเงินต่อวินาที");local v184;local function v185(v739) local v740=0;local v741;while true do if (v740==(0 -0)) then v741=424 -(104 + 320) ;while true do if (v741==0) then v177.Minimum=v11(v739);if v184 then v184.Text=(v177.Minimum and ("ขั้นต่ำ "   .. string.format("%.6g",v177.Minimum)   .. " ต่อวินาที")) or "ไม่ตั้งขั้นต่ำ: ใช้เฉพาะตัวอันดับ 2" ;end break;end end break;end end end local v186=v168(v176,"เงินขั้นต่ำ/วิ","",v185);v184=v167(v176,"ไม่ตั้งขั้นต่ำ: ใช้เฉพาะตัวอันดับ 2");v186:GetPropertyChangedSignal("Text"):Connect(function() v185(v186.Text);end);local v187=v170(v176,"ตัวอันดับ 2",{},v177.Secondary,nil,"ล้าง (ไม่เลือก)","ไม่เลือก");v169(v176,"พาไปที่",{"กลับบ้าน","จุด AFK"},v177.MoneyDestination,function(v742) v177.MoneyDestination=v742;end);local v188,v189;v188=v165(v176,"เปิดหาตัว (กลุ่ม 1)",false,function(v744) local v745=1323 -(1206 + 117) ;while true do if (v745==(0 + 0)) then if v744 then local v1349=1592 -(683 + 909) ;while true do if (v1349==0) then v185(v186.Text);v82();break;end end end if (v744 and (v13.DeliveryBusy or v13.Closed)) then local v1350=0;while true do if (v1350==0) then v188.Set(false);return;end end end v745=2 -1 ;end if ((1 -0)==v745) then v13.FindMoney=v744;break;end end end);v167(v176,"หาตัวติดบัพ");v169(v176,"พาไปที่",{"กลับบ้าน","จุด AFK"},v177.BuffDestination,function(v746) v177.BuffDestination=v746;end);v189=v165(v176,"เปิดหาตัวติดบัพ (กลุ่ม 2)",false,function(v748) local v749=288 -(134 + 154) ;while true do if (v749==(1 -0)) then v13.FindBuff=v748;break;end if (v749==(0 -0)) then if v748 then v82();end if (v748 and (v13.DeliveryBusy or v13.Closed)) then local v1351=0 + 0 ;local v1352;while true do if ((0 + 0)==v1351) then v1352=202 -(10 + 192) ;while true do if (v1352==(47 -(13 + 34))) then v189.Set(false);return;end end break;end end end v749=1290 -(342 + 947) ;end end end);local v190=v170(v176,"ตัว",{},v177.Animals);v170(v176,"บัพ",{"Hacker","Time","Haeven","Thunder","Void","ice","Gold","Diamond"},v177.Buffs,nil,"ล้าง (ไม่เลือก)","ไม่เลือก");v167(v176,"* กลุ่ม 2 ต้องเลือกบัพอย่างน้อยหนึ่งชนิด");local v191=v167(v176,"สถานะหาตัว รอเปิดใช้งาน");local v192,v193;function v174() local v750=workspace:FindFirstChild("AnimalPickups");if v750 then for v1156,v1157 in ipairs(v750:GetChildren()) do local v1158,v1159=v1157:GetAttribute("ZoneId"),v1157:GetAttribute("AnimalName");if ((type(v1158)=="string") and (type(v1159)=="string") and (v1159~="")) then local v1353=552 -(545 + 7) ;local v1354;local v1355;local v1356;local v1357;local v1358;local v1359;local v1360;local v1361;while true do if ((5 -3)==v1353) then v1360=v1359 and v1359:FindFirstChild("RarityLabel") ;v1361=v1360 and v1360:FindFirstChildWhichIsA("UIGradient") ;if ((type(v1355)~="string") or (v1355=="")) then v1355=v1361 and v1361:GetAttribute("Rarity") ;end if ((type(v1355)=="string") and (v1355~="") and (v1354.Rarity~=v1355)) then v1354.Rarity,v181=v1355,true;end v1353=2 + 1 ;end if (v1353==0) then v179[v1158]=v179[v1158] or {} ;v1354=v179[v1158][v1159];if  not v1354 then local v1678=1703 -(494 + 1209) ;local v1679;while true do if (v1678==(0 -0)) then v1679=998 -(197 + 801) ;while true do if (v1679==(0 -0)) then v1354={};v179[v1158][v1159],v181=v1354,true;break;end end break;end end end v1355=v1157:GetAttribute("Rarity");v1353=4 -3 ;end if (1==v1353) then v1356=v1157:FindFirstChild("RootPart");v1357=v1356 and v1356:FindFirstChild("AnimalOverheadAttachment") ;v1358=v1357 and v1357:FindFirstChild("AnimalOverhead") ;v1359=v1358 and v1358:FindFirstChild("Rarity") ;v1353=2;end if (v1353==3) then if (v1354.Rarity and  not v180[v1354.Rarity]) then local v1680=0;local v1681;while true do if (v1680==1) then if v1681 then v180[v1354.Rarity],v181=v1681:ToHex(),true;end break;end if (v1680==0) then v1681=v1361 and v1361.Color.Keypoints[1] and v1361.Color.Keypoints[1].Value ;if ( not v1681 and v1360 and v1360:IsA("TextLabel")) then v1681=v1360.TextColor3;end v1680=1;end end end break;end end end end end local v751,v752,v753,v754,v755=v183(),{},{},{},{};local v756={};for v968,v969 in pairs(v179[v751] or {} ) do v756[v968]=v969;end for v971,v972 in pairs(v30[v751] or {} ) do v756[v971]=v972;end for v974,v975 in pairs(v756) do local v976=954 -(919 + 35) ;local v977;while true do if (v976==(0 + 0)) then table.insert(v752,v974);v754[v974]=v56(v975.Rarity);v976=3 -2 ;end if (v976==1) then v977=v180[v975.Rarity];if v977 then v753[v974]=Color3.fromHex(v977);end break;end end end table.sort(v752,function(v978,v979) local v980=0;local v981;local v982;while true do if (v980==0) then if (v754[v978]~=v754[v979]) then return v754[v978]>v754[v979] ;end v981,v982=v756[v978].Cash or (467 -(369 + 98)) ,v756[v979].Cash or (1115 -(400 + 715)) ;v980=1;end if (v980==1) then local v1276=0 + 0 ;while true do if (v1276==(0 + 0)) then if (v981~=v982) then return v981>v982 ;end return v978<v979 ;end end end end end);for v983,v984 in ipairs(v752) do local v985=1325 -(744 + 581) ;local v986;while true do if (v985==(0 + 0)) then v986=v756[v984];table.insert(v755,v984   .. ":"   .. (v986.Rarity or "")   .. ":"   .. (v180[v986.Rarity] or "") );break;end end end local v757=table.concat(v755,"|");if (v751~=v193) then local v1054=1622 -(653 + 969) ;while true do if (v1054==(0 -0)) then table.clear(v177.Secondary);table.clear(v177.Animals);break;end end end if ((v757~=v192) or (v751~=v193)) then local v1055=1631 -(12 + 1619) ;while true do if (v1055==(163 -(103 + 60))) then v192,v193=v757,v751;v187.SetOptions(v752,v753);v1055=4 -3 ;end if ((4 -3)==v1055) then v190.SetOptions(v752,v753);break;end end end if (v181 and writefile and (os.clock()>=v182)) then local v1056=0 -0 ;local v1057;local v1058;while true do if (v1056==(1662 -(710 + 952))) then v1057={rarityColors=v180};for v1436,v1437 in pairs(v179) do local v1438=1868 -(555 + 1313) ;while true do if (v1438==0) then v1057[v1436]={};for v1682,v1683 in pairs(v1437) do v1057[v1436][v1682]={Rarity=v1683.Rarity};end break;end end end v1056=1 + 0 ;end if (v1056==(1 + 0)) then v1058=pcall(function() writefile(v178,v63:JSONEncode(v1057));end);if v1058 then v181=false;end v1056=2 + 0 ;end if (v1056==2) then v182=os.clock() + 5 ;break;end end end end v174();task.spawn(function() while v141.Parent do local v987=1468 -(1261 + 207) ;while true do if (v987==(252 -(245 + 7))) then v174();task.wait(748.5 -(212 + 535) );break;end end end end);local function v194(v758) local v759=0;local v760;while true do if (v759==(0 -0)) then v760=1476 -(905 + 571) ;while true do if (v760==(0 -0)) then pcall(function() v191.Text="สถานะหาตัว "   .. v758 ;end);v103(v758);break;end end break;end end end local function v195(v761) local v762=0;local v763;while true do if (v762==(0 -0)) then v763=workspace:FindFirstChild("AnimalPickups");return v763 and (v761.Parent==v763) ;end end end local function v196(v764) return (tostring(v764 or "" ):gsub("<[^>]*>",""):gsub("%b[]",""):gsub("%s+",""):lower());end local function v197(v765) local v766=0;local v767;while true do if (v766==(0 -0)) then v767=v765:GetBoundingBox();return v767.Position;end end end local function v198(v768) local v769=0;local v770;local v771;local v772;local v773;local v774;local v775;while true do if (0==v769) then if  not v195(v768) then return;end v770=v197(v768);v769=1 + 0 ;end if (v769==(1466 -(522 + 941))) then return v772 or v774 ;end if (v769==(1512 -(292 + 1219))) then local v1160=1112 -(787 + 325) ;while true do if (v1160==(2 -1)) then v769=2;break;end if (v1160==(0 + 0)) then v771=v196(v768:GetAttribute("AnimalName"));v772,v773=nil,137 -77 ;v1160=535 -(424 + 110) ;end end end if (v769==(2 + 0)) then local v1161=0;while true do if ((0 + 0)==v1161) then v774,v775=nil,25;for v1512,v1513 in ipairs(workspace:GetChildren()) do if ((v1513.Name=="PromptAnchor") and v1513:IsA("BasePart")) then local v1636=0 + 0 ;local v1637;while true do if (v1636==(312 -(33 + 279))) then v1637=v1513:FindFirstChild("StealPrompt");if (v1637 and v1637:IsA("ProximityPrompt") and v1637.Enabled) then local v1810=0 + 0 ;local v1811;while true do if (v1810==(1354 -(1338 + 15))) then if (v1811<=v775) then v774,v775=v1637,v1811;end break;end if (v1810==(1423 -(528 + 895))) then v1811=(v1513.Position-v770).Magnitude;if ((v771~="") and (v196(v1637.ObjectText)==v771) and (v1811<=v773)) then v772,v773=v1637,v1811;end v1810=1 + 0 ;end end end break;end end end end v1161=1925 -(1606 + 318) ;end if (v1161==(1820 -(298 + 1521))) then v769=3;break;end end end end end local function v199(v776) local v777=0 -0 ;local v778;local v779;local v780;local v781;local v782;local v783;local v784;local v785;local v786;while true do if ((312 -(154 + 156))==v777) then v782=nil;v783=nil;v777=11 -8 ;end if (v777==1) then v780=nil;v781=nil;v777=3 -1 ;end if (v777==(1115 -(712 + 403))) then v778=0;v779=nil;v777=451 -(168 + 282) ;end if (v777==(5 -2)) then v784=nil;v785=nil;v777=4;end if (v777==(4 + 0)) then v786=nil;while true do if (v778==(1 + 1)) then v784=v781 and v781:FindFirstChild("Mutation") ;v785={};v786=nil;v778=3;end if (v778==(2 -1)) then v782=v781 and v781:FindFirstChild("CashPerSecond") ;v782=v782 and v782:FindFirstChild("CashPerSecond") ;v783=(v782 and v782:IsA("TextLabel") and v11(v782.Text)) or (1451 -(1242 + 209)) ;v778=681 -(20 + 659) ;end if ((3 + 1)==v778) then local v1439=0 + 0 ;while true do if (v1439==0) then v786(v776:GetAttribute("Mutation"));return v783 or (0 -0) ,v785,v782 and v782:IsA("TextLabel") and v782.Text ;end end end if (v778==3) then function v786(v1514) if ((type(v1514)=="string") and (v1514~="")) then v785[v1514:lower():match("^%s*(.-)%s*$")]=true;end end if (v784 and v784:IsA("TextLabel")) then v786(v784.Text);end v786(v776:GetAttribute("AuraMutation"));v778=7 -3 ;end if (v778==0) then v779=v776:FindFirstChild("RootPart");v780=v779 and v779:FindFirstChild("AnimalOverheadAttachment") ;v781=v780 and v780:FindFirstChild("AnimalOverhead") ;v778=620 -(427 + 192) ;end end break;end end end local function v200(v787,v788) local v789=v18():match("(%d+)$");local v790=v789 and ("Zone"   .. v789) ;if (v787==nil) then v787=v13.FindMoney;end if (v788==nil) then v788=v13.FindBuff;end local v791=workspace:FindFirstChild("AnimalPickups");if  not v791 then return;end local v792,v793={},false;for v988,v989 in ipairs(v791:GetChildren()) do local v990=v989:GetAttribute("DespawnAtServerTime");if (v989:IsA("Model") and (v989:GetAttribute("ZoneId")==v790) and (type(v990)=="number") and ((v990-workspace:GetServerTimeNow())>(13 -7))) then local v1162=0 + 0 ;local v1163;local v1164;local v1165;local v1166;local v1167;while true do if (v1162==1) then local v1440=1947 -(1427 + 520) ;while true do if (v1440==(0 + 0)) then v1166=nil;if v787 then local v1722=0 -0 ;while true do if (0==v1722) then if ((v177.Minimum~=nil) and (v1163>=v177.Minimum)) then v1166=1;end if ( not v1166 and v177.Secondary[v1165]) then v1166=2;end break;end end end v1440=1 + 0 ;end if (1==v1440) then v1162=2;break;end end end if (0==v1162) then v1163,v1164=v199(v989);v1165=v989:GetAttribute("AnimalName");v1162=1233 -(712 + 520) ;end if (v1162==3) then if (v1166 or v1167) then local v1590=0;local v1591;while true do if (v1590==1) then table.insert(v792,{Animal=v989,Cps=v1163,Rank=v1166 or (6 -3) });break;end if ((1346 -(565 + 781))==v1590) then local v1723=565 -(35 + 530) ;while true do if (v1723==1) then v1590=1;break;end if (v1723==(0 + 0)) then v1591=(v1166 and (v177.MoneyDestination=="จุด AFK")) or (v1167 and (v177.BuffDestination=="จุด AFK")) ;v793=v793 or v1591 ;v1723=3 -2 ;end end end end end break;end if (v1162==2) then v1167=false;if (v788 and ((next(v177.Animals)==nil) or v177.Animals[v1165])) then for v1639 in pairs(v177.Buffs) do if v1164[v1639:lower()] then v1167=true;break;end end end v1162=1381 -(1330 + 48) ;end end end end local v794;for v991,v992 in ipairs(v792) do if ( not v794 or (v992.Cps>v794.Cps) or ((v992.Cps==v794.Cps) and (v992.Rank<v794.Rank))) then v794=v992;end end return v794,(v793 and "จุด AFK") or "กลับบ้าน" ;end local function v201(v795,v796,v797,v798,v799) local v800=0 + 0 ;local v801;local v802;local v803;local v804;local v805;local v806;local v807;local v808;local v809;local v810;local v811;local v812;local v813;local v814;local v815;local v816;while true do if (v800==4) then if ( not v797 and v795) then local v1362=v198(v795);if (v1362 and v806) then if  not v85(v78(v73(v98(v1362),v806,2),v795),v798) then return false;end end end v811,v812=os.clock(),nil;v813,v814= -math.huge,nil;v800=1 + 4 ;end if (v800==(8 -3)) then v815=false;v816=nil;function v816() return v13.AfkPinned or v798() or ((os.clock() -v811)>=v796) ;end v800=6;end if ((26 -20)==v800) then while  not v816() do local v1278=v47();if v51() then local v1441=1169 -(854 + 315) ;local v1442;while true do if ((3 -2)==v1441) then v814=v814 or os.clock() ;if ((os.clock() -v814)>=(0.3 + 0)) then local v1724=44 -(31 + 13) ;local v1725;while true do local v1746=0 -0 ;while true do if (v1746==(0 -0)) then if (v1724==(1 + 0)) then if (v1725 and v1725:IsA("RemoteEvent")) then v1725:FireServer();end return false;end if (v1724==(563 -(281 + 282))) then v194("ยกผิดตัว "   .. tostring(v1278:GetAttribute("AnimalName") or v1278.Name )   .. " วางสัตว์และยกเลิกการส่ง" );v1725=v5:FindFirstChild("DropCarriedRemote",true);v1724=2 -1 ;end break;end end end end break;end if (v1441==(0 + 0)) then local v1640=0;while true do if (v1640==1) then v1441=1;break;end if (v1640==(949 -(216 + 733))) then v1442=v1278 and v1278:GetAttribute("HatchId") ;if ((v1442==nil) or (v1442==v802) or ((v802==nil) and (v196(v1278:GetAttribute("AnimalName"))==v196(v803)))) then return true,v801,v812;end v1640=1848 -(137 + 1710) ;end end end end else v814=nil;v795=v809(v802,v807);if v795 then v815=true;end if (v797 and  not v815 and ((os.clock() -v811)>=(5.5 -3))) then break;end local v1443,v1444=v19();if  not v1444 then return false;end local v1445=v795 and v198(v795) ;if v1445 then local v1592=538 -(100 + 438) ;local v1593;while true do if (v1592==0) then v1593=v73(v98(v1445),v1444,1367 -(205 + 1160) );if v797 then v1444.CFrame=v1593;elseif ((v1444.Position-v1593.Position).Magnitude>4) then if  not v85(v78(v1593,v795),v816) then if  not v798() then v810();end return false;end end break;end end end if v816() then break;end if (v799 and (v813== -math.huge)) then local v1594=0;local v1595;local v1596;while true do if (v1594==2) then if (v1595.Animal~=v808) then local v1780=0;while true do if (v1780==2) then continue;break;end if (v1780==(1 + 0)) then v801={HatchId=v802,Name=v803};v807=v197(v808);v1780=2 + 0 ;end if (v1780==(1305 -(535 + 770))) then v808=v1595.Animal;v802,v803=v1596,v808:GetAttribute("AnimalName");v1780=1 + 0 ;end end end break;end if (v1594==(1 + 0)) then if  not v1595 then return false;end v1596=v1595.Animal:GetAttribute("HatchId");v1594=1996 -(211 + 1783) ;end if (v1594==0) then v1595=nil;v1595,v812=v799();v1594=1 + 0 ;end end end v795=v809(v802,v807);v1445=v795 and v198(v795) ;if (v1445 and  not v51() and ((os.clock() -v813)>=(1429.35 -(1236 + 193)))) then local v1597=910 -(793 + 117) ;local v1598;while true do if (v1597==(1892 -(1607 + 285))) then v1598=860 -(747 + 113) ;while true do if ((1978 -(80 + 1896))==v1598) then v100(v1445);break;end if (v1598==0) then v1444.CFrame=v73(v98(v1445),v1444,9 -7 );v1444.AssemblyLinearVelocity=Vector3.zero;v1598=1 -0 ;end if (v1598==1) then if (v813== -math.huge) then local v1836=0 + 0 ;local v1837;local v1838;local v1839;while true do if (v1836==(2 -1)) then v1837,v1838,v1839=v199(v795);v194("เลือก "   .. tostring(v803)   .. " "   .. (v1839 or ("$"   .. string.format("%.6g",v1837)   .. "/s")) );break;end if (v1836==(0 + 0)) then v802,v803=v795:GetAttribute("HatchId"),v795:GetAttribute("AnimalName");v801={HatchId=v802,Name=v803};v1836=1;end end end v813=os.clock();v1598=5 -3 ;end end break;end end end end task.wait();end if  not v798() then v810();end return false;end if (v800==(1 + 0)) then v805,v806=v19();v807=(v797 and v806 and v806.Position) or v804 ;v808=v795;v800=2;end if (v800==(1 + 2)) then function v810() local v1279=v809(v802,v807);local v1280=v1279 and v198(v1279) ;local v1281,v1282=v19();local v1283=v1280 and v1282 and (v98(v1280) -v1282.Position).Magnitude ;local v1284=workspace:FindFirstChild("CarriedAnimals");v194("หมดเวลายก "   .. tostring(v803)   .. " HatchId="   .. tostring(v801.HatchId)   .. " AnimalName="   .. tostring(v801.Name)   .. " พบจุด StealPrompt="   .. tostring(v1280~=nil )   .. " ระยะ="   .. ((v1283 and string.format("%.1f",v1283)) or "ไม่ทราบ")   .. " จำนวนใน CarriedAnimals="   .. tostring((v1284 and  #v1284:GetChildren()) or (0 -0) )   .. " แสดงปุ่ม Drop="   .. tostring(v50()) );end if v51() then return false;end v795=v809(v802,v807);v800=4;end if (v800==(456 -(246 + 208))) then local v1168=1892 -(614 + 1278) ;while true do if (v1168==(1 + 0)) then v810=nil;v800=317 -(249 + 65) ;break;end if (v1168==(0 -0)) then v809=nil;function v809(v1515,v1516) local v1517=0;local v1518;local v1519;local v1520;while true do if (v1517==(1275 -(726 + 549))) then local v1685=0;while true do if (v1685==(1 + 0)) then v1517=1425 -(916 + 508) ;break;end if (v1685==(0 -0)) then v1518=workspace:FindFirstChild("AnimalPickups");if  not v1518 then return;end v1685=1 + 0 ;end end end if (v1517==(325 -(140 + 183))) then for v1726,v1727 in ipairs(v1518:GetChildren()) do if v1727:IsA("Model") then local v1781=0 + 0 ;local v1782;while true do if (v1781==0) then v1782=564 -(297 + 267) ;while true do if ((0 + 0)==v1782) then if ((v1515~=nil) and (v1727:GetAttribute("HatchId")==v1515)) then return v1727;end if (v1516 and (v196(v803)~="") and (v196(v1727:GetAttribute("AnimalName"))==v196(v803))) then local v1863=0;local v1864;while true do if (v1863==(342 -(37 + 305))) then v1864=(v197(v1727) -v1516).Magnitude;if (v1864<=v1520) then v1519,v1520=v1727,v1864;end break;end end end break;end end break;end end end end return v1519;end if (v1517==(1267 -(323 + 943))) then if v797 then local v1747=0 + 0 ;local v1748;local v1749;while true do if (v1747==(0 -0)) then v1748,v1749=v19();v1516=v1749 and v1749.Position ;break;end end end v1519,v1520=nil,1615 -(394 + 1141) ;v1517=2 + 0 ;end end end v1168=1 + 0 ;end end end if (v800==(0 + 0)) then v801=((type(v795)=="table") and v795) or {HatchId=v795:GetAttribute("HatchId"),Name=v795:GetAttribute("AnimalName")} ;v802,v803=v801.HatchId,v801.Name;v804=(type(v795)~="table") and v197(v795) ;v800=1 -0 ;end end end local v202= -math.huge;local function v203(v817,v818,v819,v820) if (v13.DeliveryBusy or ((os.clock() -v202)<(2 -0))) then return;end v13.DeliveryZone=(v819 and v820) or v18() ;v13.DeliveryBusy=true;local v823=v13.Garden or (v17 and v17.Get()) ;local v824=v13.AutoFarm or v16.Get() ;local v825=v15.Get();local v826,v827=v188.Get(),v189.Get();local v828=false;local function v829() local v993=0;while true do if (v993==(1 + 0)) then v13.FindMoney,v13.FindBuff=false,false;v188.Set(false);v993=2 + 0 ;end if ((529 -(87 + 442))==v993) then if (v818~="กลับบ้าน") then return;end v828=true;v993=806 -(13 + 792) ;end if (v993==2) then v189.Set(false);break;end end end v829();local function v830() local v994=0 + 0 ;while true do if (v994==(0 + 0)) then if v828 then return v200(v826,v827);end return v200();end end end local v831,v832=v18(),v7.Character;local v833=(v823 and v14.Zone) or v13.Zone ;local function v834() return v13.AfkPinned or v13.Closed or (((v823 and v14.Zone) or v13.Zone)~=v833) or (v7.Character~=v832) or  not v19() or ( not v828 and  not (v13.FindMoney or v13.FindBuff)) ;end local v835,v836=pcall(function() local v995=0 + 0 ;local v996;local v997;local v998;local v999;local v1000;local v1001;local v1002;while true do if (v995==6) then local v1287=0;while true do if (v1287==(1865 -(1231 + 634))) then for v1599=1767 -(1362 + 404) ,3 do if v834() then error("ยกเลิกการส่งสัตว์");end local v1599,v1600=v19();v1600.CFrame=v1001;v1600.AssemblyLinearVelocity=Vector3.zero;v1600.AssemblyAngularVelocity=Vector3.zero;v109(v1001,((v818=="จุด AFK") and (5 -3)) or (1.2 + 0) );task.wait(0.4);local v1599,v1605=v19();if (v1605 and ((v1605.Position-v1001.Position).Magnitude<=40)) then v1002=true;break;end end if  not v1002 then error("ถูกดึงกลับหลังวาร์ปครบสามครั้ง");end v1287=2 -1 ;end if (v1287==(1017 -(660 + 356))) then if v834() then error("ยกเลิกการส่งสัตว์");end v995=9 -2 ;break;end end end if (2==v995) then v997:UnequipTools();if v819 then if  not v51() then error("สัตว์ที่ถืออยู่หายไปแล้ว");end else local v1446=0;local v1447;local v1448;local v1449;local v1450;local v1451;while true do if (v1446==0) then if v51() then error("กำลังถือสัตว์ตัวอื่นอยู่");end v1447,v1448=v830();v1446=1 + 0 ;end if (v1446==3) then v817,v818=v1450,v1451;break;end if (v1446==(1951 -(1111 + 839))) then if  not v1447 then local v1728=0;while true do if (v1728==0) then v194("ไม่มีสัตว์ที่ตรงเงื่อนไขแล้ว ยกเลิกการส่ง");return;end end end v817,v818=v1447.Animal,v1448;v1446=953 -(496 + 455) ;end if (v1446==(700 -(66 + 632))) then v1449,v1450,v1451=v201(v817,5,false,v834,v830);if  not v1449 then error("ยกสัตว์ไม่สำเร็จ");end v1446=4 -1 ;end end end v829();v995=1139 -(441 + 695) ;end if (v995==(10 -6)) then if ( not v106(v998,v834) or v834() or v51()) then error("ผู้พิทักษ์ยังไม่ทำให้สัตว์ตก");end if  not v201(v817,3,true,v834) then error("ยกสัตว์ตัวเดิมซ้ำไม่สำเร็จ");end v996,v999=v19();v995=9 -4 ;end if (v995==7) then if (v818=="จุด AFK") then local v1452=0 -0 ;while true do if (v1452==1) then v189.Set(false);v17.Set(false);v1452=2 + 0 ;end if (v1452==(1840 -(286 + 1552))) then v16.Set(false);v15.Set(false);v1452=1280 -(1016 + 261) ;end if (v1452==3) then if  not v83() then error("ไม่สามารถตรึงตัวที่จุด AFK");end v194("ถึงจุด AFK แล้ว ปิดทุกระบบ");break;end if (v1452==(1320 -(708 + 612))) then v13.FindMoney,v13.FindBuff=false,false;v188.Set(false);v1452=2 -1 ;end end else local v1453=0 + 0 ;local v1454;local v1455;while true do if (v1453==1) then if v834() then error("ยกเลิกการส่งสัตว์");end if v51() then error("กลับบ้านแล้วแต่ยังฝากสัตว์ไม่สำเร็จ");end v1453=381 -(113 + 266) ;end if (v1453==(1170 -(979 + 191))) then v1454=os.clock();while v51() and ((os.clock() -v1454)<3) and  not v834()  do task.wait(0.05 -0 );end v1453=1736 -(339 + 1396) ;end if (v1453==(1 + 1)) then local v1644=0 + 0 ;while true do if (v1644==(0 -0)) then v1455=false;for v1783=1,3 do if v834() then error("ยกเลิกการส่งสัตว์");end local v1783,v1784=v19();if ( not v1000 or  not v1784) then break;end v1784.CFrame=v1000;v1784.AssemblyLinearVelocity=Vector3.zero;v1784.AssemblyAngularVelocity=Vector3.zero;v109(v1000);task.wait(0.4 + 0 );local v1783,v1789=v19();if (v1789 and ((v1789.Position-v1000.Position).Magnitude<=(10 + 30))) then v1455=true;break;end end v1644=1;end if (v1644==1) then v1453=350 -(187 + 160) ;break;end end end if (v1453==(6 -3)) then if  not v1455 then v194("กลับจุดฟาร์มไม่สำเร็จ ให้ฟาร์มเริ่มตามขั้นตอนปกติ");end v194("ฝากสัตว์แล้ว เริ่มฟาร์มต่อ");break;end end end break;end if (v995==0) then if v819 then v194("พบสัตว์ที่ถืออยู่: "   .. tostring(v817.Name)   .. " กำลังพาไป "   .. v818 );else v194("กำลังหยุดฟาร์มเพื่อเลือกสัตว์");end v17.Set(false);v16.Set(false);v995=1;end if (v995==(3 -2)) then v15.Set(false);repeat local v1363=0 + 0 ;while true do if ((3 -2)==v1363) then if v834() then error("ยกเลิกการส่งสัตว์");end break;end if (v1363==0) then task.wait();for v1645 in pairs(v114) do if (coroutine.status(v1645)=="dead") then v114[v1645]=nil;end end v1363=1;end end until  not v13.Garden and  not v13.AutoFarm and  not v13.CollectGems and (next(v114)==nil)  v996,v996,v997=v19();v995=1 + 1 ;end if (v995==(1 + 2)) then v998=v72(v831);if  not v998 then error("ไม่พบผู้พิทักษ์ของโซน");end v194("รอผู้พิทักษ์ตีให้สัตว์ตก");v995=4;end if (v995==(9 -4)) then local v1288=0;while true do if (v1288==0) then v1000=(v818=="กลับบ้าน") and v999 and v999.CFrame ;v1001=((v818=="จุด AFK") and v8.AFK) or v8.Home ;v1288=1;end if ((329 -(56 + 272))==v1288) then v1002=false;v995=6;break;end end end end end);v202=os.clock();v13.DeliveryBusy=false;v13.DeliveryZone=nil;if  not v835 then v194("ส่งสัตว์ไม่สำเร็จ "   .. tostring(v836) );end if ( not v13.Closed and  not v13.AfkPinned and (v818=="กลับบ้าน") and (((v823 and v14.Zone) or v13.Zone)==v833)) then if (v824 or v823) then local v1289=0 + 0 ;while true do if (v1289==(0 + 0)) then v112={Money=v826,Buff=v827,Gems= not v823 and v825 ,Garden=v823};if v823 then v17.Set(true);else v16.Set(true);end break;end end else local v1290=0 -0 ;local v1291;while true do if ((0 + 0)==v1290) then v1291=0;while true do if (v1291==(641 -(455 + 185))) then if v825 then v15.Set(true);end break;end if ((788 -(757 + 31))==v1291) then if v826 then v188.Set(true);end if v827 then v189.Set(true);end v1291=1;end end break;end end end end end task.spawn(function() local v837;while v141.Parent do local v1003,v1004=pcall(function() local v1061=v51();if  not v1061 then local v1292=1999 -(762 + 1237) ;local v1293;while true do if (v1292==0) then v1293=0 -0 ;while true do if (v1293==0) then v837=nil;v13.ManualCarryBlocked=false;break;end end break;end end elseif (v13.ScriptLift or v13.DeliveryBusy) then local v1456=269 -(265 + 4) ;while true do if (v1456==0) then v837=nil;v13.ManualCarryBlocked=true;break;end end elseif ((v13.FindMoney or v13.FindBuff) and  not v13.Closed and  not v13.AfkPinned and  not v13.ManualCarryBlocked) then local v1606=0;local v1607;local v1608;local v1609;local v1610;local v1611;local v1612;local v1613;while true do if (v1606==3) then v1612=nil;if (v1611~=nil) then local v1790=0;local v1791;while true do if ((0 -0)==v1790) then v1791=tostring(v1611):match("(%d+)$");v1612=(v1791 and ("โซนที่ "   .. v1791)) or tostring(v1611) ;break;end end else v1612=v68(v1609.Position);end if  not v1612 then error("ไม่พบโซนของสัตว์ที่ถืออยู่");end v1606=3 + 1 ;end if (v1606==(1 -0)) then local v1730=0;while true do if (v1730==(0 -0)) then v1607=v47();v1608,v1609=v19();v1730=1 + 0 ;end if (v1730==(2 -1)) then if ( not v1607 or  not v1609) then error("ไม่พบโมเดลสัตว์ที่ถืออยู่");end v1606=3 -1 ;break;end end end if (v1606==(0 -0)) then v837=v837 or os.clock() ;if (((os.clock() -v837)<0.5) or ((os.clock() -v202)<2)) then return;end v13.ManualCarryBlocked=true;v1606=1735 -(1691 + 43) ;end if (v1606==(4 + 0)) then v1613=(v13.FindMoney and v177.MoneyDestination) or v177.BuffDestination ;if (v13.FindBuff and (v177.BuffDestination=="จุด AFK")) then v1613="จุด AFK";end v203(v1610,v1613,true,v1612);break;end if (v1606==(6 -4)) then v1610={Name=v1607:GetAttribute("AnimalName") or v1607.Name ,HatchId=v1607:GetAttribute("HatchId")};v1611=v1607:GetAttribute("ZoneId");if (v1611==nil) then local v1792=workspace:FindFirstChild("AnimalPickups");local v1793,v1794=nil,math.huge;for v1815,v1816 in ipairs((v1792 and v1792:GetChildren()) or {} ) do if (v1816:IsA("Model") and (v1816:GetAttribute("ZoneId")~=nil)) then local v1840=0;local v1841;local v1842;local v1843;while true do if (v1840==1) then v1843=nil;while true do if (v1841==(1 + 0)) then if (v1842 or v1843) then local v1867=0 -0 ;local v1868;while true do if (v1867==0) then v1868=(v197(v1816) -v1609.Position).Magnitude;if (v1868<v1794) then v1793,v1794=v1816,v1868;end break;end end end break;end if (v1841==0) then v1842=(v1610.HatchId~=nil) and (v1816:GetAttribute("HatchId")==v1610.HatchId) ;v1843=(v1610.HatchId==nil) and (v196(v1816:GetAttribute("AnimalName"))==v196(v1610.Name)) ;v1841=177 -(127 + 49) ;end end break;end if (v1840==(1680 -(281 + 1399))) then v1841=1659 -(184 + 1475) ;v1842=nil;v1840=1;end end end end v1611=v1793 and v1793:GetAttribute("ZoneId") ;end v1606=3;end end else v837=nil;end end);if  not v1003 then v194("รับช่วงสัตว์ที่ถืออยู่ไม่สำเร็จ "   .. tostring(v1004) );end task.wait(0.25);end end);task.spawn(function() while v141.Parent do local v1005=0;local v1006;local v1007;local v1008;while true do if ((0 -0)==v1005) then local v1294=0 -0 ;while true do if (v1294==(0 -0)) then v1006=v18();v1007=(v13.Garden and (v14.ReadyZone==v1006)) or ( not v13.Garden and v13.AutoFarm and (v13.ReadyZone==v1006)) ;v1294=1 + 0 ;end if (v1294==(1 + 0)) then v1005=1292 -(260 + 1031) ;break;end end end if ((1178 -(313 + 864))==v1005) then v1008=v1007 and v88(v1006) ;if (v112 and  not v13.Closed and  not v13.DeliveryBusy and v1008) then local v1457=692 -(655 + 37) ;local v1458;while true do if (v1457==(1 + 0)) then if v1458.Money then v188.Set(true);end if v1458.Buff then v189.Set(true);end v1457=2 -0 ;end if (v1457==(0 -0)) then v1458=v112;v112=nil;v1457=1 + 0 ;end if (v1457==(2 + 0)) then if (v1458.Gems and  not v13.Garden) then v15.Set(true);end v103("ถึง "   .. v1006   .. " แล้ว เปิดหาตัวต่อ" );break;end end end v1005=3 -1 ;end if (v1005==(772 -(383 + 387))) then if ((v13.FindMoney or v13.FindBuff) and  not v13.DeliveryBusy and v1008 and  not v51()) then local v1459=0 + 0 ;local v1460;local v1461;while true do if (v1459==0) then v1460,v1461=pcall(function() local v1687=0;local v1688;local v1689;while true do if (v1687==(0 + 0)) then v1688,v1689=v200();if v1688 then v203(v1688.Animal,v1689);else pcall(function() v191.Text="สถานะหาตัว รอสัตว์ที่ตรงเงื่อนไข";end);end break;end end end);if  not v1460 then v194("ตรวจหาสัตว์ไม่สำเร็จ "   .. tostring(v1461) );end break;end end end task.wait(0.5);break;end end end end);do local v838=0;local v839;local v840;local v841;local v842;local v843;local v844;local v845;while true do if (v838==2) then local v1171=0 -0 ;while true do if (v1171==0) then v843=nil;v844=nil;v1171=1;end if (v1171==(1 + 0)) then function v844(v1521) local v1522=0 + 0 ;while true do if ((510 -(304 + 206))==v1522) then v14.MinHP=v11(v1521) or (225 -(182 + 43)) ;if v843 then v843.Text="ขั้นต่ำ "   .. string.format("%.6g",v14.MinHP)   .. " HP (0 = ทุกน้ำหนัก)" ;end break;end end end v838=778 -(264 + 511) ;break;end end end if ((1 + 2)==v838) then v845=v168(v839,"น้ำหนักขั้นต่ำ (HP)","",v844);v843=v167(v839,"ขั้นต่ำ 0 HP (0 = ทุกน้ำหนัก)");v845:GetPropertyChangedSignal("Text"):Connect(function() v844(v845.Text);end);v838=9 -5 ;end if (v838==4) then v17=v165(v839,"เริ่มทำสวน",false,v113.Garden);v14.Status=v167(v839,"ตรง 0/0 ฟอง");v842();v838=986 -(128 + 853) ;end if (0==v838) then v839=v161("สวน");v840,v841=nil;v842=nil;v838=1703 -(1635 + 67) ;end if (v838==(1 + 4)) then task.spawn(function() while v141.Parent do v842();task.wait(1.5 + 0 );end end);break;end if (1==v838) then local v1173=0;while true do if (v1173==0) then function v842() if  not v840 then return;end v14.Progress();local v1523=v12(v14.Zone);local v1524=table.concat(v1523,"|");if (v1524~=v841) then v841=v1524;v840.SetOptions(v1523);end end v169(v839,"เลือกโซน",v8.ZoneOrder,v14.Zone,function(v1525) local v1526=197 -(131 + 66) ;local v1527;while true do if (v1526==0) then v1527=0 -0 ;while true do if ((0 -0)==v1527) then if (v14.Zone==v1525) then return;end v14.Zone,v14.Egg,v14.ReadyZone=v1525,nil,nil;v1527=1;end if (v1527==1) then v17.Set(false);v840.Set(nil,true);v1527=1 + 1 ;end if (2==v1527) then v842();break;end end break;end end end);v1173=1 + 0 ;end if (v1173==1) then v840=v169(v839,"เลือกไข่",{},v14.Egg,function(v1528) v14.Egg=v1528;end);v838=2;break;end end end end end local v204=v161("เพิ่ม FPS");v165(v204,"ลดกราฟิก (เพิ่ม FPS)",v132.saved.boost,v113.FpsBoost);v165(v204,"ปลดล็อก FPS",v132.saved.unlock,v113.UnlockFps);if (type(setfpscap)~="function") then v167(v204,"* ตัวรันนี้ไม่รองรับ setfpscap จึงปลดล็อก FPS ไม่ได้");end v132.start(v167(v204,"FPS: 0"));v160(v159[1 -0 ]);local function v205(v846) local v847=0 -0 ;local v848;local v849;local v850;local v851;while true do if ((1605 -(306 + 1299))==v847) then v848,v849,v850,v851=nil;v846.InputBegan:Connect(function(v1295) if ((v1295.UserInputType==Enum.UserInputType.MouseButton1) or (v1295.UserInputType==Enum.UserInputType.Touch)) then local v1462=0;local v1463;while true do if (v1462==(0 + 0)) then v1463=0 -0 ;while true do if (v1463==(789 -(671 + 118))) then v848,v849,v850,v851=true,v1295.Position,v846.Position,false;v1295.Changed:Connect(function() if (v1295.UserInputState==Enum.UserInputState.End) then v848=false;end end);break;end end break;end end end end);v847=3 -2 ;end if (v847==(77 -(73 + 3))) then local v1174=0 -0 ;while true do if (v1174==(0 -0)) then v1.InputChanged:Connect(function(v1530) if (v848 and ((v1530.UserInputType==Enum.UserInputType.MouseMovement) or (v1530.UserInputType==Enum.UserInputType.Touch))) then local v1647=0 -0 ;local v1648;while true do if (v1647==(1756 -(1668 + 87))) then v846.Position=UDim2.new(v850.X.Scale,v850.X.Offset + v1648.X ,v850.Y.Scale,v850.Y.Offset + v1648.Y );break;end if (v1647==(0 + 0)) then local v1754=1899 -(296 + 1603) ;while true do if (v1754==0) then v1648=v1530.Position-v849 ;if (v1648.Magnitude>4) then v851=true;end v1754=1;end if (v1754==(107 -(79 + 27))) then v1647=1 + 0 ;break;end end end end end end);return function() return v851;end;end end end end end v205(v142);local v206=v205(v151);v150.MouseButton1Click:Connect(function() v152(true);end);v151.MouseButton1Click:Connect(function() if  not v206() then v152(false);end end);v1.InputBegan:Connect(function(v852,v853) if ( not v853 and (v852.KeyCode==v8.ToggleKey)) then v152(v142.Visible);end end);
--- ⚠️ WARNING: integrity protected!
 --[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+	Farm Hub UI  (Roblox Lua / Luau)
+	- เมนูซ้าย: ฟาร์ม / หาตัว / สวน / เพิ่ม FPS
+	- หน้าฟาร์ม: เลือกโซน, เริ่มฟาร์ม, เก็บเพชร, เลือกไข่ (ดึงจากเกมจริง)
+	- กดโลโก้เพื่อย่อหน้าต่าง, กด RightControl เพื่อซ่อน/แสดง
 
-]]--
+	โครงสร้างเกมที่ใช้:
+	  workspace.Build.ZoneBuilds.ZoneN.Eggs["<tier>: <ชื่อไข่>"].Egg
+	    Attributes: EggType, Health, MaxHealth, Broken, ZoneIndex
+]]
+
+local Players           = game:GetService("Players")
+local UIS               = game:GetService("UserInputService")
+local TweenService      = game:GetService("TweenService")
+local Lighting          = game:GetService("Lighting")
+local RunService        = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualUser       = game:GetService("VirtualUser")
+local player            = Players.LocalPlayer
+
+---------------------------------------------------------------------
+-- CONFIG
+---------------------------------------------------------------------
+local CONFIG = {
+	Title      = "Malmon Hub",
+	LogoImage  = "",               -- เช่น "rbxassetid://1234567890" (ว่าง = แสดงคำว่า Logo)
+	ToggleKey  = Enum.KeyCode.RightControl,
+	HitInterval = 0.2,             -- ตีไข่ (ส่ง EggHitRequest) ทุกกี่วินาที (ถ้าโดนปฏิเสธจะช้าลงเอง)
+	EggTimeout = 20,               -- ตีไข่ใบเดียวนานสุดกี่วินาที แล้วข้ามไปใบอื่น
+	GemRadius  = 60,               -- รัศมีเก็บเพชรสำรองเมื่อยังไม่มีข้อมูลตำแหน่งโซน (studs)
+	GemStay    = 0.25,             -- ยืนบนเพชรรอให้เก็บติดนานสุดกี่วินาที
+	TeleportRetries = 3,           -- วาร์ปซ้ำกี่ครั้งถ้าเกมดึงตัวกลับ
+	NoWarpDist = 300,              -- ห่างจากกลางโซนที่เลือกไม่เกินนี้ = ไม่ต้องวาร์ป Tween ไปเลย
+	TeleportVia = { [13] = 12 },   -- โซนที่ไกลเกินวาร์ปตรง: วาร์ปไปโซนนี้ก่อน แล้ว Tween ต่อ
+	SwingPressGap = 0.8,           -- กดปุ่ม Auto Swing แล้วรออย่างน้อยกี่วินาทีก่อนกดซ้ำ (รอปุ่มเปลี่ยนสี)
+	TweenSpeed = 300,              -- ความเร็ว Tween (studs/วินาที)
+	LiftWait   = 12,               -- รอสัตว์ออกจากไข่แล้วกด Steal นานสุดกี่วินาที
+	LiftRadius = 60,               -- หาปุ่ม Steal ในรัศมีนี้รอบไข่ที่ตีแตก
+	LiftPromptWords = { "steal", "pick", "carry", "grab", "lift" },
+	ToolKeyword = "Pickaxe",       -- ชื่อที่ขุด (Elite Pickaxe ฯลฯ)
+	GuardTimeout = 30,             -- รอผู้พิทักษ์ตีนานสุดกี่วินาที
+	KnockbackDist = 12,            -- ถูกดันออกไกลเกินนี้ = โดนตีแล้ว
+	Home = CFrame.new(-70.7790527, 2.72415328, 3.12843513, 0.12112426, 0, -0.992637336, 0, 1, 0, 0.992637336, 0, 0.12112426),
+	AFK = CFrame.new(-748.049316, 37.7241478, 141.6633, 0.978355706, 0, 0.206930265, 0, 1, 0, -0.206930265, 0, 0.978355706),
+	ZoneOrder  = {},
+	ZoneModels = {},               -- "โซนที่ N" -> workspace.Build.ZoneBuilds.ZoneN
+}
+local VERSION = "2026-11-16 r57"   -- เช็กใน F9 ว่าได้เวอร์ชันล่าสุด
+local ALL_EGGS = "ทั้งหมด"
+
+-- อ่านเงินทั้งค่าที่พิมพ์และข้อความเหนือหัวสัตว์ (แยกหน่วยยาวก่อน)
+local function parseMoney(str)
+	local cleaned = tostring(str):lower():gsub("/s", ""):gsub("[$,%s]", "")
+	local number, suffix = cleaned:match("^(%d*%.?%d+)(%a*)$")
+	local units = { qa = 1e15, qi = 1e18, sx = 1e21, sp = 1e24,
+		oc = 1e27, no = 1e30, dc = 1e33, k = 1e3, m = 1e6, b = 1e9, t = 1e12 }
+	local multiplier = suffix == "" and 1 or units[suffix]
+	if not number or not multiplier then return nil end
+	local value = tonumber(number) * multiplier
+	if value < math.huge then return value end
+end
+
+-- ดึงรายชื่อโซนจริงจาก workspace.Build.ZoneBuilds (Zone1, Zone2, ...)
+do
+	local build = workspace:FindFirstChild("Build")
+	local zoneBuilds = build and build:FindFirstChild("ZoneBuilds")
+	local nums = {}
+	if zoneBuilds then
+		for _, z in ipairs(zoneBuilds:GetChildren()) do
+			local n = tonumber(z.Name:match("^Zone(%d+)$"))
+			if n then table.insert(nums, n) end
+		end
+	end
+	table.sort(nums)   -- เรียง 1,2,3,...,13
+	for _, n in ipairs(nums) do
+		local name = "โซนที่ " .. n
+		table.insert(CONFIG.ZoneOrder, name)
+		CONFIG.ZoneModels[name] = zoneBuilds:FindFirstChild("Zone" .. n)
+	end
+	if #CONFIG.ZoneOrder == 0 then
+		CONFIG.ZoneOrder = { "ไม่พบโซน" }
+		warn("[FarmHub] ไม่พบ workspace.Build.ZoneBuilds")
+	end
+end
+
+-- รายชื่อชนิดไข่ในโซน (อ่านจากชื่อโมเดล "1: Forest Egg", "2: Rock Egg", ...)
+local function eggTypesOf(zoneName)
+	local list, found, seen = {}, {}, {}
+	local zone = CONFIG.ZoneModels[zoneName]
+	local folder = zone and zone:FindFirstChild("Eggs")
+	if folder then
+		for _, m in ipairs(folder:GetChildren()) do
+			local tier, name = m.Name:match("^(%d+):%s*(.+)$")
+			if name and not seen[name] then
+				seen[name] = true
+				table.insert(found, { tonumber(tier), name })
+			end
+		end
+	end
+	table.sort(found, function(a, b) return a[1] < b[1] end)
+	for _, f in ipairs(found) do table.insert(list, f[2]) end
+	return list
+end
+
+local State = {
+	Zone        = CONFIG.ZoneOrder[1],
+	Eggs        = {},              -- ชนิดไข่ที่เลือก (ว่าง = ทุกชนิด)
+	AutoFarm    = false,
+	Garden      = false,
+	GardenRun   = 0,
+	CollectGems = false,
+	ScriptLift  = false,           -- กันตัวเฝ้าดูรับช่วงสัตว์ที่สคริปต์ยกเอง
+	ManualCarryBlocked = false,    -- รอวางสัตว์ก่อนรับช่วงใหม่หลังส่งพลาดหรือยกเอง
+	AfkPinned   = false,           -- ตรึงตัวที่จุด AFK จนกว่าจะเปิดระบบอีกครั้ง
+	Debug       = false,
+	FarmRun     = 0,
+	ReadyZone   = nil,
+	SwingWant   = false,           -- ต้องการให้ Auto Swing เปิดอยู่ไหม
+	GemRun      = 0,
+	Priority    = "ใกล้สุดก่อน",
+}
+
+-- ตั้งค่าสวนแยกจากฟาร์ม และประกาศสวิตช์ก่อน callback ที่ใช้งาน
+local Garden = { Zone = CONFIG.ZoneOrder[1], Egg = nil, MinHP = 0, ReadyZone = nil, Spots = {} }
+local gemToggle, farmToggle, gardenToggle
+local function activeZone()
+	-- ระหว่างส่งสัตว์ยังใช้โซนเดิม แม้สวิตช์สวนถูกปิดแล้ว
+	return State.DeliveryZone or (State.Garden and Garden.Zone or State.Zone)
+end
+
+---------------------------------------------------------------------
+-- Game helpers
+---------------------------------------------------------------------
+local function getChar()
+	local char = player.Character
+	local root = char and char:FindFirstChild("HumanoidRootPart")
+	local hum  = char and char:FindFirstChildOfClass("Humanoid")
+	if root and hum and hum.Health > 0 then return char, root, hum end
+end
+
+local function log(...)
+	if State.Debug then print("[FarmHub]", ...) end
+end
+
+-- ถือที่ขุด: หา Tool ที่ชื่อมี CONFIG.ToolKeyword (เช่น "Elite Pickaxe") แล้วถือ
+local function getTool()
+	local char, _, hum = getChar()
+	if not char then return end
+	local kw = CONFIG.ToolKeyword:lower()
+	local held = char:FindFirstChildOfClass("Tool")
+	if held and held.Name:lower():find(kw, 1, true) then return held end
+	local backpack = player:FindFirstChild("Backpack")
+	if backpack then
+		for _, t in ipairs(backpack:GetChildren()) do
+			if t:IsA("Tool") and t.Name:lower():find(kw, 1, true) then
+				log("ถือ:", t.Name)
+				hum:EquipTool(t)
+				return t
+			end
+		end
+	end
+	log("ไม่พบ Tool ที่ชื่อมี '" .. CONFIG.ToolKeyword .. "' ในกระเป๋า")
+end
+
+-- หา GUI ปุ่มที่มองเห็นอยู่บนจอ จากข้อความ/ชื่อ (เช่น "Auto Swing", "Drop")
+local function isShown(gui)
+	local g = gui
+	while g and not g:IsA("LayerCollector") do
+		if g:IsA("GuiObject") and not g.Visible then return false end
+		g = g.Parent
+	end
+	return g ~= nil and g.Enabled
+end
+
+local function squash(s) return (s:lower():gsub("%s", "")) end
+
+-- exact = true: ข้อความ/ชื่อต้องตรงทั้งคำ (กันไปเจอปุ่มอื่นที่มีคำนี้อยู่ข้างใน)
+local function findGuiButton(text, exact)
+	local pg = player:FindFirstChild("PlayerGui")
+	if not pg then return end
+	local want = squash(text)
+	local function match(s)
+		s = squash(s)
+		if exact then return s == want end
+		return s:find(want, 1, true) ~= nil
+	end
+	for _, d in ipairs(pg:GetDescendants()) do
+		if d:IsA("GuiObject") and not d:IsDescendantOf(pg:FindFirstChild("FarmHubUI") or d) then
+			local label = (d:IsA("TextLabel") or d:IsA("TextButton")) and d.Text or ""
+			if match(label) or match(d.Name) then
+				local btn = d:IsA("GuiButton") and d or d:FindFirstAncestorWhichIsA("GuiButton")
+				if btn and isShown(btn) then return btn end
+			end
+		end
+	end
+end
+
+-- กดปุ่ม GUI ของเกม มีหลายวิธี เพราะแต่ละเกม/ตัวรันรับไม่เหมือนกัน
+--   method 1: ยิง MouseButton1Click ที่เกมผูกไว้   2: ยิง Activated
+--   method 3: firesignal                          4: จำลองคลิกเมาส์ที่ตำแหน่งปุ่ม
+local function pressButton(btn, method)
+	method = method or 1
+	if method == 1 or method == 2 then
+		if getconnections then
+			local sig = method == 1 and btn.MouseButton1Click or btn.Activated
+			local conns = getconnections(sig)
+			if #conns > 0 then
+				for _, c in ipairs(conns) do
+					pcall(function()
+						if c.Function then c.Function() else c:Fire() end
+					end)
+				end
+				return true
+			end
+		end
+		return false
+	elseif method == 3 then
+		if firesignal then
+			pcall(firesignal, btn.MouseButton1Click)
+			pcall(firesignal, btn.Activated)
+			return true
+		end
+		return false
+	end
+	local vim = game:GetService("VirtualInputManager")
+	local sg = btn:FindFirstAncestorWhichIsA("ScreenGui")
+	local inset = (sg and sg.IgnoreGuiInset) and Vector2.zero or game:GetService("GuiService"):GetGuiInset()
+	local p = btn.AbsolutePosition + btn.AbsoluteSize / 2 + inset
+	vim:SendMouseButtonEvent(p.X, p.Y, 0, true, game, 0)
+	task.wait(0.05)
+	vim:SendMouseButtonEvent(p.X, p.Y, 0, false, game, 0)
+	return true
+end
+
+-- ปุ่ม Auto Swing ของเกม: PlayerGui.MainGUI.AutoSwing
+-- สีแดง = เปิดอยู่, สีเขียว = ปิดอยู่ (เกมไม่มีค่าอื่นบอกสถานะ เลยดูจากสี)
+local autoSwingBtn
+local function getAutoSwingBtn()
+	if autoSwingBtn and autoSwingBtn.Parent then return autoSwingBtn end
+	local pg = player:FindFirstChild("PlayerGui")
+	local main = pg and pg:FindFirstChild("MainGUI")
+	autoSwingBtn = main and main:FindFirstChild("AutoSwing") or findGuiButton("Auto Swing")
+	return autoSwingBtn
+end
+
+-- คุม Auto Swing ผ่านโค้ดของเกม (PlayerScripts.Client.Controllers.AutoSwingController) แทนการกดปุ่ม
+-- พิมพ์รายชื่อฟังก์ชันลง log ครั้งแรก (ไว้ดูว่าใช้ตัวไหนได้)
+-- คืนสิทธิ์เธรดของเราหลังเรียกโค้ดเกม ถ้า executor รองรับ
+local function restoreThreadIdentity()
+	local setIdentity = setthreadidentity or set_thread_identity or setidentity
+	if type(setIdentity) == "function" then
+		pcall(setIdentity, 8)
+	end
+end
+
+-- แยกโค้ดเกมไปเธรดใหม่ เพื่อไม่ให้สิทธิ์ของเธรดฟาร์มลดลง
+local function runIsolated(fn, ...)
+	local ok, result = coroutine.wrap(function(...)
+		return pcall(fn, ...)
+	end)(...)
+	restoreThreadIdentity()
+	return ok, result
+end
+
+-- โหลดรายชื่อครบทุกโซนครั้งเดียว แยกจากข้อมูลสัตว์ที่เคยพบและไฟล์บันทึก
+local zoneRoster, animalRarityRanks = {}, {}
+do
+	local shared = ReplicatedStorage:FindFirstChild("Shared")
+	local ok, roster = runIsolated(function()
+		local config = require(shared and shared:FindFirstChild("ZoneAnimalsConfig"))
+		assert(type(config) == "table" and type(config.Zones) == "table", "ไม่พบตาราง Zones")
+		local zones = {}
+		for zone, animals in pairs(config.Zones) do
+			assert(type(zone) == "number" and type(animals) == "table", "ข้อมูลโซนไม่ถูกต้อง")
+			local names = {}
+			for _, animal in ipairs(animals) do
+				assert(type(animal) == "table" and type(animal.Name) == "string"
+					and type(animal.Rarity) == "string" and type(animal.Cash) == "number", "ข้อมูลสัตว์ไม่ถูกต้อง")
+				names[animal.Name] = { Rarity = animal.Rarity, Cash = animal.Cash }
+			end
+			zones["Zone" .. zone] = names
+		end
+		-- โซนที่ยืมรายชื่อ เช่น โซน 13 ใช้รายชื่อของโซน 12
+		for zone, source in pairs(config.BorrowedRosters or {}) do
+			zones["Zone" .. zone] = assert(zones["Zone" .. source], "ไม่พบโซนต้นทาง")
+		end
+		return zones
+	end)
+	if ok then
+		zoneRoster = roster
+	else
+		print("[FarmHub] โหลดรายชื่อสัตว์ไม่ได้ ใช้เฉพาะสัตว์ที่เคยพบ:", roster)
+	end
+	local orderOk, ranks = runIsolated(function()
+		local config = require(shared and shared:FindFirstChild("IndexConfig"))
+		assert(type(config) == "table" and type(config.RarityOrder) == "table"
+			and #config.RarityOrder > 0, "ไม่พบลำดับความหายาก")
+		local result = {}
+		for rank, rarity in ipairs(config.RarityOrder) do
+			assert(type(rarity) == "string", "ความหายากไม่ถูกต้อง")
+			result[rarity] = rank
+		end
+		return result
+	end)
+	if orderOk then animalRarityRanks = ranks end
+end
+
+local swingCtrl, swingCtrlTried = nil, false
+local function getSwingController()
+	if swingCtrlTried then return swingCtrl end
+	swingCtrlTried = true
+	local ps = player:FindFirstChild("PlayerScripts")
+	local client = ps and ps:FindFirstChild("Client")
+	local ctrls = client and client:FindFirstChild("Controllers")
+	local mod = ctrls and ctrls:FindFirstChild("AutoSwingController")
+	if not mod then print("[FarmHub] ไม่พบ AutoSwingController") return nil end
+	local ok, res = runIsolated(require, mod)
+	if not ok or type(res) ~= "table" then
+		print("[FarmHub] require AutoSwingController ไม่ได้:", res)
+		return nil
+	end
+	local keys = {}
+	for k, v in pairs(res) do table.insert(keys, tostring(k) .. "=" .. typeof(v) .. (type(v) ~= "function" and type(v) ~= "table" and ("(" .. tostring(v) .. ")") or "")) end
+	print("[FarmHub] AutoSwingController:", table.concat(keys, ", "))
+	swingCtrl = res
+	return res
+end
+
+-- สั่งเปิด/ปิดผ่าน AutoSwingController.SetOn(true/false) ของเกม แล้วเช็กด้วย IsOn()
+local function controllerIsOn()
+	local c = getSwingController()
+	if not c or type(c.IsOn) ~= "function" then return nil end
+	local ok, v = runIsolated(c.IsOn)
+	if ok and type(v) == "boolean" then return v end
+	ok, v = runIsolated(c.IsOn, c)
+	if ok and type(v) == "boolean" then return v end
+	return nil
+end
+
+local function controllerSetSwing(on)
+	local c = getSwingController()
+	if not c or type(c.SetOn) ~= "function" then return false end
+	runIsolated(c.SetOn, on)
+	if controllerIsOn() == on then return true end
+	runIsolated(c.SetOn, c, on)
+	return controllerIsOn() == on
+end
+
+-- สถานะ Auto Swing: เขียว = เปิด, แดง = ปิด
+-- 1) ถ้าปุ่มใช้รูปจาก ReplicatedStorage.Assets.AutoSwingState ดูจากชื่อรูป (On/Off ฯลฯ)
+-- 2) ไม่งั้นดูจากสี (เขียวมากกว่า = เปิด)
+-- คืนค่า true = เปิด, false = ปิด, nil = ดูไม่ออก
+local function swingStateImages()
+	local map = {}
+	local assets = ReplicatedStorage:FindFirstChild("Assets")
+	local folder = assets and assets:FindFirstChild("AutoSwingState")
+	if not folder then return map end
+	for _, d in ipairs(folder:GetDescendants()) do
+		local id = (d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.Image
+			or (d:IsA("Decal") or d:IsA("Texture")) and d.Texture
+			or d:IsA("StringValue") and d.Value
+		if id and id ~= "" then
+			local n = d.Name:lower()
+			if n:find("off") or n:find("disable") or n:find("inactive") or n:find("red") then
+				map[id] = false
+			elseif n:find("on") or n:find("enable") or n:find("active") or n:find("green") then
+				map[id] = true
+			end
+		end
+	end
+	return map
+end
+
+local function autoSwingIsOn(btn)
+	local byCtrl = controllerIsOn()   -- อ่านจากโค้ดเกมก่อน แม่นที่สุด
+	if byCtrl ~= nil then return byCtrl end
+	-- เกมเก็บสถานะใน AutoSwingColorAlpha: 0 = ปิด (แดง), มากกว่า 0 = เปิด (เขียว / กำลังกะพริบ)
+	local alpha = btn:FindFirstChild("AutoSwingColorAlpha")
+	if alpha and alpha:IsA("NumberValue") then
+		return alpha.Value > 0.05
+	end
+	local list = btn:GetDescendants()
+	table.insert(list, btn)
+	local images = swingStateImages()
+	for _, d in ipairs(list) do
+		if (d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.Visible and images[d.Image] ~= nil then
+			return images[d.Image]
+		end
+	end
+	local reds, greens = 0, 0
+	local function judge(c)
+		if c.R - c.G > 0.25 then reds += 1 elseif c.G - c.R > 0.25 then greens += 1 end
+	end
+	for _, d in ipairs(list) do
+		if d:IsA("GuiObject") and d.Visible then
+			if d.BackgroundTransparency < 1 then judge(d.BackgroundColor3) end
+			if (d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.ImageTransparency < 1 then judge(d.ImageColor3) end
+			if (d:IsA("TextLabel") or d:IsA("TextButton")) and d.TextTransparency < 1 then judge(d.TextColor3) end
+		elseif d:IsA("UIGradient") and d.Enabled then
+			for _, k in ipairs(d.Color.Keypoints) do judge(k.Value) end
+		elseif d:IsA("UIStroke") and d.Enabled then
+			judge(d.Color)
+		end
+	end
+	if greens > reds then return true end
+	if reds > greens then return false end
+	return nil
+end
+
+-- บันทึกโครงสร้างปุ่ม Auto Swing ลงไฟล์ FarmHub_autoswing.txt (ไว้ตรวจว่าเกมแสดงสถานะยังไง)
+local function dumpAutoSwing(btn)
+	if not writefile then return end
+	local out = { "VERSION " .. VERSION, "isOn = " .. tostring(autoSwingIsOn(btn)) }
+	local function c3(c) return string.format("(%.2f,%.2f,%.2f)", c.R, c.G, c.B) end
+	local list = btn:GetDescendants()
+	table.insert(list, 1, btn)
+	for _, d in ipairs(list) do
+		local s = d:GetFullName() .. " [" .. d.ClassName .. "]"
+		if d:IsA("GuiObject") then s ..= " vis=" .. tostring(d.Visible) .. " bg=" .. c3(d.BackgroundColor3) .. " bgT=" .. d.BackgroundTransparency end
+		if d:IsA("ImageLabel") or d:IsA("ImageButton") then s ..= " img=" .. d.Image .. " imgC=" .. c3(d.ImageColor3) end
+		if d:IsA("TextLabel") or d:IsA("TextButton") then s ..= " tc=" .. c3(d.TextColor3) end
+		if d:IsA("UIGradient") then
+			local k = {} for _, p in ipairs(d.Color.Keypoints) do k[#k + 1] = c3(p.Value) end
+			s ..= " grad=" .. table.concat(k, ",")
+		end
+		if d:IsA("UIStroke") then s ..= " stroke=" .. c3(d.Color) end
+		if d:IsA("ValueBase") then s ..= " value=" .. tostring(d.Value) end
+		table.insert(out, s)
+	end
+	local assets = ReplicatedStorage:FindFirstChild("Assets")
+	local folder = assets and assets:FindFirstChild("AutoSwingState")
+	table.insert(out, "--- AutoSwingState")
+	if folder then
+		for _, d in ipairs(folder:GetDescendants()) do
+			local s = d:GetFullName() .. " [" .. d.ClassName .. "]"
+			if d:IsA("ImageLabel") or d:IsA("ImageButton") then s ..= " img=" .. d.Image end
+			if d:IsA("Decal") or d:IsA("Texture") then s ..= " tex=" .. d.Texture end
+			if d:IsA("ValueBase") then s ..= " value=" .. tostring(d.Value) end
+			table.insert(out, s)
+		end
+	end
+	pcall(appendfile or writefile, "FarmHub_autoswing.txt", table.concat(out, "\n") .. "\n\n")
+end
+
+-- คุม Auto Swing ของเกมให้ตรงกับที่ต้องการ (State.SwingWant)
+--   เปิด = ยืนติดไข่ที่กำลังจะตีแล้ว, ปิด = ระหว่างเดินทาง / หลังไข่แตก
+-- กดทันทีเมื่อสถานะไม่ตรงกับที่ต้องการ (อ่านจาก AutoSwingColorAlpha ซึ่งแม่น)
+local lastObserved, dumps = "init", 0
+local lastSwingPress, swingMethod, pressedFor = 0, 1, nil
+local function syncAutoSwing()
+	local btn = getAutoSwingBtn()
+	if not btn or not isShown(btn) then return end
+	local on = autoSwingIsOn(btn)
+	if on ~= lastObserved and dumps < 12 then   -- สถานะเปลี่ยน: บันทึกลงไฟล์ไว้ตรวจ
+		lastObserved, dumps = on, dumps + 1
+		dumpAutoSwing(btn)
+	end
+	if on == nil then return end
+	if on == State.SwingWant then pressedFor = nil return end
+	-- กดแล้วปุ่มต้องใช้เวลาเปลี่ยนสี (ค่า alpha ค่อย ๆ ขยับ) รอก่อนค่อยกดซ้ำ
+	if controllerSetSwing(State.SwingWant) then   -- สั่งผ่านโค้ดเกมได้: ไม่ต้องกดปุ่ม
+		log(State.SwingWant and "เปิด Auto Swing (SetOn)" or "ปิด Auto Swing (SetOn)")
+		pressedFor = nil
+		return
+	end
+	if os.clock() - lastSwingPress < CONFIG.SwingPressGap then return end
+	if pressedFor == State.SwingWant then
+		-- กดไปแล้วแต่สถานะไม่เปลี่ยน: เปลี่ยนวิธีกด
+		swingMethod = swingMethod % 4 + 1
+		print("[FarmHub] ปุ่ม Auto Swing ไม่ตอบสนอง ลองวิธีกดแบบที่", swingMethod)
+	end
+	lastSwingPress, pressedFor = os.clock(), State.SwingWant
+	log(State.SwingWant and "เปิด Auto Swing" or "ปิด Auto Swing", "วิธี", swingMethod)
+	if not pressButton(btn, swingMethod) then swingMethod = swingMethod % 4 + 1 end
+end
+
+
+-- ตั้งสถานะที่ต้องการ: ลองผ่านโค้ดเกมก่อน ถ้าไม่ได้ค่อยกดปุ่ม
+local function setSwing(on)
+	if State.SwingWant ~= on then
+		lastSwingPress = 0
+		State.SwingWant = on
+		local cur = controllerIsOn()
+		if cur == on then return end
+		if cur ~= nil and controllerSetSwing(on) then
+			lastSwingPress = os.clock()
+			return
+		end
+	end
+	syncAutoSwing()
+end
+
+-- เช็กสัตว์ที่อยู่ใกล้หรือเชื่อมกับตัวเรา และใช้ปุ่ม Drop ช่วยยืนยัน
+local function carriedAnimal()
+	local folder = workspace:FindFirstChild("CarriedAnimals")
+	local char, root = getChar()
+	if not folder or not root then return end
+	for _, animal in ipairs(folder:GetDescendants()) do
+		if animal:IsA("Model") then
+			for _, part in ipairs(animal:GetDescendants()) do
+				if part:IsA("BasePart") then
+					if part:IsDescendantOf(char) or (part.Position - root.Position).Magnitude <= 15 then
+						return animal
+					end
+					for _, connected in ipairs(part:GetConnectedParts(true)) do
+						if connected:IsDescendantOf(char) then return animal end
+					end
+				end
+			end
+		end
+	end
+end
+local dropBtn, dropScanAt = nil, 0
+local function dropButtonShown()
+	if dropBtn and dropBtn.Parent then return isShown(dropBtn) end
+	if os.clock() < dropScanAt then return false end
+	dropScanAt = os.clock() + 0.3
+	dropBtn = findGuiButton("Drop", true)
+	return dropBtn ~= nil and isShown(dropBtn)
+end
+local function isCarrying()
+	return carriedAnimal() ~= nil or dropButtonShown()
+end
+
+-- ไข่ที่เกมยืนยันว่าเลือดหมดแล้ว (จาก EggHitConfirmed) รู้ก่อน Attribute อัปเดต จะได้ไปใบต่อไปทันที
+local brokenEggs = setmetatable({}, { __mode = "k" })
+local function eggAlive(part)
+	return part and part.Parent ~= nil and not (brokenEggs[part] and os.clock() - brokenEggs[part] < 5)
+		and part:GetAttribute("Broken") ~= true
+		and (part:GetAttribute("Health") or 1) > 0
+end
+
+-- ความหายากของไข่ (EggInfoRarity) เรียงจากธรรมดา -> หายากสุด
+local RARITY_ORDER = {
+	"Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Cosmic",
+	"Secret", "Celestial", "Inferno", "Void", "Omega", "Spectral", "Ethereal", "Primordial",
+}
+local RARITY_RANK = {}
+for i, r in ipairs(RARITY_ORDER) do RARITY_RANK[r] = i end
+
+-- ใช้ลำดับจากเกมก่อน ถ้าไม่พบจึงใช้รายการสำรอง (ไม่รู้จัก = ท้ายสุด)
+local function animalRarityRank(rarity)
+	if type(rarity) ~= "string" then return -math.huge end
+	return animalRarityRanks[rarity] or RARITY_RANK[rarity] or -math.huge
+end
+
+local PRIORITY_NEAR, PRIORITY_RARE, PRIORITY_LUCK = "ใกล้สุดก่อน", "หายากสุดก่อน", "Luck สูงสุดก่อน"
+
+local function eggRarity(part) return part:GetAttribute("EggInfoRarity") or "?" end
+local function eggLuck(part) return part:GetAttribute("HatchLuck") or part:GetAttribute("Luck") or 0 end
+
+-- ผ่านตัวกรองชนิดไข่ไหม (ไม่ได้เลือกเลย = ทุกชนิด)
+local function eggSelected(part)
+	if next(State.Eggs) == nil then return true end
+	return State.Eggs[part:GetAttribute("EggType")] == true
+end
+
+-- จำตำแหน่งกลางโซน (เฉลี่ยตำแหน่งไข่ที่เคยเห็น) และบันทึกลงไฟล์ ใช้วาร์ปไปโซนที่อยู่ไกลจนไข่ยังไม่โหลด
+local HttpService = game:GetService("HttpService")
+local ZONE_FILE = "FarmHub_zones.json"
+local ZonePos = {}
+pcall(function()
+	if isfile and isfile(ZONE_FILE) then
+		for name, v in pairs(HttpService:JSONDecode(readfile(ZONE_FILE))) do
+			ZonePos[name] = Vector3.new(v[1], v[2], v[3])
+		end
+	end
+end)
+local zoneSaveAt = 0
+local function rememberZone(zoneName, pos)
+	ZonePos[zoneName] = pos
+	if writefile and os.clock() > zoneSaveAt then
+		zoneSaveAt = os.clock() + 20
+		local data = {}
+		for n, p in pairs(ZonePos) do data[n] = { p.X, p.Y, p.Z } end
+		pcall(writefile, ZONE_FILE, HttpService:JSONEncode(data))
+	end
+end
+
+-- หาโซนที่มีจุดกึ่งกลางใกล้ตำแหน่งนี้ที่สุด
+local function zoneOfPosition(pos)
+	local closestZone, closestDist
+	for name, center in pairs(ZonePos) do
+		local distance = (center - pos).Magnitude
+		if not closestDist or distance < closestDist then
+			closestZone, closestDist = name, distance
+		end
+	end
+	return closestZone
+end
+
+-- ตอนฟาร์มใช้โซนที่เลือก นอกนั้นใช้โซนที่ตัวละครอยู่
+local function gemZoneTarget()
+	if State.AutoFarm then return State.Zone end
+	local _, root = getChar()
+	return root and zoneOfPosition(root.Position)
+end
+
+-- หาไข่ในโซน
+--   filter   = ชื่อชนิดไข่ หรือ ALL_EGGS
+--   usePrefs = true: ใช้ชนิดไข่ที่เลือก + ลำดับการตีที่ตั้งไว้ (ใช้ตอนฟาร์ม)
+-- คืนค่า (ไข่, ระยะ)
+local function findEgg(zoneName, filter, usePrefs, acceptEgg)
+	local zone = CONFIG.ZoneModels[zoneName]
+	local folder = zone and zone:FindFirstChild("Eggs")
+	local _, root = getChar()
+	if not folder or not root then return end
+	local priority = usePrefs and State.Priority or PRIORITY_NEAR
+	local best, bestDist, bestScore
+	local sum, count = Vector3.zero, 0
+	for _, m in ipairs(folder:GetChildren()) do
+		local part = m:FindFirstChild("Egg")
+		if part and part:IsA("BasePart") then sum += part.Position count += 1 end
+		if part and part:IsA("BasePart") and eggAlive(part)
+			and (filter == ALL_EGGS or part:GetAttribute("EggType") == filter)
+			and (not usePrefs or eggSelected(part))
+			and (not acceptEgg or acceptEgg(part)) then
+			local d = (part.Position - root.Position).Magnitude
+			local score = 0
+			if priority == PRIORITY_RARE then
+				score = RARITY_RANK[eggRarity(part)] or 0
+			elseif priority == PRIORITY_LUCK then
+				score = eggLuck(part)
+			end
+			-- คะแนนสูงกว่าชนะ ถ้าเท่ากันเอาใบที่ใกล้กว่า
+			if not best or score > bestScore or (score == bestScore and d < bestDist) then
+				best, bestDist, bestScore = part, d, score
+			end
+		end
+	end
+	if count > 0 then rememberZone(zoneName, sum / count) end
+	return best, bestDist
+end
+
+
+-- ไข่ที่ใกล้ที่สุดจากทุกโซน = โซนที่ใกล้ที่สุด คืนค่า (ไข่, ชื่อโซน)
+local function nearestZoneEgg(acceptEgg)
+	local bestEgg, bestZone, bestDist
+	for zoneName in pairs(CONFIG.ZoneModels) do
+		local egg, d = findEgg(zoneName, ALL_EGGS, false, acceptEgg)
+		if egg and (not bestDist or d < bestDist) then
+			bestEgg, bestZone, bestDist = egg, zoneName, d
+		end
+	end
+	return bestEgg, bestZone
+end
+
+-- ผู้พิทักษ์ของโซน = โมเดลในโซนที่มี Attribute "ChaseState" (เช่น Zone1.Chicken)
+local function getGuard(zoneName)
+	local zone = CONFIG.ZoneModels[zoneName]
+	if not zone then return end
+	for _, c in ipairs(zone:GetChildren()) do
+		if c:IsA("Model") and c:GetAttribute("ChaseState") ~= nil then return c end
+	end
+end
+
+-- ตำแหน่งยืนข้างเป้าหมาย หันหน้าเข้าหา
+local function besideCFrame(targetPos, root, gap)
+	local flat = Vector3.new(root.Position.X - targetPos.X, 0, root.Position.Z - targetPos.Z)
+	local dir = flat.Magnitude > 0.1 and flat.Unit or Vector3.new(0, 0, 1)
+	local pos = targetPos + dir * gap
+	return CFrame.lookAt(pos, Vector3.new(targetPos.X, pos.Y, targetPos.Z))
+end
+
+-- วางตัวละครให้ยืนบนพื้นจริง (ยิงเลเซอร์ลงหาพื้น) ไม่ลอยกลางอากาศ
+local groundParams = RaycastParams.new()
+groundParams.FilterType = Enum.RaycastFilterType.Exclude
+groundParams.RespectCanCollide = true   -- ไม่นับส่วนที่ทะลุได้ (เช่น กล่องขอบเขตโซน) เป็นพื้น
+local function onGround(cf, ignore)
+	local char = player.Character
+	local list = { char }
+	if ignore then table.insert(list, ignore) end
+	local gems = workspace:FindFirstChild("EggGemDrops")
+	if gems then table.insert(list, gems) end
+	groundParams.FilterDescendantsInstances = list
+	local hit = workspace:Raycast(cf.Position + Vector3.new(0, 8, 0), Vector3.new(0, -80, 0), groundParams)
+	if not hit then return cf end
+	local _, root, hum = getChar()
+	local height = 3
+	if hum and root then
+		height = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
+	end
+	return cf + Vector3.new(0, hit.Position.Y + height - cf.Position.Y, 0)
+end
+
+local function eggCFrame(egg, root)
+	local cf = besideCFrame(egg.Position, root, math.max(egg.Size.X, egg.Size.Z) / 2 + 2.5)
+	-- ไม่นับไข่และรังเป็นพื้น (ข้ามทั้งโฟลเดอร์ Eggs ของโซน)
+	local eggsFolder = egg.Parent and egg.Parent.Parent
+	return onGround(cf, eggsFolder)
+end
+
+-- ตรึงเฉพาะตัวละครที่ส่งถึง AFK และคืนการเคลื่อนที่เมื่อเลิกตรึง
+local afkPinRoot, afkPinConnections = nil, {}
+local function releaseAfkPin()
+	State.AfkPinned = false
+	for _, conn in ipairs(afkPinConnections) do conn:Disconnect() end
+	table.clear(afkPinConnections)
+	if afkPinRoot and afkPinRoot.Parent then afkPinRoot.Anchored = false end
+	afkPinRoot = nil
+end
+
+local function pinAtAfk()
+	local char, root, hum = getChar()
+	if not root or State.Closed then return false end
+	releaseAfkPin()
+	-- คงพิกัดและทิศทาง AFK ปรับเฉพาะความสูงตามพื้น โดยไม่นับสัตว์ที่ถือ
+	local cf = onGround(CONFIG.AFK, workspace:FindFirstChild("CarriedAnimals"))
+	afkPinRoot = root
+	State.AfkPinned = true
+	root.CFrame = cf
+	root.AssemblyLinearVelocity = Vector3.zero
+	root.AssemblyAngularVelocity = Vector3.zero
+	root.Anchored = true
+	-- ปลดตรึงทันทีเมื่อผู้เล่นขอกระโดด และถอดตัวฟังพร้อมการตรึง
+	table.insert(afkPinConnections, UIS.JumpRequest:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, hum.Died:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, player.CharacterRemoving:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, player.CharacterAdded:Connect(releaseAfkPin))
+	table.insert(afkPinConnections, RunService.Heartbeat:Connect(function()
+		if player.Character ~= char or not root.Parent or hum.Health <= 0 then
+			releaseAfkPin()
+			return
+		end
+		-- คืนการควบคุมเมื่อผู้เล่นเดิน โดยไม่ตรึงซ้ำหลังปล่อย
+		if hum.MoveDirection.Magnitude > 0.1 then
+			releaseAfkPin()
+			return
+		end
+		-- กันแรงหรือสคริปต์อื่นย้ายตัว โดยยังถือสัตว์ไว้ตามเดิม
+		root.Anchored = true
+		if root.CFrame ~= cf then root.CFrame = cf end
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+	end))
+	return true
+end
+
+-- เคลื่อนที่แบบ Tween ด้วยความเร็ว CONFIG.TweenSpeed (studs/วินาที)
+local tweenMoving = false -- งดแก้การจมระหว่างเคลื่อนที่ด้วย Tween
+local function tweenTo(cf, shouldStop)
+	if State.AfkPinned then return false end
+	local _, root = getChar()
+	if not root then return false end
+	local t = (root.Position - cf.Position).Magnitude / CONFIG.TweenSpeed
+	if t < 0.05 then root.CFrame = cf return true end
+	local hold = RunService.Heartbeat:Connect(function()
+		if State.AfkPinned then return end
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+	end)
+	-- Noclip ระหว่าง Tween: ทะลุกำแพง/สิ่งกีดขวาง
+	local char = root.Parent
+	local noclip = RunService.Stepped:Connect(function()
+		if State.AfkPinned then return end
+		for _, p in ipairs(char:GetDescendants()) do
+			if p:IsA("BasePart") then p.CanCollide = false end
+		end
+	end)
+	local tween = TweenService:Create(root, TweenInfo.new(t, Enum.EasingStyle.Linear), { CFrame = cf })
+	local done = false
+	local c = tween.Completed:Connect(function() done = true end)
+	tweenMoving = true
+	tween:Play()
+	while not done and not State.AfkPinned and not (shouldStop and shouldStop()) and root.Parent do task.wait() end
+	if not done then tween:Cancel() end
+	tweenMoving = false
+	c:Disconnect()
+	hold:Disconnect()
+	noclip:Disconnect()
+	return done
+end
+
+local grabNearbyGems     -- กำหนดในส่วนเก็บเพชรด้านล่าง
+local hasCollectableGems -- กำหนดในส่วนเก็บเพชรด้านล่าง
+local isNearZone         -- กำหนดในส่วนตรวจโซนด้านล่าง
+
+-- ระหว่างฟาร์ม เก็บเพชรได้เมื่อถึงโซนที่เลือกแล้วเท่านั้น
+local function canCollectGems()
+	return not State.Garden and not State.AfkPinned and not State.DeliveryBusy and not State.Closed
+		and (not State.AutoFarm or (State.ReadyZone == State.Zone and isNearZone(State.Zone)))
+end
+
+-- ตีไข่ตรง ๆ แบบที่ MYHUB ทำ (ไม่ใช้ปุ่ม Auto Swing ของเกม จึงไม่ตีโดนไข่ใบอื่น)
+--   ReplicatedStorage.MasteryPickaxeSwing:FireServer()
+--   ReplicatedStorage.EggHitRequest:FireServer(ส่วน Egg ของไข่, ลำดับการตี)
+--   เกมตอบกลับ EggHitConfirmed(Egg, ลำดับ, เลือดที่เหลือ, ดาเมจ) / EggHitRejected
+local hitRemote = ReplicatedStorage:FindFirstChild("EggHitRequest")
+local swingRemote = ReplicatedStorage:FindFirstChild("MasteryPickaxeSwing")
+local hitSeq, hitGap = 0, CONFIG.HitInterval
+do
+	local confirmed = ReplicatedStorage:FindFirstChild("EggHitConfirmed")
+	if confirmed and confirmed:IsA("RemoteEvent") then
+		confirmed.OnClientEvent:Connect(function(egg, seq, hp)
+			if type(seq) == "number" and seq > hitSeq then hitSeq = seq end   -- ใช้ลำดับต่อจากของเกม
+			if typeof(egg) == "Instance" and type(hp) == "number" and hp <= 0 then brokenEggs[egg] = os.clock() end
+		end)
+	end
+	local rejected = ReplicatedStorage:FindFirstChild("EggHitRejected")
+	if rejected and rejected:IsA("RemoteEvent") then
+		rejected.OnClientEvent:Connect(function(...)
+			-- ส่วนใหญ่โดนปฏิเสธเพราะไข่แตกไปแล้ว ไม่ต้องลดความเร็ว
+			print("[FarmHub] ตีไม่ผ่าน (EggHitRejected):", ...)
+		end)
+	end
+end
+
+local function sendHit(eggPart)
+	if not hitRemote then return false end
+	hitSeq += 1
+	if swingRemote then swingRemote:FireServer() end
+	hitRemote:FireServer(eggPart, hitSeq)
+	return true
+end
+
+-- Tween ไปข้างไข่ แล้วตีจนแตก
+-- มีเพชรตกอยู่ในโซนเป้าหมายไหม
+local function gemsAround()
+	return canCollectGems() and hasCollectableGems ~= nil and hasCollectableGems(CONFIG.GemRadius)
+end
+
+-- เก็บเพชรก่อนเสมอ (ปิด Auto Swing ระหว่างเก็บ กันตีโดนไข่ระหว่างทาง)
+local function collectGemsFirst(shouldStop)
+	if not (State.CollectGems and grabNearbyGems and gemsAround()) then return end
+	setSwing(false)
+	grabNearbyGems(shouldStop, CONFIG.GemRadius)
+end
+
+-- แบบเดียวกับ MYHUB: เก็บเพชรก่อน -> Tween ไปไข่ (Auto Swing ปิด) -> ถึงไข่เปิด Auto Swing -> ไข่แตกปิด
+local function breakEgg(egg, shouldStop, skipGems)
+	if not skipGems then collectGemsFirst(shouldStop) end
+	local _, root = getChar()
+	getTool()          -- ถือที่ขุด (ปุ่ม Auto Swing จะโผล่)
+	setSwing(false)    -- ระหว่างเดินทาง: ปิด
+	if not root or not tweenTo(eggCFrame(egg, root), shouldStop) then return false end
+	log("ตีไข่:", egg:GetAttribute("EggType"), "HP", egg:GetAttribute("Health"))
+	-- ตรวจอีกครั้งหลังเดินทาง เผื่อไข่เกิดใหม่หรือตรงเงื่อนไขสวนแล้ว
+	if shouldStop() or not eggAlive(egg) then return false end
+	local spot = eggCFrame(egg, root)   -- จุดยืน (บนพื้น)
+	setSwing(true)     -- ถึงไข่เป้าหมาย: เปิด
+	local started, lastHit, lastGemCheck = os.clock(), 0, 0
+	while eggAlive(egg) and not State.AfkPinned and not shouldStop() and os.clock() - started < CONFIG.EggTimeout do
+		-- มีเพชรดรอป: หยุดตี ไปเก็บเพชรก่อน แล้วกลับมาตีต่อ
+		if not skipGems and os.clock() - lastGemCheck > 0.15 then
+			lastGemCheck = os.clock()
+			if State.CollectGems and gemsAround() then
+				collectGemsFirst(shouldStop)
+				local _, r = getChar()
+				if r then tweenTo(spot, shouldStop) end
+				setSwing(true)
+			end
+		end
+		-- หลุดจากจุดยืนค่อยวางกลับ ไม่งั้นปล่อยยืนตามแรงโน้มถ่วง เท้าติดพื้น
+		local _, r = getChar()
+		if r then
+			local flat = Vector3.new(r.Position.X - spot.Position.X, 0, r.Position.Z - spot.Position.Z)
+			if flat.Magnitude > 2 or math.abs(r.Position.Y - spot.Position.Y) > 4 then
+				r.CFrame = spot
+				r.AssemblyLinearVelocity = Vector3.zero
+			end
+		end
+		syncAutoSwing()
+		-- ถ้า Auto Swing ของเกมยังไม่เปิด ตีเองแทน (ส่ง EggHitRequest ไปที่ไข่เป้าหมาย)
+		local btn = getAutoSwingBtn()
+		local swingOn = btn and autoSwingIsOn(btn)
+		if not swingOn and os.clock() - lastHit >= hitGap then
+			lastHit = os.clock()
+			getTool()
+			if not sendHit(egg) then
+				local tool = getTool()
+				if tool then tool:Activate() end
+			end
+		end
+		task.wait()   -- เช็กทุกเฟรม: ไข่แตกปุ๊บ ไปใบต่อไปทันที
+	end
+	setSwing(false)    -- ไข่เป้าหมายแตก: ปิดทันที กันตีโดนไข่ใบอื่น
+	return not eggAlive(egg)
+end
+
+-- ยกสัตว์: ไข่แตกแล้วจะมีสัตว์ออกมาพร้อมปุ่ม "E Steal" (ProximityPrompt)
+-- สคริปต์จะหา Prompt ที่เพิ่งเกิดใกล้ไข่ที่ตีแตก แล้ว Tween ไปกดให้
+local function promptPos(p)
+	local par = p.Parent
+	if not par then return end
+	if par:IsA("Attachment") then return par.WorldPosition end
+	if par:IsA("BasePart") then return par.Position end
+	if par:IsA("Model") then return par:GetPivot().Position end
+end
+
+local function isLiftPrompt(p)
+	local text = (p.ActionText .. " " .. p.ObjectText .. " " .. p.Name):lower()
+	for _, word in ipairs(CONFIG.LiftPromptWords) do
+		if text:find(word, 1, true) then return true end
+	end
+	return false
+end
+
+local function triggerPrompt(p)
+	p.HoldDuration = 0   -- ไม่ต้องกดค้าง (ฝั่งเรา)
+	if fireproximityprompt then
+		fireproximityprompt(p)
+		return
+	end
+	-- ไม่มี fireproximityprompt: กดปุ่มคีย์บอร์ดของ Prompt แทน
+	local vim = game:GetService("VirtualInputManager")
+	vim:SendKeyEvent(true, p.KeyboardKeyCode, false, game)
+	task.wait(0.05)
+	vim:SendKeyEvent(false, p.KeyboardKeyCode, false, game)
+end
+
+-- เริ่มจด Prompt ที่เกิดใหม่ในแมพ (เรียกก่อนตีไข่) คืนค่า (รายการ, ฟังก์ชันหยุดจด)
+local function watchNewPrompts()
+	local list = {}
+	local conn = workspace.DescendantAdded:Connect(function(d)
+		if d:IsA("ProximityPrompt") then table.insert(list, d) end
+	end)
+	return list, function() conn:Disconnect() end
+end
+
+-- ขั้นตอนสำคัญจะพิมพ์ลง F9 เสมอ (ไม่ต้องเปิดโหมดดีบัก)
+local statusLabel   -- ช่องสถานะบนหน้าฟาร์ม (สร้างตอนทำ UI)
+local function say(...)
+	print("[FarmHub]", ...)
+	if statusLabel then
+		local parts = {}
+		for i = 1, select("#", ...) do parts[i] = tostring((select(i, ...))) end
+		-- ป้องกันข้อผิดพลาดจาก GUI ไม่ให้หยุดลูปฟาร์ม
+		pcall(function()
+			statusLabel.Text = "สถานะ: " .. table.concat(parts, " ")
+		end)
+	end
+end
+
+local function bestLiftPrompt(list, eggPos)
+	local best, bestDist
+	for _, p in ipairs(list) do
+		if p.Parent and p.Enabled and isLiftPrompt(p) then
+			local pos = promptPos(p)
+			local d = pos and (pos - eggPos).Magnitude
+			if d and d < CONFIG.LiftRadius and (not bestDist or d < bestDist) then
+				best, bestDist = p, d
+			end
+		end
+	end
+	return best
+end
+
+-- ยกสัตว์ให้ไวที่สุด: เช็กทุกเฟรม, วาร์ปไปติดตัวสัตว์ (ระยะสั้น) แล้วกด Steal ทันที
+local function liftAnimal(eggPos, newPrompts, shouldStop)
+	local started, tried = os.clock(), 0
+	local slowScanAt = os.clock() + 1.5   -- ถ้า 1.5 วิยังไม่เจอ ค่อยสแกนทั้งแมพ (ช้า)
+	while os.clock() - started < CONFIG.LiftWait and not State.AfkPinned and not shouldStop() do
+		local best = bestLiftPrompt(newPrompts, eggPos)
+		if not best then
+			local pickups = workspace:FindFirstChild("AnimalPickups")
+			if pickups then
+				local list = {}
+				for _, p in ipairs(pickups:GetDescendants()) do
+					if p:IsA("ProximityPrompt") then table.insert(list, p) end
+				end
+				best = bestLiftPrompt(list, eggPos)
+			end
+		end
+		if not best and os.clock() > slowScanAt then
+			slowScanAt = os.clock() + 1
+			local list = {}
+			for _, p in ipairs(workspace:GetDescendants()) do
+				if p:IsA("ProximityPrompt") then table.insert(list, p) end
+			end
+			best = bestLiftPrompt(list, eggPos)
+		end
+
+		if best then
+			if tried == 0 then say("ยกสัตว์: กด", best.ActionText, "ที่", best:GetFullName()) end
+			local _, root = getChar()
+			local pos = promptPos(best)
+			if root and pos then
+				root.CFrame = besideCFrame(pos, root, 1.5)
+				root.AssemblyLinearVelocity = Vector3.zero
+			end
+			State.ScriptLift = true
+			triggerPrompt(best)
+			tried += 1
+			-- เช็กผลทุกเฟรม ไม่เกิน 0.3 วิ แล้วค่อยกดซ้ำ
+			local t = os.clock()
+			while os.clock() - t < 0.3 do
+				if not best.Parent or not best.Enabled or isCarrying() then
+					say(string.format("ยกสัตว์แล้ว (%.2f วิ, กด %d ครั้ง)", os.clock() - started, tried))
+					return true
+				end
+				task.wait()
+			end
+		else
+			task.wait()
+		end
+	end
+	say(tried > 0 and "กด Steal แล้วแต่ยังยกไม่ได้" or "ไม่เจอปุ่ม Steal ใกล้ไข่ที่ตีแตก")
+	return false
+end
+
+-- Tween ไปหาผู้พิทักษ์ แล้วยืนติดตัวจนกว่าจะโดนตี
+local function waitForGuardHit(guard, shouldStop)
+	local _, root, hum = getChar()
+	if not root then return false end
+	local hit, conns = false, {}
+	-- ถ้ายกสัตว์อยู่: "โดนตีแล้ว" = ตรวจว่าไม่มีสัตว์ที่เราถือแล้ว
+	-- ถ้าไม่ได้ยก: ใช้เลือดลด / ตาย / CatchFlingRemote / กระเด็น แทน
+	local carrying = isCarrying()
+	local lastHealth = hum.Health
+	table.insert(conns, hum.HealthChanged:Connect(function(h)
+		if h < lastHealth then log("เลือดลด:", lastHealth, "->", h) hit = not carrying end
+		lastHealth = h
+	end))
+	table.insert(conns, hum.Died:Connect(function() hit = true end))
+	local fling = ReplicatedStorage:FindFirstChild("CatchFlingRemote")
+	if fling and fling:IsA("RemoteEvent") then
+		table.insert(conns, fling.OnClientEvent:Connect(function(...)
+			log("<- CatchFlingRemote", ...)
+			hit = not carrying
+		end))
+	end
+	table.insert(conns, guard:GetAttributeChangedSignal("ChaseState"):Connect(function()
+		log("ผู้พิทักษ์ ChaseState =", guard:GetAttribute("ChaseState"))
+	end))
+
+	local stop = function() return State.AfkPinned or hit or shouldStop() end
+	tweenTo(onGround(besideCFrame(guard:GetPivot().Position, root, 3), guard), stop)
+
+	local started = os.clock()
+	while not stop() and guard.Parent and os.clock() - started < CONFIG.GuardTimeout do
+		local _, r = getChar()
+		if not r then hit = true break end
+		local target = onGround(besideCFrame(guard:GetPivot().Position, r, 3), guard)
+		r.CFrame = target
+		r.AssemblyLinearVelocity = Vector3.zero
+		task.wait()   -- เช็กทุกเฟรม
+		if carrying and not isCarrying() then
+			log("ผู้พิทักษ์แย่งสัตว์ไปแล้ว")
+			hit = true
+		end
+		-- ถูกตีจนกระเด็น / ถูกย้ายตำแหน่ง (ใช้เฉพาะตอนไม่ได้ยกสัตว์)
+		if not carrying and r.Parent and (r.Position - target.Position).Magnitude > CONFIG.KnockbackDist then
+			log("ถูกกระเด็นออกจากจุดที่ยืน")
+			hit = true
+		end
+	end
+	for _, c in ipairs(conns) do c:Disconnect() end
+	return hit
+end
+
+-- ขั้นเตรียม: ขุดไข่โซนที่ใกล้ที่สุด -> ยกสัตว์ที่ออกจากไข่ (Steal) -> พุ่งไปหาผู้พิทักษ์ให้ตี
+local function warmUp(shouldStop, acceptEgg)
+	local egg, zoneName = nearestZoneEgg(acceptEgg)
+	if not egg then say("ไม่พบไข่ใกล้ ๆ ข้ามขั้นผู้พิทักษ์") return end
+
+	say("ขั้นที่ 1: ขุดไข่ใน", zoneName)
+	local eggPos = egg.Position
+	local newPrompts, stopWatching = watchNewPrompts()
+	breakEgg(egg, function()
+		return shouldStop() or (acceptEgg and not acceptEgg(egg))
+	end, true)   -- ขั้นเตรียม: ไม่เก็บเพชร รีบยกสัตว์
+	if acceptEgg and eggAlive(egg) and not acceptEgg(egg) then
+		stopWatching()
+		return
+	end
+	if not shouldStop() then
+		say("ขั้นที่ 2: ยกสัตว์")
+		liftAnimal(eggPos, newPrompts, shouldStop)
+	end
+	stopWatching()
+	if shouldStop() then return end
+
+	local guard = getGuard(zoneName)
+	if not guard then say("ไม่พบผู้พิทักษ์ใน", zoneName) return zoneName end
+	say("ขั้นที่ 3: พุ่งไปหาผู้พิทักษ์", guard.Name)
+	local hit = waitForGuardHit(guard, shouldStop)
+	say(hit and "ผู้พิทักษ์ตีแล้ว" or "หมดเวลารอผู้พิทักษ์")
+	if not getChar() then player.CharacterAdded:Wait() task.wait(1) end   -- ถ้าตาย รอเกิดใหม่
+
+	return zoneName
+end
+
+-- ตำแหน่งปลายทางในโซน: ข้างไข่ (ถ้าเห็นไข่แล้ว) หรือกลางโซน
+local function zoneTarget(zoneName, root)
+	local egg = findEgg(zoneName, ALL_EGGS, true) or findEgg(zoneName, ALL_EGGS)
+	if egg then return eggCFrame(egg, root) end
+	-- ไข่ยังไม่โหลด: ใช้ตำแหน่งกลางโซนที่จำไว้ ถ้ายังไม่เคยเห็น ใช้กึ่งกลางกรอบของโมเดลโซน
+	if ZonePos[zoneName] then
+		return onGround(CFrame.new(ZonePos[zoneName] + Vector3.new(0, 5, 0)))
+	end
+	-- ลอง ZoneHitboxes ก่อน (กล่องขอบเขตโซน) แล้วค่อยใช้กรอบของโมเดลโซน
+	local num = zoneName:match("(%d+)")
+	local build = workspace:FindFirstChild("Build")
+	local hitboxes = build and build:FindFirstChild("ZoneHitboxes")
+	local hb = hitboxes and num and (hitboxes:FindFirstChild("Zone" .. num) or hitboxes:FindFirstChild(num))
+	if hb then
+		local pos = hb:IsA("BasePart") and hb.Position or (hb:IsA("Model") and hb:GetBoundingBox().Position)
+		if pos then return onGround(CFrame.new(pos + Vector3.new(0, 5, 0))) end
+	end
+	local zone = CONFIG.ZoneModels[zoneName]
+	if not zone then return end
+	local ok, box = pcall(zone.GetBoundingBox, zone)
+	local cf = ok and box or zone:GetPivot()
+	say("ยังไม่รู้ตำแหน่ง", zoneName, "ใช้กึ่งกลางโมเดลโซน")
+	return onGround(CFrame.new(cf.Position + Vector3.new(0, 5, 0)))
+end
+
+-- ตรึงหลังวาร์ปเพื่อล้างแรงกระเด็น โดยไม่ลดความสูงที่ระบบกันจมยกไว้
+local function holdAfterTeleport(cf, duration)
+	local char, root = getChar()
+	if not root then return end
+	local started = os.clock()
+	while os.clock() - started < (duration or 1.2) do
+		RunService.Heartbeat:Wait()
+		if State.AfkPinned or player.Character ~= char or not char.Parent or not root.Parent then return end
+		local pos = root.Position
+		local drift = Vector3.new(pos.X - cf.Position.X, 0, pos.Z - cf.Position.Z)
+		if drift.Magnitude > 1 then
+			root.CFrame = cf + Vector3.new(0, math.max(0, pos.Y - cf.Position.Y), 0)
+		end
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+	end
+end
+
+-- วาร์ปทันทีไปโซน (ถ้าเกมดึงตัวกลับ จะวาร์ปซ้ำ สูงสุด CONFIG.TeleportRetries ครั้ง)
+local function teleportInto(zoneName)
+	for attempt = 1, CONFIG.TeleportRetries do
+		if State.AfkPinned then return false end
+		local _, root = getChar()
+		if not root then return false end
+		local target = zoneTarget(zoneName, root)
+		if not target then return false end
+		root.CFrame = target
+		root.AssemblyLinearVelocity = Vector3.zero
+		holdAfterTeleport(target)
+		task.wait(0.4)
+		if root.Parent and (root.Position - target.Position).Magnitude < 40 then return true end
+		say("เกมดึงตัวกลับหลังวาร์ป ลองใหม่ (ครั้งที่ " .. attempt .. ")")
+	end
+	return false
+end
+
+-- ไปโซนที่เลือก: ถ้าโซนนั้นไกลเกินวาร์ปตรง (CONFIG.TeleportVia) วาร์ปไปโซนก่อนหน้าก่อน แล้ว Tween ต่อ
+local function goToZone(zoneName, shouldStop)
+	local num = tonumber(zoneName:match("(%d+)"))
+	local viaNum = num and CONFIG.TeleportVia[num]
+	if viaNum then
+		local via = "โซนที่ " .. viaNum
+		say("วาร์ปไป", via, "ก่อน")
+		teleportInto(via)
+		local _, root = getChar()
+		local target = root and zoneTarget(zoneName, root)
+		if target then
+			say("Tween ต่อไป", zoneName)
+			tweenTo(target, shouldStop)
+		end
+	else
+		say("วาร์ปไป", zoneName)
+		teleportInto(zoneName)
+	end
+	task.wait(0.3)   -- รอไข่ในโซนโหลด
+end
+
+-- อยู่ในโซนนี้หรือใกล้พอจะ Tween ไปเองได้ไหม (ไม่ต้องวาร์ป)
+--   ใกล้ = โซนที่ตัวละครอยู่ใกล้ที่สุดคือโซนนี้ หรือห่างจากกลางโซนไม่เกิน CONFIG.NoWarpDist
+isNearZone = function(zoneName)
+	local _, root = getChar()
+	if not root then return false end
+	local target = ZonePos[zoneName]
+	if not target then
+		local _, z = nearestZoneEgg()
+		return z == zoneName
+	end
+	if (target - root.Position).Magnitude <= CONFIG.NoWarpDist then return true end
+	local best, bestDist
+	for name, pos in pairs(ZonePos) do
+		local d = (pos - root.Position).Magnitude
+		if not bestDist or d < bestDist then best, bestDist = name, d end
+	end
+	return best == zoneName
+end
+
+---------------------------------------------------------------------
+-- Callbacks
+---------------------------------------------------------------------
+local finderResume -- จำสวิตช์หาตัวและเพชรไว้จนฟาร์มกลับถึงโซน
+local Callbacks = {}
+local motionLoops = {} -- รอเธรดฟาร์ม/เพชร/สวนหยุดจริงก่อนเริ่มส่งสัตว์
+
+local function waitForMotion(shouldStop)
+	repeat
+		task.wait()
+		for thread in pairs(motionLoops) do
+			if coroutine.status(thread) == "dead" then motionLoops[thread] = nil end
+		end
+		if shouldStop() then return false end
+	until not State.AutoFarm and not State.CollectGems and next(motionLoops) == nil
+	return true
+end
+
+-- ฟาร์มและสวนใช้ขั้นเดินทางเดียวกัน
+local function prepareZone(target, shouldStop, acceptEgg)
+	if isNearZone(target) then return true end
+	-- ครอบตั้งแต่ยกเองจนผู้พิทักษ์ตีและเดินทางจบ แม้มีข้อผิดพลาดก็ล้างธง
+	local ok, err = pcall(function()
+		local warmZone = warmUp(shouldStop, acceptEgg)
+		if shouldStop() then return end
+		if warmZone ~= target then goToZone(target, shouldStop) end
+	end)
+	State.ScriptLift = false
+	State.ManualCarryBlocked = isCarrying()
+	if not ok then error(err) end
+	-- เหมือนเดิม: วาร์ปเสร็จถือว่าถึงโซนแล้ว (ไม่บังคับตรวจระยะซ้ำ กันวนขั้นเตรียมไม่จบ)
+	return not shouldStop() and getChar() ~= nil
+end
+
+function Garden.Say(text)
+	if Garden.Status and not State.Closed then Garden.Status.Text = text end
+end
+
+function Garden.Matches(egg)
+	local hp = egg:GetAttribute("MaxHealth")
+	if hp == nil then hp = egg:GetAttribute("Health") end
+	return egg:GetAttribute("EggType") == Garden.Egg and (tonumber(hp) or 0) >= Garden.MinHP
+end
+
+-- จำจำนวนตำแหน่ง เผื่อเกมถอดโมเดลออกหรือเปลี่ยนชื่อระหว่างเกิดใหม่
+function Garden.Progress()
+	local zone = CONFIG.ZoneModels[Garden.Zone]
+	local folder = zone and zone:FindFirstChild("Eggs")
+	local _, root = getChar()
+	local count, matched, target, distance = 0, 0, nil, math.huge
+	for _, model in ipairs(folder and folder:GetChildren() or {}) do
+		local egg = model:FindFirstChild("Egg")
+		if egg or model.Name:match("^%d+:") then count += 1 end
+		if egg and egg:IsA("BasePart") and eggAlive(egg) then
+			if Garden.Matches(egg) then matched += 1
+			elseif root then
+				local d = (root.Position - egg.Position).Magnitude
+				if d < distance then target, distance = egg, d end
+			end
+		end
+	end
+	local total = math.max(Garden.Spots[Garden.Zone] or 0, count)
+	Garden.Spots[Garden.Zone] = total
+	return target, matched, total
+end
+
+function Callbacks.Garden(on)
+	if on and (not Garden.Egg or State.DeliveryBusy or State.Closed) then
+		Garden.Say("กรุณาเลือกไข่ก่อนเริ่มทำสวน")
+		gardenToggle.Set(false)
+		return
+	end
+	State.Garden = on
+	State.GardenRun += 1
+	Garden.ReadyZone = nil
+	local run = State.GardenRun
+	if not on then
+		finderResume = nil
+		setSwing(false)
+		return
+	end
+	releaseAfkPin()
+	Garden.Progress() -- จำจำนวนตำแหน่งก่อนขั้นเตรียมอาจทำไข่แตก
+	local function stopped()
+		return State.Closed or State.AfkPinned or State.DeliveryBusy
+			or not State.Garden or State.GardenRun ~= run
+	end
+	farmToggle.Set(false)
+	gemToggle.Set(false)
+	Garden.Say("กำลังหยุดฟาร์มและเพชร")
+	if not waitForMotion(stopped) then return end
+	local thread = coroutine.running()
+	motionLoops[thread] = true
+	local respawnConn = player.CharacterAdded:Connect(function()
+		if not stopped() then Garden.ReadyZone = nil end
+	end)
+	task.spawn(function()
+		while not stopped() do
+			if not isCarrying() then getTool() end
+			task.wait(0.2)
+		end
+	end)
+	local complete, completeSince = false, nil
+	local ok, err = pcall(function()
+		while not stopped() do
+			if not getChar() then
+				Garden.ReadyZone = nil
+				task.wait(0.5)
+			elseif Garden.ReadyZone ~= Garden.Zone then
+				local zone = Garden.Zone
+				local function travelStopped()
+					return stopped() or Garden.Zone ~= zone
+				end
+				Garden.Say("กำลังเดินทางไป " .. zone)
+				-- ขั้นเตรียมก็ต้องไม่ตีไข่ที่ตรงเงื่อนไขแล้ว
+				if prepareZone(zone, travelStopped, function(egg) return not Garden.Matches(egg) end) then
+					Garden.ReadyZone = zone
+				end
+			else
+				local egg, matched, total = Garden.Progress()
+				Garden.Say("ตรง " .. matched .. "/" .. total .. " ฟอง")
+				if total > 0 and matched == total then
+					-- ยืนยันซ้ำให้พ้นช่วงไข่แตก เผื่อโมเดลหายชั่วคราวระหว่างเกิดใหม่
+					completeSince = completeSince or os.clock()
+					if os.clock() - completeSince >= 5 and not finderResume then complete = true break end
+				else completeSince = nil end
+				if egg and not isCarrying() then
+					local zone, character = Garden.Zone, player.Character
+					breakEgg(egg, function()
+						return stopped() or Garden.Zone ~= zone or Garden.ReadyZone ~= zone
+							or player.Character ~= character or not getChar()
+							or isCarrying() or Garden.Matches(egg)
+					end, true)
+				else task.wait(0.3) end
+			end
+			task.wait()
+		end
+	end)
+	respawnConn:Disconnect()
+	setSwing(false)
+	motionLoops[thread] = nil
+	if State.GardenRun == run then
+		gardenToggle.Set(false)
+		if complete then Garden.Say("สวนเสร็จแล้ว")
+		elseif not ok then Garden.Say("สวนหยุด: " .. tostring(err)) end
+	end
+end
+
+function Callbacks.ZoneChanged(zone)
+	log("เลือกโซน:", zone)
+end
+
+function Callbacks.EggChanged(egg)
+	log("เลือกไข่:", egg)
+end
+
+-- ฟาร์ม: ทุกครั้งที่เริ่ม/เปลี่ยนโซน จะทำขั้นเตรียม (warmUp) ก่อน
+-- โดนผู้พิทักษ์ตีแล้ววาร์ปทันทีไปโซนที่เลือก จากนั้น Tween ไปตีไข่ที่ใกล้ที่สุดไปเรื่อย ๆ
+function Callbacks.AutoFarm(on)
+	State.AutoFarm = on
+	State.FarmRun += 1
+	State.ReadyZone = nil
+	if not on then if not State.Garden then finderResume = nil end return end
+	local thread = coroutine.running()
+	motionLoops[thread] = true
+	local run = State.FarmRun
+	task.spawn(function()
+		while State.AutoFarm and State.FarmRun == run do
+			if not isCarrying() then getTool() end
+			task.wait(0.2)
+		end
+	end)
+	local function stopped() return State.AfkPinned or not State.AutoFarm or State.FarmRun ~= run end
+	-- ตาย/เกิดใหม่ระหว่างฟาร์ม: เริ่มขั้นเตรียม + วาร์ปใหม่ ไม่ Tween ข้ามแมพจากจุดเกิด
+	local respawnConn = player.CharacterAdded:Connect(function()
+		if not stopped() then say("ตัวละครเกิดใหม่ เริ่มรอบใหม่") State.ReadyZone = nil end
+	end)
+	local waiting = true
+
+	while not stopped() do
+		if not getChar() then
+			task.wait(0.5)
+		elseif State.ReadyZone ~= State.Zone then
+			local target = State.Zone
+			if prepareZone(target, function()
+				return stopped() or State.Zone ~= target
+			end) then State.ReadyZone = target end
+		else
+			local egg = findEgg(State.Zone, ALL_EGGS, true)
+			if egg then
+				if waiting then say("ตีไข่:", egg:GetAttribute("EggType"), egg:GetAttribute("EggInfoRarity")) waiting = false end
+				breakEgg(egg, function() return stopped() or State.ReadyZone ~= State.Zone end)
+			else
+				if not waiting then say("ไม่มีไข่ตามตัวกรองใน", State.Zone, "รอไข่เกิด") waiting = true end
+				task.wait(0.5)   -- ไม่มีไข่ รอเกิดใหม่
+			end
+		end
+		task.wait()
+	end
+	respawnConn:Disconnect()
+	motionLoops[thread] = nil
+end
+
+-- เก็บเพชร: เพชรที่ตกจากไข่อยู่ใน workspace.EggGemDrops (เช่น EggGemDrops.Gem)
+-- วิธีเก็บ: ไปแตะเพชรทั่วโซนเป้าหมาย ใช้รัศมีสำรองเมื่อยังไม่มีข้อมูลโซน
+local gemLogged = false
+
+local function gemPart(g)
+	if g:IsA("BasePart") then return g end
+	return g:FindFirstChildWhichIsA("BasePart", true)
+end
+
+-- พิมพ์โครงสร้างเพชรเม็ดแรกลง F9 (ไว้ดูว่าเกมเก็บเพชรแบบไหน)
+local function describeGem(g)
+	local attrs, inside = {}, {}
+	for k, v in pairs(g:GetAttributes()) do table.insert(attrs, k .. "=" .. tostring(v)) end
+	for _, d in ipairs(g:GetDescendants()) do table.insert(inside, d.Name .. "[" .. d.ClassName .. "]") end
+	say("เพชร:", g:GetFullName(), g.ClassName,
+		"| attrs:", table.concat(attrs, ", "),
+		"| ข้างใน:", table.concat(inside, ", "))
+end
+
+local function nearbyGems(root, radius)
+	local folder = workspace:FindFirstChild("EggGemDrops")
+	local list = {}
+	if not folder then return list end
+	local targetZone = gemZoneTarget()
+	local hasZones = next(ZonePos) ~= nil
+	for _, g in ipairs(folder:GetChildren()) do
+		local part = gemPart(g)
+		if part and ((hasZones and zoneOfPosition(part.Position) == targetZone)
+			or (not hasZones and (part.Position - root.Position).Magnitude <= (radius or CONFIG.GemRadius))) then
+			table.insert(list, g)
+		end
+	end
+	return list
+end
+
+-- เก็บเพชรแบบสคริปต์รุ่นก่อน: Tween (Noclip) ไปหาเพชรในโซนเป้าหมายทีละเม็ด จนหมด
+local gemSkip = setmetatable({}, { __mode = "k" })   -- เพชรที่เก็บไม่ติด -> ข้ามไปก่อนจนถึงเวลานี้
+-- มีเพชรที่เก็บได้จริงอยู่ในโซนเป้าหมายไหม (ไม่นับเม็ดที่เพิ่งเก็บไม่ติด)
+hasCollectableGems = function(radius)
+	local _, root = getChar()
+	if not root then return false end
+	for _, g in ipairs(nearbyGems(root, radius)) do
+		if not (gemSkip[g] and os.clock() < gemSkip[g]) then return true end
+	end
+	return false
+end
+grabNearbyGems = function(shouldStop, radius)
+	local function stopped()
+		return not State.CollectGems or not canCollectGems() or (shouldStop and shouldStop())
+	end
+	local got = 0
+	while not stopped() do
+		local _, root = getChar()
+		if not root then break end
+		-- เพชรเม็ดที่ใกล้ที่สุด (ข้ามเม็ดที่เพิ่งเก็บไม่ติด)
+		local best, bestDist
+		for _, g in ipairs(nearbyGems(root, radius)) do
+			local part = gemPart(g)
+			if part and not (gemSkip[g] and os.clock() < gemSkip[g]) then
+				local d = (part.Position - root.Position).Magnitude
+				if not bestDist or d < bestDist then best, bestDist = g, d end
+			end
+		end
+		if not best then break end
+
+		local part = gemPart(best)
+		if not gemLogged then gemLogged = true describeGem(best) end
+		if got == 0 then say("เก็บเพชร: ไปหาเพชรที่ตก") end
+		if not tweenTo(onGround(CFrame.new(part.Position)), stopped) or stopped() then break end
+		root.AssemblyLinearVelocity = Vector3.zero
+		if firetouchinterest and part.Parent then
+			firetouchinterest(root, part, 0)
+			firetouchinterest(root, part, 1)
+		end
+		local prompt = best:FindFirstChildWhichIsA("ProximityPrompt", true)
+		if prompt then triggerPrompt(prompt) end
+		-- ยืนบนเพชรจนเพชรหาย (ไม่เกิน GemStay วิ)
+		local t = os.clock()
+		while best.Parent and os.clock() - t < CONFIG.GemStay and not stopped() do
+			if part.Parent then root.CFrame = onGround(CFrame.new(part.Position)) end
+			task.wait()
+		end
+		if best.Parent then
+			gemSkip[best] = os.clock() + 30   -- เก็บไม่ติด (อาจเป็นของคนอื่น): ข้ามไปนาน ๆ
+		else
+			got += 1
+		end
+	end
+	if got > 0 then say("เก็บเพชรได้", got, "เม็ด") end
+end
+
+-- ตอนเปิดฟาร์ม ระบบฟาร์มจะเรียกเก็บเพชรเองระหว่างตีไข่
+-- ตอนไม่ได้ฟาร์ม สวิตช์นี้จะวนเก็บเพชรในโซนที่ตัวละครอยู่
+function Callbacks.CollectGems(on)
+	State.CollectGems = on
+	State.GemRun += 1
+	if not on then return end
+	local thread = coroutine.running()
+	motionLoops[thread] = true
+	local run = State.GemRun
+	say("เปิดเก็บเพชรในโซนที่ฟาร์ม (ถ้าไม่ได้ฟาร์ม ใช้โซนที่ตัวละครอยู่)")
+	while State.CollectGems and State.GemRun == run do
+		if not State.AutoFarm and canCollectGems() then grabNearbyGems(function() return not State.CollectGems or State.AutoFarm end) end
+		task.wait(0.2)
+	end
+	motionLoops[thread] = nil
+end
+
+-- โหมดดีบัก: พิมพ์ข้อมูล Remote ที่เกี่ยวกับการตีไข่/เพชร ลงช่อง F9
+local debugHooked = false
+function Callbacks.Debug(on)
+	State.Debug = on
+	if not on or debugHooked then return end
+	debugHooked = true
+	for _, name in ipairs({ "EggGemDropRemote", "EggHitConfirmed", "EggHitRejected", "EggHitLanded" }) do
+		local r = ReplicatedStorage:FindFirstChild(name)
+		if r and r:IsA("RemoteEvent") then
+			r.OnClientEvent:Connect(function(...)
+				if State.Debug then print("[FarmHub] <-", name, ...) end
+			end)
+		end
+	end
+	if hookmetamethod and getnamecallmethod then
+		local watch = { EggHitRequest = true, BatHitRequest = true, MasteryPickaxeSwing = true }
+		local old
+		old = hookmetamethod(game, "__namecall", function(self, ...)
+			if State.Debug and getnamecallmethod() == "FireServer"
+				and typeof(self) == "Instance" and watch[self.Name] then
+				print("[FarmHub] ->", self.Name, ...)
+			end
+			return old(self, ...)
+		end)
+	end
+end
+
+-- เก็บค่ากราฟิกเดิมแยกตามวัตถุ คืนค่าได้โดยไม่ต้องรีจอย
+local fps = { boost = false, unlock = false, alive = true, saved = {} }
+do
+	local originals = setmetatable({}, { __mode = "k" })
+	local connections = {}
+	local generation = 0
+	local http = game:GetService("HttpService")
+	local fileName = "FarmHub_fps.json"
+
+	pcall(function()
+		local data = http:JSONDecode(readfile(fileName))
+		if type(data) == "table" then
+			fps.saved.boost = data.boost == true
+			fps.saved.unlock = data.unlock == true
+		end
+	end)
+
+	local function save()
+		pcall(function()
+			writefile(fileName, http:JSONEncode({ boost = fps.boost, unlock = fps.unlock }))
+		end)
+	end
+
+	local function change(object, prop, value)
+		pcall(function()
+			local old = object[prop]
+			if old == value then return end
+			local saved = originals[object]
+			if not saved then
+				saved = {}
+				originals[object] = saved
+			end
+			if saved[prop] == nil then saved[prop] = old end
+			object[prop] = value
+		end)
+	end
+
+	local function restore(object)
+		local saved = originals[object]
+		if not saved then return end
+		for prop, value in pairs(saved) do
+			pcall(function() object[prop] = value end)
+		end
+		originals[object] = nil
+	end
+
+	-- ไม่แตะ GUI เหนือหัวสัตว์หรือสิ่งที่อยู่ภายใน GUI
+	local function insideGui(object)
+		local parent = object
+		while parent and parent ~= workspace and parent ~= Lighting do
+			if parent:IsA("LayerCollector") or parent:IsA("GuiObject") then return true end
+			parent = parent.Parent
+		end
+		return false
+	end
+
+	local function protectedPart(object, protectEggs)
+		local parent = object
+		while parent and parent ~= workspace do
+			if parent.Name == "AnimalPickups" or parent.Name == "CarriedAnimals"
+				or (protectEggs and parent.Name == "Eggs") then return true end
+			if parent:IsA("Model") then
+				-- ครอบคลุมตัวละครที่ Humanoid ยังโหลดมาไม่ครบ
+				if parent:FindFirstChildOfClass("Humanoid") or Players:GetPlayerFromCharacter(parent) then return true end
+			end
+			parent = parent.Parent
+		end
+		return false
+	end
+
+	local postEffects = {
+		BloomEffect = true, BlurEffect = true, SunRaysEffect = true,
+		DepthOfFieldEffect = true, ColorCorrectionEffect = true,
+	}
+	local visuals = {
+		ParticleEmitter = true, Trail = true, Beam = true,
+		Smoke = true, Fire = true, Sparkles = true,
+	}
+	local function apply(object)
+		if not fps.alive or not fps.boost or insideGui(object) then return end
+		if postEffects[object.ClassName] then
+			local camera = workspace.CurrentCamera
+			if object:IsDescendantOf(Lighting) or (camera and object:IsDescendantOf(camera)) then
+				change(object, "Enabled", false)
+			end
+		elseif object:IsA("Atmosphere") then
+			change(object, "Density", 0)
+			change(object, "Haze", 0)
+			change(object, "Glare", 0)
+		elseif object:IsA("Clouds") and object.Parent == workspace.Terrain then
+			change(object, "Enabled", false)
+		elseif visuals[object.ClassName] then
+			change(object, "Enabled", false)
+		elseif object:IsA("Explosion") then
+			-- ปิดเฉพาะภาพ ไม่เปลี่ยนแรงระเบิดหรือพฤติกรรม
+			change(object, "Visible", false)
+		elseif object:IsA("BasePart") and not protectedPart(object, false) then
+			change(object, "CastShadow", false)
+			change(object, "Material", Enum.Material.SmoothPlastic)
+			change(object, "Reflectance", 0)
+		elseif object:IsA("Decal") or object:IsA("Texture") then
+			if object.Parent and object.Parent:IsA("BasePart") and not protectedPart(object, true) then
+				change(object, "Transparency", 1)
+			end
+		elseif object:IsA("PointLight") or object:IsA("SpotLight") or object:IsA("SurfaceLight") then
+			change(object, "Shadows", false)
+		end
+	end
+
+	local function disconnectBoost()
+		for _, connection in ipairs(connections) do connection:Disconnect() end
+		table.clear(connections)
+	end
+
+	function Callbacks.FpsBoost(on)
+		if not fps.alive then return end
+		on = on == true
+		if fps.boost == on then return end
+		fps.boost = on
+		generation = generation + 1
+		disconnectBoost()
+		save()
+		if not on then
+			for object in pairs(originals) do restore(object) end
+			return
+		end
+
+		change(Lighting, "GlobalShadows", false)
+		change(Lighting, "FogEnd", 1e9)
+		change(Lighting, "ShadowSoftness", 0)
+		change(Lighting, "EnvironmentDiffuseScale", 0)
+		change(Lighting, "EnvironmentSpecularScale", 0)
+		pcall(function() change(settings().Rendering, "QualityLevel", Enum.QualityLevel.Level01) end)
+		pcall(function()
+			change(UserSettings():GetService("UserGameSettings"), "SavedQualityLevel", Enum.SavedQualitySetting.QualityLevel1)
+		end)
+		local terrain = workspace.Terrain
+		change(terrain, "WaterWaveSize", 0)
+		change(terrain, "WaterWaveSpeed", 0)
+		change(terrain, "WaterReflectance", 0)
+		change(terrain, "Decoration", false)
+
+		-- เข้าคิวทั้งของเดิมและของใหม่ ประมวลผลไม่เกิน 400 ชิ้นต่อเฟรม
+		local token = generation
+		local queue, queued = {}, setmetatable({}, { __mode = "k" })
+		local head, tail = 1, 0
+		local function enqueue(object)
+			if queued[object] then return end
+			queued[object] = true
+			tail = tail + 1
+			queue[tail] = object
+		end
+		table.insert(connections, workspace.DescendantAdded:Connect(enqueue))
+		table.insert(connections, Lighting.ChildAdded:Connect(enqueue))
+		table.insert(connections, Lighting.DescendantAdded:Connect(enqueue))
+		table.insert(connections, workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+			local camera = workspace.CurrentCamera
+			if camera then
+				for _, object in ipairs(camera:GetDescendants()) do enqueue(object) end
+			end
+		end))
+		task.spawn(function()
+			for _, object in ipairs(workspace:GetDescendants()) do enqueue(object) end
+			for _, object in ipairs(Lighting:GetDescendants()) do enqueue(object) end
+			while fps.alive and fps.boost and token == generation do
+				local last = math.min(head + 399, tail)
+				while head <= last do
+					local object = queue[head]
+					queue[head] = nil
+					head = head + 1
+					queued[object] = nil
+					pcall(function()
+						if object:IsDescendantOf(workspace) or object:IsDescendantOf(Lighting) then apply(object) end
+					end)
+				end
+				if head > tail then head, tail = 1, 0 end
+				task.wait()
+			end
+		end)
+	end
+
+	local function setCap(on)
+		if type(setfpscap) ~= "function" then return end
+		if on then
+			local ok = pcall(setfpscap, 0)
+			if not ok then pcall(setfpscap, 999) end
+		else
+			pcall(setfpscap, 60)
+		end
+	end
+
+	function Callbacks.UnlockFps(on)
+		if not fps.alive then return end
+		fps.unlock = on == true
+		setCap(fps.unlock)
+		save()
+	end
+
+	function fps.start(fpsLabel)
+		-- นับเฟรมในหน้าต่างเวลาหนึ่งวินาที อัปเดตข้อความทุกครึ่งวินาที
+		local frames, head, tail = {}, 1, 0
+		local started = os.clock()
+		local lastLabel, lastLog, lastCap = started, started, started
+		fps.render = RunService.RenderStepped:Connect(function()
+			local now = os.clock()
+			tail = tail + 1
+			frames[tail] = now
+			while head <= tail and frames[head] <= now - 1 do
+				frames[head] = nil
+				head = head + 1
+			end
+			if now - lastLabel >= 0.5 then
+				local count = tail - head + 1
+				fps.value = math.floor(count / math.min(now - started, 1) + 0.5)
+				fpsLabel.Text = "FPS: " .. fps.value
+				lastLabel = now
+				local compact = {}
+				for i = head, tail do compact[#compact + 1] = frames[i] end
+				frames, head, tail = compact, 1, #compact
+			end
+			if now - lastCap >= 5 then
+				if fps.unlock then setCap(true) end
+				lastCap = now
+			end
+			if now - lastLog >= 10 then
+				if fps.boost or fps.unlock then print("[FarmHub] FPS: " .. (fps.value or 0)) end
+				lastLog = now
+			end
+		end)
+		-- makeToggle ตั้งค่าเริ่มต้นแบบเงียบ จึงต้องเรียกใช้ค่าที่บันทึกเอง
+		if fps.saved.boost then Callbacks.FpsBoost(true) end
+		if fps.saved.unlock then Callbacks.UnlockFps(true) end
+	end
+
+	function fps.cleanup()
+		generation = generation + 1
+		disconnectBoost()
+		if fps.render then fps.render:Disconnect() end
+		for object in pairs(originals) do restore(object) end
+		if fps.unlock then setCap(false) end
+		fps.boost, fps.unlock, fps.alive = false, false, false
+		-- คงไฟล์ไว้เพื่อเปิดตามค่าที่ผู้ใช้เลือกเมื่อรันครั้งถัดไป
+	end
+end
+
+---------------------------------------------------------------------
+-- Theme
+---------------------------------------------------------------------
+local C = {
+	-- ธีมโทนอุ่น (ส้ม/น้ำตาล) ให้เข้ากับรูปพื้นหลังแมว Malmon Hub
+	Bg      = Color3.fromRGB(38, 28, 24),
+	Side    = Color3.fromRGB(32, 23, 20),
+	Row     = Color3.fromRGB(48, 36, 31),
+	Input   = Color3.fromRGB(66, 50, 43),
+	Accent  = Color3.fromRGB(245, 146, 40),   -- ส้มแบบตัวอักษร "Hub" ในรูป
+	Off     = Color3.fromRGB(96, 78, 70),
+	Knob    = Color3.fromRGB(35, 22, 16),
+	Text    = Color3.fromRGB(250, 240, 228),
+	SubText = Color3.fromRGB(205, 185, 170),
+}
+local FONT = Enum.Font.GothamMedium
+
+---------------------------------------------------------------------
+-- Helpers
+---------------------------------------------------------------------
+local function create(class, props)
+	local inst = Instance.new(class)
+	local parent = props.Parent
+	props.Parent = nil
+	for k, v in pairs(props) do inst[k] = v end
+	inst.Parent = parent
+	return inst
+end
+
+local function corner(inst, r)
+	create("UICorner", { CornerRadius = UDim.new(0, r or 8), Parent = inst })
+end
+
+local function tween(inst, goal, t)
+	TweenService:Create(inst, TweenInfo.new(t or 0.18, Enum.EasingStyle.Quad), goal):Play()
+end
+
+local function label(parent, text, props)
+	local p = {
+		BackgroundTransparency = 1,
+		Font = FONT, Text = text, TextSize = 16,
+		TextColor3 = C.Text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = parent,
+	}
+	for k, v in pairs(props or {}) do p[k] = v end
+	return create("TextLabel", p)
+end
+
+---------------------------------------------------------------------
+-- Root
+---------------------------------------------------------------------
+local guiParent = (gethui and gethui()) or player:WaitForChild("PlayerGui")
+local old = guiParent:FindFirstChild("FarmHubUI")
+if old then old:Destroy() end
+
+local gui = create("ScreenGui", {
+	Name = "FarmHubUI", ResetOnSpawn = false,
+	ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	Parent = guiParent,
+})
+
+local main = create("Frame", {
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromOffset(580, 360),
+	BackgroundColor3 = C.Bg, Active = true,
+	Parent = gui,
+})
+corner(main, 12)
+create("UIStroke", { Color = C.Input, Thickness = 1, Parent = main })
+
+-- พื้นหลังรูป Malmon Hub (โหลดจาก GitHub เก็บในโฟลเดอร์ executor แล้วใช้ getcustomasset)
+local bgImage = create("ImageLabel", {
+	Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+	ScaleType = Enum.ScaleType.Crop, ImageTransparency = 1, Parent = main,
+})
+corner(bgImage, 12)
+-- ฟิล์มมืดบาง ๆ ให้อ่านตัวหนังสือออก แต่ยังเห็นรูป
+local bgTint = create("Frame", {
+	Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(40, 22, 14),
+	BackgroundTransparency = 1, Parent = main,
+})
+corner(bgTint, 12)
+local side -- สร้างด้านล่าง
+task.spawn(function()
+	local BG_FILE = "MalmonHub_bg.jpg"
+	local BG_URL = "https://raw.githubusercontent.com/Malmon01/Mhub/main/assets/malmon_bg.jpg"
+	local getAsset = getcustomasset or getsynasset
+	if type(getAsset) ~= "function" or not writefile then return end
+	local ok = pcall(function()
+		if not (isfile and isfile(BG_FILE)) then writefile(BG_FILE, game:HttpGet(BG_URL)) end
+		bgImage.Image = getAsset(BG_FILE)
+	end)
+	if ok then
+		bgImage.ImageTransparency = 0
+		main.BackgroundTransparency = 1
+		bgTint.BackgroundTransparency = 0.45
+		if side then side.BackgroundTransparency = 0.3 end
+	else
+		print("[FarmHub] โหลดรูปพื้นหลังไม่ได้ ใช้พื้นสีเดิม")
+	end
+end)
+
+-- Sidebar --------------------------------------------------------------
+side = create("Frame", {
+	Size = UDim2.new(0, 150, 1, 0), BackgroundTransparency = 0.3,
+	BackgroundColor3 = C.Side, Parent = main,
+})
+corner(side, 12)
+
+label(side, CONFIG.Title, {
+	Position = UDim2.fromOffset(14, 10), Size = UDim2.new(1, -28, 0, 30),
+	TextSize = 18, Font = Enum.Font.GothamBold, TextColor3 = C.Accent,
+})
+label(side, "v " .. VERSION, {
+	AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 14, 1, -8),
+	Size = UDim2.new(1, -28, 0, 16), TextSize = 11, TextColor3 = C.SubText,
+})
+print("[FarmHub] โหลดเวอร์ชัน", VERSION)
+
+local tabHolder = create("Frame", {
+	Position = UDim2.fromOffset(10, 52), Size = UDim2.new(1, -20, 1, -62),
+	BackgroundTransparency = 1, Parent = side,
+})
+create("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder, Parent = tabHolder })
+
+-- Content --------------------------------------------------------------
+local content = create("Frame", {
+	Position = UDim2.fromOffset(150, 0), Size = UDim2.new(1, -150, 1, 0),
+	BackgroundTransparency = 1, Parent = main,
+})
+
+local pageTitle = label(content, "", {
+	Position = UDim2.fromOffset(18, 14), Size = UDim2.new(1, -120, 0, 28),
+	TextSize = 20, Font = Enum.Font.GothamBold,
+})
+
+-- Logo (วงกลม) = แสดงโลโก้ + เป็นปุ่ม
+local function makeLogo(parent, size, props)
+	local p = {
+		Size = UDim2.fromOffset(size, size), BackgroundColor3 = C.Row,
+		Image = CONFIG.LogoImage, AutoButtonColor = false, Parent = parent,
+	}
+	for k, v in pairs(props or {}) do p[k] = v end
+	local b = create("ImageButton", p)
+	corner(b, size / 2)
+	local stroke = create("UIStroke", { Color = C.Accent, Thickness = 2, Parent = b })
+	if CONFIG.LogoImage == "" then
+		label(b, "Logo", { Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 14 })
+	end
+	b.MouseEnter:Connect(function() tween(stroke, { Thickness = 3 }) end)
+	b.MouseLeave:Connect(function() tween(stroke, { Thickness = 2 }) end)
+	return b
+end
+
+-- โลโก้มุมขวาบนในหน้าต่าง: กดเพื่อย่อหน้าต่าง
+local logo = makeLogo(content, 60, {
+	AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -40, 0, 8),
+})
+
+-- โลโก้ลอย (โชว์ตอนย่อ): กดเพื่อเปิดหน้าต่างกลับ, ลากย้ายได้
+local floatLogo = makeLogo(gui, 60, {
+	-- ชิดมุมขวาบน ไม่บังปุ่มของเกม (ยังลากย้ายได้)
+	AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 8), Visible = false,
+})
+
+-- รูปโลโก้ Malmon Hub (โหลดจาก GitHub เก็บในโฟลเดอร์ executor แล้วใช้ getcustomasset)
+task.spawn(function()
+	local LOGO_FILE = "MalmonHub_logo.png"
+	local LOGO_URL = "https://raw.githubusercontent.com/Malmon01/Mhub/main/assets/malmon_logo.png"
+	local getAsset = getcustomasset or getsynasset
+	if type(getAsset) ~= "function" or not writefile then return end
+	local ok, asset = pcall(function()
+		if not (isfile and isfile(LOGO_FILE)) then writefile(LOGO_FILE, game:HttpGet(LOGO_URL)) end
+		return getAsset(LOGO_FILE)
+	end)
+	if not ok then print("[FarmHub] โหลดรูปโลโก้ไม่ได้ ใช้โลโก้ตัวอักษรเดิม") return end
+	for _, b in ipairs({ logo, floatLogo }) do
+		b.Image = asset
+		for _, c in ipairs(b:GetChildren()) do
+			if c:IsA("TextLabel") then c:Destroy() end
+		end
+	end
+end)
+
+local function setMinimized(min)
+	main.Visible = not min
+	floatLogo.Visible = min
+end
+
+-- ทะลุสิ่งกีดขวางและกระโดดซ้ำได้ตลอดอายุหน้าต่าง
+local globalNoclip = RunService.Stepped:Connect(function()
+	if State.AfkPinned then return end
+	local char = player.Character
+	if char then
+		for _, part in ipairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then part.CanCollide = false end
+		end
+	end
+end)
+-- ยกตัวละครที่จมให้ยืนบนพื้นจริง โดยคงทิศทางและความเร็วแนวราบไว้
+local antiSink = RunService.Heartbeat:Connect(function()
+	if State.AfkPinned then return end
+	local char, root, hum = getChar()
+	if not root or tweenMoving or hum:GetState() == Enum.HumanoidStateType.Seated then return end
+	-- หยุดไถลเมื่อไม่มีอินพุต แต่คงความเร็วแนวดิ่งและการกระโดดไว้
+	local state = hum:GetState()
+	if hum.MoveDirection.Magnitude < 0.1 and state ~= Enum.HumanoidStateType.Jumping
+		and state ~= Enum.HumanoidStateType.Freefall then
+		local velocity = root.AssemblyLinearVelocity
+		root.AssemblyLinearVelocity = Vector3.new(0, velocity.Y, 0)
+		root.AssemblyAngularVelocity = Vector3.zero
+	end
+	local standHeight = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
+	local list = { char }
+	local gems = workspace:FindFirstChild("EggGemDrops")
+	if gems then table.insert(list, gems) end
+	local carried = workspace:FindFirstChild("CarriedAnimals")
+	if carried then table.insert(list, carried) end
+	groundParams.FilterDescendantsInstances = list
+	local hit = workspace:Raycast(root.Position + Vector3.new(0, standHeight + 2, 0), Vector3.new(0, -60, 0), groundParams)
+	if not hit then return end
+	local standY = hit.Position.Y + standHeight
+	if root.Position.Y < standY - 0.25 then
+		root.CFrame = root.CFrame + Vector3.new(0, standY - root.Position.Y, 0)
+		local velocity = root.AssemblyLinearVelocity
+		root.AssemblyLinearVelocity = Vector3.new(velocity.X, math.max(0, velocity.Y), velocity.Z)
+	end
+end)
+local infiniteJump = UIS.JumpRequest:Connect(function()
+	if State.AfkPinned then return end
+	local _, _, hum = getChar()
+	if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+end)
+-- กันหลุดเมื่ออยู่นิ่งตลอดอายุหน้าต่าง
+local antiAfk = player.Idled:Connect(function()
+	pcall(function()
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+	end)
+end)
+gui.Destroying:Connect(function()
+	fps.cleanup()
+	State.Closed = true
+	releaseAfkPin()
+	finderResume = nil
+	State.FindMoney, State.FindBuff = false, false
+	State.AutoFarm = false
+	Callbacks.Garden(false)
+	Callbacks.CollectGems(false)
+	antiAfk:Disconnect()
+	globalNoclip:Disconnect()
+	antiSink:Disconnect()
+	infiniteJump:Disconnect()
+end)
+
+-- ปุ่มปิด
+local closeBtn = create("TextButton", {
+	AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 8),
+	Size = UDim2.fromOffset(24, 24), BackgroundColor3 = C.Row,
+	Font = Enum.Font.GothamBold, Text = "X", TextSize = 14, TextColor3 = C.SubText,
+	AutoButtonColor = true, Parent = content,
+})
+corner(closeBtn, 6)
+closeBtn.MouseButton1Click:Connect(function()
+	State.AutoFarm, State.Debug = false, false
+	Callbacks.CollectGems(false)
+	gui:Destroy()
+end)
+
+local pagesHolder = create("Frame", {
+	Position = UDim2.fromOffset(14, 76), Size = UDim2.new(1, -28, 1, -88),
+	BackgroundTransparency = 1, Parent = content,
+})
+
+---------------------------------------------------------------------
+-- Tabs / Pages
+---------------------------------------------------------------------
+local tabs = {}
+
+local function selectTab(tab)
+	for _, t in ipairs(tabs) do
+		local on = (t == tab)
+		t.page.Visible = on
+		tween(t.button, { BackgroundColor3 = on and C.Accent or C.Row })
+		t.button.TextColor3 = on and C.Knob or C.Text
+	end
+	pageTitle.Text = tab.name
+end
+
+local function addTab(name)
+	local button = create("TextButton", {
+		Size = UDim2.new(1, 0, 0, 36), LayoutOrder = #tabs + 1,
+		BackgroundColor3 = C.Row, AutoButtonColor = false,
+		Font = FONT, Text = name, TextSize = 16, TextColor3 = C.Text,
+		Parent = tabHolder,
+	})
+	corner(button, 8)
+
+	local page = create("ScrollingFrame", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		BorderSizePixel = 0, ScrollBarThickness = 3,
+		ScrollBarImageColor3 = C.Accent,
+		CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		Visible = false, Parent = pagesHolder,
+	})
+	create("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder, Parent = page })
+	create("UIPadding", { PaddingRight = UDim.new(0, 6), Parent = page })
+
+	local tab = { name = name, button = button, page = page }
+	table.insert(tabs, tab)
+	button.MouseButton1Click:Connect(function() selectTab(tab) end)
+	return page
+end
+
+---------------------------------------------------------------------
+-- Components
+---------------------------------------------------------------------
+local order = 0
+local function nextOrder() order += 1; return order end
+
+local function makeRow(page, height)
+	local row = create("Frame", {
+		Size = UDim2.new(1, 0, 0, height or 40), LayoutOrder = nextOrder(),
+		BackgroundColor3 = C.Row, BackgroundTransparency = 0.3, -- โปร่งให้เห็นรูปพื้นหลัง (ช่องเลือก/สวิตช์ยังทึบ)
+		ClipsDescendants = true, Parent = page,
+	})
+	corner(row, 8)
+	return row
+end
+
+local function makeToggle(page, text, default, callback)
+	local row = makeRow(page)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(1, -80, 0, 40) })
+
+	local track = create("TextButton", {
+		AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0),
+		Size = UDim2.fromOffset(48, 24), BackgroundColor3 = C.Off,
+		Text = "", AutoButtonColor = false, Parent = row,
+	})
+	corner(track, 12)
+	local knob = create("Frame", {
+		Size = UDim2.fromOffset(18, 18), Position = UDim2.new(0, 3, 0.5, -9),
+		BackgroundColor3 = C.Text, Parent = track,
+	})
+	corner(knob, 9)
+
+	local state = false
+	local function set(v, silent)
+		state = v
+		tween(track, { BackgroundColor3 = v and C.Accent or C.Off })
+		tween(knob, {
+			Position = v and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9),
+			BackgroundColor3 = v and C.Knob or C.Text,
+		})
+		if not silent and callback then task.spawn(callback, v) end
+	end
+	track.MouseButton1Click:Connect(function() set(not state) end)
+	set(default or false, true)
+	return { Set = set, Get = function() return state end }
+end
+
+local function makeButton(page, text, callback)
+	local row = makeRow(page)
+	local b = create("TextButton", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		Font = FONT, Text = text, TextSize = 16, TextColor3 = C.Accent, Parent = row,
+	})
+	b.MouseButton1Click:Connect(function()
+		tween(row, { BackgroundColor3 = C.Input }, 0.08)
+		task.delay(0.1, function() tween(row, { BackgroundColor3 = C.Row }) end)
+		if callback then task.spawn(callback) end
+	end)
+end
+
+local function makeNote(page, text)
+	return label(page, text, {
+		Size = UDim2.new(1, 0, 0, 18), LayoutOrder = nextOrder(),
+		TextSize = 13, TextColor3 = C.SubText,
+	})
+end
+
+local function makeTextBox(page, text, default, callback)
+	local row = makeRow(page)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(0.45, -12, 1, 0) })
+	local box = create("TextBox", {
+		Position = UDim2.new(0.45, 0, 0, 6), Size = UDim2.new(0.55, -8, 0, 28),
+		BackgroundColor3 = C.Input, Font = FONT, Text = default or "",
+		TextSize = 15, TextColor3 = C.Text, ClearTextOnFocus = false, Parent = row,
+	})
+	corner(box, 6)
+	box.FocusLost:Connect(function() if callback then callback(box.Text) end end)
+	return box
+end
+
+local function makeDropdown(page, text, options, default, callback)
+	local ROW_H, ITEM_H, GAP = 40, 28, 4
+	local row = makeRow(page, ROW_H)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(0.45, -12, 0, ROW_H) })
+
+	local btn = create("TextButton", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 6),
+		Size = UDim2.new(0.55, -8, 0, ROW_H - 12), BackgroundColor3 = C.Input,
+		Text = "", AutoButtonColor = false, Parent = row,
+	})
+	corner(btn, 6)
+	local valueLabel = label(btn, "", { Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -34, 1, 0), TextSize = 15 })
+	local arrow = label(btn, "v", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -10, 0, 0),
+		Size = UDim2.new(0, 16, 1, 0), TextXAlignment = Enum.TextXAlignment.Right,
+		TextColor3 = C.Accent, Font = Enum.Font.GothamBold,
+	})
+
+	local list = create("Frame", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, ROW_H),
+		Size = UDim2.new(0.55, -8, 0, 0), BackgroundTransparency = 1, Parent = row,
+	})
+	create("UIListLayout", { Padding = UDim.new(0, GAP), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
+
+	local isOpen, current, opts = false, nil, {}
+
+	local function setOpen(v)
+		isOpen = v
+		local h = v and (ROW_H + #opts * (ITEM_H + GAP) + 4) or ROW_H
+		tween(row, { Size = UDim2.new(1, 0, 0, h) })
+		arrow.Text = v and "^" or "v"
+	end
+
+	local function set(v, silent)
+		current = v
+		valueLabel.Text = v or "-- เลือก --"
+		if not silent and callback then task.spawn(callback, v) end
+	end
+
+	local function setOptions(newOpts)
+		opts = newOpts or {}
+		for _, c in ipairs(list:GetChildren()) do
+			if c:IsA("TextButton") then c:Destroy() end
+		end
+		list.Size = UDim2.new(0.55, -8, 0, #opts * (ITEM_H + GAP))
+		for i, o in ipairs(opts) do
+			local item = create("TextButton", {
+				Size = UDim2.new(1, 0, 0, ITEM_H), LayoutOrder = i,
+				BackgroundColor3 = C.Input, AutoButtonColor = true,
+				Font = FONT, Text = o, TextSize = 14, TextColor3 = C.Text, Parent = list,
+			})
+			corner(item, 6)
+			item.MouseButton1Click:Connect(function()
+				set(o)
+				setOpen(false)
+			end)
+		end
+		if isOpen then setOpen(true) end
+	end
+
+	btn.MouseButton1Click:Connect(function() setOpen(not isOpen) end)
+	setOptions(options)
+	set(default, true)
+	return { Set = set, Get = function() return current end, SetOptions = setOptions }
+end
+
+-- เลือกได้หลายตัว (selected = ตาราง { [ชื่อ] = true }) ไม่เลือกเลย = ทั้งหมด
+local function makeMultiSelect(page, text, options, selected, callback, clearText, emptyText, optionColors)
+	local ROW_H, ITEM_H, GAP = 40, 28, 4
+	local CLEAR = clearText or "ล้าง (ทั้งหมด)"
+	local row = makeRow(page, ROW_H)
+	label(row, text, { Position = UDim2.fromOffset(12, 0), Size = UDim2.new(0.45, -12, 0, ROW_H) })
+
+	local btn = create("TextButton", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 6),
+		Size = UDim2.new(0.55, -8, 0, ROW_H - 12), BackgroundColor3 = C.Input,
+		Text = "", AutoButtonColor = false, Parent = row,
+	})
+	corner(btn, 6)
+	local valueLabel = label(btn, "", {
+		Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -34, 1, 0), TextSize = 15,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+	})
+	local arrow = label(btn, "v", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -10, 0, 0),
+		Size = UDim2.new(0, 16, 1, 0), TextXAlignment = Enum.TextXAlignment.Right,
+		TextColor3 = C.Accent, Font = Enum.Font.GothamBold,
+	})
+	local list = create("Frame", {
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, ROW_H),
+		Size = UDim2.new(0.55, -8, 0, 0), BackgroundTransparency = 1, Parent = row,
+	})
+	create("UIListLayout", { Padding = UDim.new(0, GAP), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
+
+	local isOpen, opts, items = false, nil, {}
+
+	local function refreshText()
+		local names = {}
+		for _, o in ipairs(opts) do if selected[o] then table.insert(names, o) end end
+		for o in pairs(selected) do if not table.find(names, o) then table.insert(names, o) end end
+		valueLabel.Text = #names == 0 and (emptyText or "ทั้งหมด") or table.concat(names, ", ")
+		for o, item in pairs(items) do
+			local on = selected[o] == true
+			item.BackgroundColor3 = on and C.Accent or C.Input
+			local color = optionColors and optionColors[o]
+			-- สีเดียวตามความหายาก + ขอบอักษรสีดำ ให้อ่านได้แม้พื้นหลังถูกเลือก (เขียว)
+			item.TextColor3 = color or (on and C.Knob or C.Text)
+			item.TextStrokeColor3 = Color3.new(0, 0, 0)
+			item.TextStrokeTransparency = color and 0 or 1
+		end
+	end
+
+	local function setOpen(v)
+		isOpen = v
+		local h = v and (ROW_H + (#opts + 1) * (ITEM_H + GAP) + 4) or ROW_H
+		tween(row, { Size = UDim2.new(1, 0, 0, h) })
+		arrow.Text = v and "^" or "v"
+	end
+
+	local function changed()
+		refreshText()
+		if callback then task.spawn(callback, selected) end
+	end
+
+	local function setOptions(newOpts, newColors)
+		newOpts = newOpts or {}
+		local colors = newColors or optionColors
+		-- ไม่สร้างรายการซ้ำขณะเปิดอยู่ ถ้าชื่อ ลำดับ และสียังเหมือนเดิม
+		local same = opts ~= nil and #opts == #newOpts
+		if same then
+			for i, name in ipairs(newOpts) do
+				if opts[i] ~= name or (optionColors and optionColors[name]) ~= (colors and colors[name]) then
+					same = false
+					break
+				end
+			end
+		end
+		if newColors ~= nil then optionColors = newColors end
+		if same then refreshText() return end
+		opts = newOpts
+		for _, c in ipairs(list:GetChildren()) do
+			if c:IsA("TextButton") then c:Destroy() end
+		end
+		items = {}
+		list.Size = UDim2.new(0.55, -8, 0, (#opts + 1) * (ITEM_H + GAP))
+		local clear = create("TextButton", {
+			Size = UDim2.new(1, 0, 0, ITEM_H), LayoutOrder = 0, BackgroundColor3 = C.Row,
+			AutoButtonColor = true, Font = FONT, Text = CLEAR, TextSize = 14,
+			TextColor3 = C.SubText, Parent = list,
+		})
+		corner(clear, 6)
+		clear.MouseButton1Click:Connect(function()
+			for k in pairs(selected) do selected[k] = nil end
+			changed()
+		end)
+		for i, o in ipairs(opts) do
+			local item = create("TextButton", {
+				Size = UDim2.new(1, 0, 0, ITEM_H), LayoutOrder = i,
+				BackgroundColor3 = C.Input, AutoButtonColor = true,
+				Font = FONT, Text = o, TextSize = 14, TextColor3 = C.Text, Parent = list,
+			})
+			corner(item, 6)
+			items[o] = item
+			item.MouseButton1Click:Connect(function()
+				selected[o] = (not selected[o]) or nil
+				changed()
+			end)
+		end
+		refreshText()
+		if isOpen then setOpen(true) end
+	end
+
+	btn.MouseButton1Click:Connect(function() setOpen(not isOpen) end)
+	setOptions(options)
+	return { SetOptions = setOptions }
+end
+
+---------------------------------------------------------------------
+-- Build pages
+---------------------------------------------------------------------
+-- 1) ฟาร์ม
+local farmPage = addTab("ฟาร์ม")
+local eggPicker, lastEggList
+local refreshAnimalList -- สร้างหลังตัวเลือกสัตว์ แล้วเรียกเมื่อเปลี่ยนโซน
+
+-- อัปเดตรายชื่อไข่ของโซนที่เลือก (เรียกตอนเปลี่ยนโซน และวนเช็กเองทุก 1.5 วิ)
+local function refreshEggList()
+	if not eggPicker then return end
+	local list = eggTypesOf(State.Zone)
+	local key = table.concat(list, "|")
+	if key ~= lastEggList then
+		lastEggList = key
+		eggPicker.SetOptions(list)
+	end
+end
+
+makeDropdown(farmPage, "เลือกโซน", CONFIG.ZoneOrder, State.Zone, function(zone)
+	State.Zone = zone
+	for k in pairs(State.Eggs) do State.Eggs[k] = nil end   -- ไข่ของโซนเก่าใช้ไม่ได้แล้ว
+	lastEggList = nil
+	refreshEggList()
+	if refreshAnimalList then refreshAnimalList() end
+	Callbacks.ZoneChanged(zone)
+end)
+
+-- เปิด/ปิดเริ่มฟาร์ม = เปิด/ปิดเก็บเพชรด้วย (ปิดเก็บเพชรแยกได้ ฟาร์มยังทำงานต่อ)
+farmToggle = makeToggle(farmPage, "เริ่มฟาร์ม", false, function(on)
+	if on then releaseAfkPin() end
+	if on and (State.DeliveryBusy or State.Closed) then farmToggle.Set(false) return end
+	if on and State.Garden then
+		gardenToggle.Set(false)
+		if not waitForMotion(function() return State.Closed or State.DeliveryBusy or not farmToggle.Get() end) then return end
+	end
+	if gemToggle then gemToggle.Set(on and not finderResume) end
+	Callbacks.AutoFarm(on)
+end)
+gemToggle = makeToggle(farmPage, "เก็บเพชร", false, function(on)
+	if on then releaseAfkPin() end
+	if on and (State.Garden or State.DeliveryBusy or State.Closed) then gemToggle.Set(false) return end
+	Callbacks.CollectGems(on)
+end)
+
+eggPicker = makeMultiSelect(farmPage, "เลือกไข่", {}, State.Eggs, function()
+	say("เลือกไข่:", next(State.Eggs) and "ตั้งแล้ว" or "ทุกชนิด")
+end, "ล้าง (ทุกชนิด)")
+refreshEggList()
+task.spawn(function()
+	while gui.Parent do
+		refreshEggList()
+		task.wait(1.5)
+	end
+end)
+makeDropdown(farmPage, "ลำดับการตี", { PRIORITY_NEAR, PRIORITY_RARE, PRIORITY_LUCK }, State.Priority, function(p)
+	State.Priority = p
+	say("ลำดับการตี:", p)
+end)
+makeNote(farmPage, "* รายชื่อไข่อัปเดตเองตามโซนที่เลือก (เลือกได้หลายชนิด)")
+statusLabel = label(farmPage, "สถานะ: พร้อม", {
+	Size = UDim2.new(1, 0, 0, 20), LayoutOrder = nextOrder(),
+	TextSize = 13, TextColor3 = C.Accent, TextTruncate = Enum.TextTruncate.AtEnd,
+})
+
+-- 2) หาตัว
+local findPage = addTab("หาตัว")
+local Finder = { Minimum = nil, Secondary = {}, Animals = {}, Buffs = {},
+	MoneyDestination = "กลับบ้าน", BuffDestination = "กลับบ้าน" }
+local ANIMAL_FILE = "FarmHub_animals.json"
+local animalNames, rarityColors, animalsDirty, animalSaveAt = {}, {}, false, 0
+pcall(function()
+	if isfile and isfile(ANIMAL_FILE) then
+		local saved = HttpService:JSONDecode(readfile(ANIMAL_FILE))
+		-- โหลดสีประจำความหายากก่อน เพื่อไม่ให้สีเก่ารายชื่อมาเขียนทับ
+		if type(saved.rarityColors) == "table" then
+			for rarity, hex in pairs(saved.rarityColors) do
+				if type(rarity) == "string" and type(hex) == "string" and hex:match("^%x%x%x%x%x%x$") then
+					rarityColors[rarity] = hex
+				end
+			end
+		end
+		for zone, names in pairs(saved) do
+			if zone ~= "rarityColors" and type(zone) == "string" and type(names) == "table" then
+				animalNames[zone] = {}
+				-- รองรับทั้งรายการชื่อเดิม และตารางชื่อพร้อมความหายาก/สี
+				for key, value in pairs(names) do
+					if type(key) == "number" and type(value) == "string" then
+						animalNames[zone][value] = {}
+					elseif type(key) == "string" and type(value) == "table" then
+						animalNames[zone][key] = {
+							Rarity = type(value.Rarity) == "string" and value.Rarity or nil,
+						}
+						-- ย้ายสีรายชื่อจากไฟล์เดิมมาใช้ครั้งแรกของความหายากนั้น
+						local rarity = animalNames[zone][key].Rarity
+						if rarity and rarity ~= "" and not rarityColors[rarity]
+							and type(value.Color) == "string" and value.Color:match("^%x%x%x%x%x%x$") then
+							rarityColors[rarity], animalsDirty = value.Color, true
+						end
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- สีประจำความหายากจากแม่แบบเกม: ใช้สีที่สดที่สุดในไล่ระดับ (สีเดียว อ่านง่าย) ทับสีเก่าที่ซีด
+pcall(function()
+	local rarities = ReplicatedStorage:FindFirstChild("Rarities")
+	if not rarities then return end
+	for _, gradient in ipairs(rarities:GetChildren()) do
+		if gradient:IsA("UIGradient") then
+			local best, bestScore = nil, -1
+			for _, kp in ipairs(gradient.Color.Keypoints) do
+				local h, s, v = kp.Value:ToHSV()
+				local score = s * v
+				if score > bestScore then best, bestScore = kp.Value, score end
+			end
+			if best then
+				local h, s, v = best:ToHSV()
+				best = Color3.fromHSV(h, s, math.max(v, 0.85)) -- ให้สว่างพอบนพื้นมืด
+				local hex = best:ToHex()
+				if rarityColors[gradient.Name] ~= hex then rarityColors[gradient.Name], animalsDirty = hex, true end
+			end
+		end
+	end
+end)
+
+local function selectedZoneId()
+	local n = State.Zone:match("(%d+)$")
+	return n and "Zone" .. n
+end
+
+makeNote(findPage, "หาตามเงินต่อวินาที")
+local minimumNote
+local function updateMinimum(text)
+	Finder.Minimum = parseMoney(text)
+	if minimumNote then
+		minimumNote.Text = Finder.Minimum and ("ขั้นต่ำ " .. string.format("%.6g", Finder.Minimum) .. " ต่อวินาที")
+			or "ไม่ตั้งขั้นต่ำ: ใช้เฉพาะตัวอันดับ 2"
+	end
+end
+local minimumBox = makeTextBox(findPage, "เงินขั้นต่ำ/วิ", "", updateMinimum)
+minimumNote = makeNote(findPage, "ไม่ตั้งขั้นต่ำ: ใช้เฉพาะตัวอันดับ 2")
+-- อัปเดตทันทีเมื่อแก้ข้อความ ไม่ต้องรอออกจากช่องก่อนเปิดกลุ่ม
+minimumBox:GetPropertyChangedSignal("Text"):Connect(function() updateMinimum(minimumBox.Text) end)
+local secondaryPicker = makeMultiSelect(findPage, "ตัวอันดับ 2", {}, Finder.Secondary, nil, "ล้าง (ไม่เลือก)", "ไม่เลือก")
+makeDropdown(findPage, "พาไปที่", { "กลับบ้าน", "จุด AFK" }, Finder.MoneyDestination, function(v)
+	Finder.MoneyDestination = v
+end)
+local moneyToggle, buffToggle
+moneyToggle = makeToggle(findPage, "เปิดหาตัว (กลุ่ม 1)", false, function(on)
+	if on then updateMinimum(minimumBox.Text) releaseAfkPin() end
+	if on and (State.DeliveryBusy or State.Closed) then moneyToggle.Set(false) return end
+	State.FindMoney = on
+end)
+makeNote(findPage, "หาตัวติดบัพ")
+makeDropdown(findPage, "พาไปที่", { "กลับบ้าน", "จุด AFK" }, Finder.BuffDestination, function(v)
+	Finder.BuffDestination = v
+end)
+buffToggle = makeToggle(findPage, "เปิดหาตัวติดบัพ (กลุ่ม 2)", false, function(on)
+	if on then releaseAfkPin() end
+	if on and (State.DeliveryBusy or State.Closed) then buffToggle.Set(false) return end
+	State.FindBuff = on
+end)
+local animalPicker = makeMultiSelect(findPage, "ตัว", {}, Finder.Animals)
+makeMultiSelect(findPage, "บัพ", { "Hacker", "Time", "Haeven", "Thunder", "Void", "ice", "Gold", "Diamond" },
+	Finder.Buffs, nil, "ล้าง (ไม่เลือก)", "ไม่เลือก")
+makeNote(findPage, "* กลุ่ม 2 ต้องเลือกบัพอย่างน้อยหนึ่งชนิด")
+local finderStatus = makeNote(findPage, "สถานะหาตัว รอเปิดใช้งาน")
+local lastAnimalList, lastAnimalZone
+refreshAnimalList = function()
+	local folder = workspace:FindFirstChild("AnimalPickups")
+	if folder then
+		for _, animal in ipairs(folder:GetChildren()) do
+			local zone, name = animal:GetAttribute("ZoneId"), animal:GetAttribute("AnimalName")
+			if type(zone) == "string" and type(name) == "string" and name ~= "" then
+				animalNames[zone] = animalNames[zone] or {}
+				local info = animalNames[zone][name]
+				if not info then
+					info = {}
+					animalNames[zone][name], animalsDirty = info, true
+				end
+				local rarity = animal:GetAttribute("Rarity")
+				local root = animal:FindFirstChild("RootPart")
+				local attachment = root and root:FindFirstChild("AnimalOverheadAttachment")
+				local overhead = attachment and attachment:FindFirstChild("AnimalOverhead")
+				local rarityFrame = overhead and overhead:FindFirstChild("Rarity")
+				local rarityLabel = rarityFrame and rarityFrame:FindFirstChild("RarityLabel")
+				local gradient = rarityLabel and rarityLabel:FindFirstChildWhichIsA("UIGradient")
+				if type(rarity) ~= "string" or rarity == "" then
+					rarity = gradient and gradient:GetAttribute("Rarity")
+				end
+				if type(rarity) == "string" and rarity ~= "" and info.Rarity ~= rarity then
+					info.Rarity, animalsDirty = rarity, true
+				end
+				-- จำสีครั้งแรกต่อความหายาก ไม่อ่านสีไล่ระดับที่เคลื่อนไหวซ้ำ
+				if info.Rarity and not rarityColors[info.Rarity] then
+					local color = gradient and gradient.Color.Keypoints[1] and gradient.Color.Keypoints[1].Value
+					if not color and rarityLabel and rarityLabel:IsA("TextLabel") then color = rarityLabel.TextColor3 end
+					if color then rarityColors[info.Rarity], animalsDirty = color:ToHex(), true end
+				end
+			end
+		end
+	end
+	local zone, list, colors, ranks, keys = selectedZoneId(), {}, {}, {}, {}
+	-- รวมรายชื่อเต็มกับสัตว์ที่เคยพบ โดยใช้ข้อมูลจากรายชื่อเต็มก่อน
+	local names = {}
+	for name, info in pairs(animalNames[zone] or {}) do names[name] = info end
+	for name, info in pairs(zoneRoster[zone] or {}) do names[name] = info end
+	for name, info in pairs(names) do
+		table.insert(list, name)
+		ranks[name] = animalRarityRank(info.Rarity)
+		local hex = rarityColors[info.Rarity]
+		if hex then colors[name] = Color3.fromHex(hex) end
+	end
+	table.sort(list, function(a, b)
+		if ranks[a] ~= ranks[b] then return ranks[a] > ranks[b] end
+		local cashA, cashB = names[a].Cash or 0, names[b].Cash or 0
+		if cashA ~= cashB then return cashA > cashB end
+		return a < b
+	end)
+	-- ตรวจเฉพาะชื่อ ความหายาก และสีประจำความหายากที่จำไว้แล้ว
+	for _, name in ipairs(list) do
+		local info = names[name]
+		table.insert(keys, name .. ":" .. (info.Rarity or "") .. ":" .. (rarityColors[info.Rarity] or ""))
+	end
+	local key = table.concat(keys, "|")
+	if zone ~= lastAnimalZone then
+		table.clear(Finder.Secondary)
+		table.clear(Finder.Animals)
+	end
+	if key ~= lastAnimalList or zone ~= lastAnimalZone then
+		lastAnimalList, lastAnimalZone = key, zone
+		secondaryPicker.SetOptions(list, colors)
+		animalPicker.SetOptions(list, colors)
+	end
+	if animalsDirty and writefile and os.clock() >= animalSaveAt then
+		local data = { rarityColors = rarityColors }
+		for id, names in pairs(animalNames) do
+			data[id] = {}
+			for name, info in pairs(names) do
+				data[id][name] = { Rarity = info.Rarity }
+			end
+		end
+		local ok = pcall(function() writefile(ANIMAL_FILE, HttpService:JSONEncode(data)) end)
+		if ok then animalsDirty = false end
+		animalSaveAt = os.clock() + 5
+	end
+end
+refreshAnimalList()
+task.spawn(function()
+	while gui.Parent do refreshAnimalList() task.wait(1.5) end
+end)
+
+local function finderSay(text)
+	pcall(function() finderStatus.Text = "สถานะหาตัว " .. text end)   -- กัน GUI error หยุดงาน
+	say(text)
+end
+
+-- ตรวจว่าโมเดลยังอยู่ในโฟลเดอร์สัตว์ก่อนค้นหาจุดกด
+local function animalPresent(animal)
+	local folder = workspace:FindFirstChild("AnimalPickups")
+	return folder and animal.Parent == folder
+end
+-- ตัดแท็ก สี น้ำหนัก และช่องว่าง เพื่อเทียบชื่อที่แสดงกับ AnimalName
+local function normaliseAnimalName(name)
+	return (tostring(name or ""):gsub("<[^>]*>", ""):gsub("%b[]", ""):gsub("%s+", ""):lower())
+end
+-- ใช้จุดกึ่งกลางโมเดลแทนรากที่อาจอยู่ห่างมากในสัตว์ตัวใหญ่
+local function animalPosition(animal)
+	local cf = animal:GetBoundingBox()
+	return cf.Position
+end
+local function animalPrompt(animal)
+	if not animalPresent(animal) then return end
+	local position = animalPosition(animal)
+	local name = normaliseAnimalName(animal:GetAttribute("AnimalName"))
+	local best, bestDistance = nil, 60
+	local fallback, fallbackDistance = nil, 25
+	for _, anchor in ipairs(workspace:GetChildren()) do
+		if anchor.Name == "PromptAnchor" and anchor:IsA("BasePart") then
+			local prompt = anchor:FindFirstChild("StealPrompt")
+			if prompt and prompt:IsA("ProximityPrompt") and prompt.Enabled then
+				local distance = (anchor.Position - position).Magnitude
+				if name ~= "" and normaliseAnimalName(prompt.ObjectText) == name and distance <= bestDistance then
+					best, bestDistance = prompt, distance
+				end
+				if distance <= fallbackDistance then fallback, fallbackDistance = prompt, distance end
+			end
+		end
+	end
+	-- ใช้จุดใกล้ที่สุดเฉพาะเมื่อไม่พบชื่อที่ตรงกันในระยะที่กำหนด
+	return best or fallback
+end
+local function animalDetails(animal)
+	local root = animal:FindFirstChild("RootPart")
+	local attachment = root and root:FindFirstChild("AnimalOverheadAttachment")
+	local overhead = attachment and attachment:FindFirstChild("AnimalOverhead")
+	local cash = overhead and overhead:FindFirstChild("CashPerSecond")
+	cash = cash and cash:FindFirstChild("CashPerSecond")
+	local cps = cash and cash:IsA("TextLabel") and parseMoney(cash.Text) or 0
+	local mutation = overhead and overhead:FindFirstChild("Mutation")
+	local buffs = {}
+	local function add(value)
+		if type(value) == "string" and value ~= "" then buffs[value:lower():match("^%s*(.-)%s*$")] = true end
+	end
+	if mutation and mutation:IsA("TextLabel") then add(mutation.Text) end
+	add(animal:GetAttribute("AuraMutation"))
+	add(animal:GetAttribute("Mutation"))
+	return cps or 0, buffs, cash and cash:IsA("TextLabel") and cash.Text
+end
+local function chooseAnimal(findMoney, findBuff)
+	local n = activeZone():match("(%d+)$")
+	local zoneId = n and "Zone" .. n
+	if findMoney == nil then findMoney = State.FindMoney end
+	if findBuff == nil then findBuff = State.FindBuff end
+	local folder = workspace:FindFirstChild("AnimalPickups")
+	if not folder then return end
+	local candidates, anyAFK = {}, false
+	for _, animal in ipairs(folder:GetChildren()) do
+		local despawn = animal:GetAttribute("DespawnAtServerTime")
+		if animal:IsA("Model") and animal:GetAttribute("ZoneId") == zoneId
+			and type(despawn) == "number" and despawn - workspace:GetServerTimeNow() > 6 then
+			local cps, buffs = animalDetails(animal)
+			local name = animal:GetAttribute("AnimalName")
+			local rank
+			if findMoney then
+				-- ไม่ตั้งขั้นต่ำ = ปิดเงื่อนไขหลัก แต่ยังรับตัวอันดับ 2
+				if Finder.Minimum ~= nil and cps >= Finder.Minimum then rank = 1 end
+				if not rank and Finder.Secondary[name] then rank = 2 end
+			end
+			local buffMatch = false
+			if findBuff and (next(Finder.Animals) == nil or Finder.Animals[name]) then
+				for buff in pairs(Finder.Buffs) do
+					if buffs[buff:lower()] then buffMatch = true break end
+				end
+			end
+			if rank or buffMatch then
+				local afk = (rank and Finder.MoneyDestination == "จุด AFK")
+					or (buffMatch and Finder.BuffDestination == "จุด AFK")
+				anyAFK = anyAFK or afk
+				table.insert(candidates, { Animal = animal, Cps = cps, Rank = rank or 3 })
+			end
+		end
+	end
+	local best
+	for _, candidate in ipairs(candidates) do
+		if not best or candidate.Cps > best.Cps
+			or (candidate.Cps == best.Cps and candidate.Rank < best.Rank) then best = candidate end
+	end
+	return best, anyAFK and "จุด AFK" or "กลับบ้าน"
+end
+
+local function stealSameAnimal(animal, timeout, immediate, shouldStop, reselect)
+	-- เก็บตัวตนแยกจากโมเดล เพราะเกมสร้างโมเดลใหม่เมื่อสัตว์ตก
+	local identity = type(animal) == "table" and animal or {
+		HatchId = animal:GetAttribute("HatchId"), Name = animal:GetAttribute("AnimalName"),
+	}
+	local hatchId, targetName = identity.HatchId, identity.Name
+	local position = type(animal) ~= "table" and animalPosition(animal)
+	local _, root = getChar()
+	local nearPos = immediate and root and root.Position or position
+	local selectedAnimal = animal
+	local function findAnimalByHatch(hatchId, nearPos)
+		local folder = workspace:FindFirstChild("AnimalPickups")
+		if not folder then return end
+		-- รอบเก็บซ้ำใช้ตำแหน่งผู้เล่นปัจจุบัน และรับโมเดลที่เพิ่งเกิดชื่อเดียวกัน
+		if immediate then
+			local _, currentRoot = getChar()
+			nearPos = currentRoot and currentRoot.Position
+		end
+		local nearest, bestDistance = nil, 80
+		for _, candidate in ipairs(folder:GetChildren()) do
+			if candidate:IsA("Model") then
+				if hatchId ~= nil and candidate:GetAttribute("HatchId") == hatchId then return candidate end
+				-- เมื่อไม่มี HatchId ใช้ชื่อเดียวกันและระยะจากกึ่งกลางโมเดล
+				if nearPos and normaliseAnimalName(targetName) ~= ""
+					and normaliseAnimalName(candidate:GetAttribute("AnimalName")) == normaliseAnimalName(targetName) then
+					local distance = (animalPosition(candidate) - nearPos).Magnitude
+					if distance <= bestDistance then nearest, bestDistance = candidate, distance end
+				end
+			end
+		end
+		return nearest
+	end
+	local function logTimeout()
+		local current = findAnimalByHatch(hatchId, nearPos)
+		local prompt = current and animalPrompt(current)
+		local _, currentRoot = getChar()
+		local distance = prompt and currentRoot and (promptPos(prompt) - currentRoot.Position).Magnitude
+		local folder = workspace:FindFirstChild("CarriedAnimals")
+		finderSay("หมดเวลายก " .. tostring(targetName) .. " HatchId=" .. tostring(identity.HatchId)
+			.. " AnimalName=" .. tostring(identity.Name)
+			.. " พบจุด StealPrompt=" .. tostring(prompt ~= nil)
+			.. " ระยะ=" .. (distance and string.format("%.1f", distance) or "ไม่ทราบ")
+			.. " จำนวนใน CarriedAnimals=" .. tostring(folder and #folder:GetChildren() or 0)
+			.. " แสดงปุ่ม Drop=" .. tostring(dropButtonShown()))
+	end
+	-- เวลาเดินทางรอบแรกแยกจากเวลารอกดเก็บ
+	if isCarrying() then return false end
+	animal = findAnimalByHatch(hatchId, nearPos)
+	if not immediate and animal then
+		local prompt = animalPrompt(animal)
+		if prompt and root then
+			if not tweenTo(onGround(besideCFrame(promptPos(prompt), root, 2), animal), shouldStop) then return false end
+		end
+	end
+	local started, destination = os.clock(), nil
+	local lastPress, wrongSince = -math.huge, nil
+	local appeared = false
+	local function timedOut() return State.AfkPinned or shouldStop() or os.clock() - started >= timeout end
+	while not timedOut() do
+		local carried = carriedAnimal()
+		if isCarrying() then
+			local carriedHatch = carried and carried:GetAttribute("HatchId")
+			if carriedHatch == nil or carriedHatch == hatchId
+				or (hatchId == nil and normaliseAnimalName(carried:GetAttribute("AnimalName")) == normaliseAnimalName(targetName)) then
+				return true, identity, destination
+			end
+			wrongSince = wrongSince or os.clock()
+			-- เผื่อโฟลเดอร์ฝั่งเซิร์ฟเวอร์อัปเดตคนละเฟรม
+			if os.clock() - wrongSince >= 0.3 then
+				finderSay("ยกผิดตัว " .. tostring(carried:GetAttribute("AnimalName") or carried.Name)
+					.. " วางสัตว์และยกเลิกการส่ง")
+				local drop = ReplicatedStorage:FindFirstChild("DropCarriedRemote", true)
+				if drop and drop:IsA("RemoteEvent") then drop:FireServer() end
+				return false
+			end
+		else
+			wrongSince = nil
+			animal = findAnimalByHatch(hatchId, nearPos)
+			if animal then appeared = true end
+			-- รอโมเดลที่ตกปรากฏได้ 2.5 วินาที โดยค้นหาใหม่ทุกเฟรม
+			if immediate and not appeared and os.clock() - started >= 2.5 then break end
+			local _, currentRoot = getChar()
+			if not currentRoot then return false end
+			local prompt = animal and animalPrompt(animal)
+			if prompt then
+				local cf = besideCFrame(promptPos(prompt), currentRoot, 2)
+				if immediate then currentRoot.CFrame = cf
+				elseif (currentRoot.Position - cf.Position).Magnitude > 4 then
+					if not tweenTo(onGround(cf, animal), timedOut) then
+						if not shouldStop() then logTimeout() end
+						return false
+					end
+				end
+			end
+			if timedOut() then break end
+			-- เลือกค่าสูงสุดอีกครั้งหลังเดินทาง แล้วล็อก HatchId ตั้งแต่กดครั้งแรก
+			if reselect and lastPress == -math.huge then
+				local candidate
+				candidate, destination = reselect()
+				if not candidate then return false end
+				local nextHatch = candidate.Animal:GetAttribute("HatchId")
+				if candidate.Animal ~= selectedAnimal then
+					selectedAnimal = candidate.Animal
+					hatchId, targetName = nextHatch, selectedAnimal:GetAttribute("AnimalName")
+					identity = { HatchId = hatchId, Name = targetName }
+					nearPos = animalPosition(selectedAnimal)
+					continue
+				end
+			end
+			animal = findAnimalByHatch(hatchId, nearPos)
+			prompt = animal and animalPrompt(animal)
+			if prompt and not isCarrying() and os.clock() - lastPress >= 0.35 then
+				-- ยืนติดจุดกดและกดซ้ำจนกว่าเซิร์ฟเวอร์จะยืนยันว่าถือแล้ว
+				currentRoot.CFrame = besideCFrame(promptPos(prompt), currentRoot, 2)
+				currentRoot.AssemblyLinearVelocity = Vector3.zero
+				if lastPress == -math.huge then
+					-- ล็อกตัวตนจากโมเดลบนพื้นก่อนกด รวมถึงตัวชื่อเดิมที่เกิดใหม่
+					hatchId, targetName = animal:GetAttribute("HatchId"), animal:GetAttribute("AnimalName")
+					identity = { HatchId = hatchId, Name = targetName }
+					local cps, _, cashText = animalDetails(animal)
+					finderSay("เลือก " .. tostring(targetName)
+						.. " " .. (cashText or ("$" .. string.format("%.6g", cps) .. "/s")))
+				end
+				lastPress = os.clock()
+				triggerPrompt(prompt)
+			end
+		end
+		task.wait()
+	end
+	if not shouldStop() then logTimeout() end
+	return false
+end
+
+local deliveryEndedAt = -math.huge
+local function deliverAnimal(animal, destination, alreadyCarrying, carryZone)
+	if State.DeliveryBusy or os.clock() - deliveryEndedAt < 2 then return end
+	State.DeliveryZone = alreadyCarrying and carryZone or activeZone()
+	State.DeliveryBusy = true
+	local gardenWasOn = State.Garden or (gardenToggle and gardenToggle.Get())
+	local farmWasOn = State.AutoFarm or farmToggle.Get()
+	local gemsWereOn = gemToggle.Get()
+	local findMoney, findBuff = moneyToggle.Get(), buffToggle.Get()
+	local finderPaused = false
+	local function pauseFinder()
+		if destination ~= "กลับบ้าน" then return end
+		finderPaused = true
+		State.FindMoney, State.FindBuff = false, false
+		moneyToggle.Set(false)
+		buffToggle.Set(false)
+	end
+	pauseFinder()
+	local function chooseDeliveryAnimal()
+		if finderPaused then return chooseAnimal(findMoney, findBuff) end
+		return chooseAnimal()
+	end
+	local zone, character = activeZone(), player.Character
+	local selectedZone = gardenWasOn and Garden.Zone or State.Zone
+	local function shouldStop()
+		return State.AfkPinned or State.Closed or (gardenWasOn and Garden.Zone or State.Zone) ~= selectedZone or player.Character ~= character
+			or not getChar() or (not finderPaused and not (State.FindMoney or State.FindBuff))
+	end
+	local ok, err = pcall(function()
+		if alreadyCarrying then
+			finderSay("พบสัตว์ที่ถืออยู่: " .. tostring(animal.Name) .. " กำลังพาไป " .. destination)
+		else
+			finderSay("กำลังหยุดฟาร์มเพื่อเลือกสัตว์")
+		end
+		gardenToggle.Set(false)
+		farmToggle.Set(false)
+		gemToggle.Set(false)
+		-- Set เรียก callback ในเธรดใหม่ รอทั้งสถานะและเธรดเคลื่อนที่ให้จบ
+		repeat
+			task.wait()
+			for thread in pairs(motionLoops) do
+				if coroutine.status(thread) == "dead" then motionLoops[thread] = nil end
+			end
+			if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+		until not State.Garden and not State.AutoFarm and not State.CollectGems and next(motionLoops) == nil
+		local _, _, hum = getChar()
+		hum:UnequipTools()
+		if alreadyCarrying then
+			if not isCarrying() then error("สัตว์ที่ถืออยู่หายไปแล้ว") end
+		else
+			if isCarrying() then error("กำลังถือสัตว์ตัวอื่นอยู่") end
+			local candidate, currentDestination = chooseDeliveryAnimal()
+			if not candidate then
+				finderSay("ไม่มีสัตว์ที่ตรงเงื่อนไขแล้ว ยกเลิกการส่ง")
+				return
+			end
+			animal, destination = candidate.Animal, currentDestination
+			local lifted, selectedAnimal, selectedDestination = stealSameAnimal(animal, 5, false, shouldStop, chooseDeliveryAnimal)
+			if not lifted then error("ยกสัตว์ไม่สำเร็จ") end
+			animal, destination = selectedAnimal, selectedDestination
+		end
+		pauseFinder()
+		local guard = getGuard(zone)
+		if not guard then error("ไม่พบผู้พิทักษ์ของโซน") end
+		finderSay("รอผู้พิทักษ์ตีให้สัตว์ตก")
+		if not waitForGuardHit(guard, shouldStop) or shouldStop() or isCarrying() then
+			error("ผู้พิทักษ์ยังไม่ทำให้สัตว์ตก")
+		end
+		-- เก็บตัวเดิมทันทีตอนยังล้ม ห้ามรอให้ลุกก่อนวาร์ป
+		if not stealSameAnimal(animal, 3, true, shouldStop) then error("ยกสัตว์ตัวเดิมซ้ำไม่สำเร็จ") end
+		-- จำจุดฟาร์มทันทีหลังยกซ้ำ ขณะยังล้มอยู่ใกล้ผู้พิทักษ์
+		local _, returnRoot = getChar()
+		local returnCF = destination == "กลับบ้าน" and returnRoot and returnRoot.CFrame
+		local target = destination == "จุด AFK" and CONFIG.AFK or CONFIG.Home
+		local arrived = false
+		for _ = 1, 3 do
+			if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+			local _, root = getChar()
+			root.CFrame = target
+			root.AssemblyLinearVelocity = Vector3.zero
+			root.AssemblyAngularVelocity = Vector3.zero
+			holdAfterTeleport(target, destination == "จุด AFK" and 2 or 1.2)
+			task.wait(0.4)
+			local _, currentRoot = getChar()
+			if currentRoot and (currentRoot.Position - target.Position).Magnitude <= 40 then arrived = true break end
+		end
+		if not arrived then error("ถูกดึงกลับหลังวาร์ปครบสามครั้ง") end
+		if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+		if destination == "จุด AFK" then
+			State.FindMoney, State.FindBuff = false, false
+			moneyToggle.Set(false)
+			buffToggle.Set(false)
+			gardenToggle.Set(false)
+			farmToggle.Set(false)
+			gemToggle.Set(false)
+			if not pinAtAfk() then error("ไม่สามารถตรึงตัวที่จุด AFK") end
+			finderSay("ถึงจุด AFK แล้ว ปิดทุกระบบ")
+		else
+			local started = os.clock()
+			while isCarrying() and os.clock() - started < 3 and not shouldStop() do task.wait(0.05) end
+			if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+			if isCarrying() then error("กลับบ้านแล้วแต่ยังฝากสัตว์ไม่สำเร็จ") end
+			-- กลับจุดเดิมก่อนเปิดฟาร์ม เพื่อให้การตรวจระยะโซนข้ามช่วงอุ่นเครื่อง
+			local returned = false
+			for _ = 1, 3 do
+				if shouldStop() then error("ยกเลิกการส่งสัตว์") end
+				local _, root = getChar()
+				if not returnCF or not root then break end
+				root.CFrame = returnCF
+				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyAngularVelocity = Vector3.zero
+				holdAfterTeleport(returnCF)
+				task.wait(0.4)
+				local _, currentRoot = getChar()
+				if currentRoot and (currentRoot.Position - returnCF.Position).Magnitude <= 40 then
+					returned = true
+					break
+				end
+			end
+			if not returned then finderSay("กลับจุดฟาร์มไม่สำเร็จ ให้ฟาร์มเริ่มตามขั้นตอนปกติ") end
+			finderSay("ฝากสัตว์แล้ว เริ่มฟาร์มต่อ")
+		end
+	end)
+	deliveryEndedAt = os.clock()
+	State.DeliveryBusy = false
+	State.DeliveryZone = nil
+	if not ok then finderSay("ส่งสัตว์ไม่สำเร็จ " .. tostring(err)) end
+	if not State.Closed and not State.AfkPinned and destination == "กลับบ้าน"
+		and (gardenWasOn and Garden.Zone or State.Zone) == selectedZone then
+		if farmWasOn or gardenWasOn then
+			finderResume = { Money = findMoney, Buff = findBuff, Gems = not gardenWasOn and gemsWereOn, Garden = gardenWasOn }
+			if gardenWasOn then gardenToggle.Set(true) else farmToggle.Set(true) end
+		else
+			if findMoney then moneyToggle.Set(true) end
+			if findBuff then buffToggle.Set(true) end
+			if gemsWereOn then gemToggle.Set(true) end
+		end
+	end
+end
+
+-- รับช่วงสัตว์ที่ผู้เล่นยกเอง โดยไม่ผูกกับฟาร์ม สวน หรือเงื่อนไขเลือกสัตว์
+task.spawn(function()
+	local carrySince
+	while gui.Parent do
+		local ok, err = pcall(function()
+			local carrying = isCarrying()
+			if not carrying then
+				carrySince = nil
+				State.ManualCarryBlocked = false
+			elseif State.ScriptLift or State.DeliveryBusy then
+				carrySince = nil
+				State.ManualCarryBlocked = true
+			elseif (State.FindMoney or State.FindBuff) and not State.Closed and not State.AfkPinned
+				and not State.ManualCarryBlocked then
+				carrySince = carrySince or os.clock()
+				if os.clock() - carrySince < 0.5 or os.clock() - deliveryEndedAt < 2 then return end
+				-- ล็อกจนวางสัตว์ แม้ค้นตัวตนหรือส่งไม่สำเร็จก็ไม่วนส่งซ้ำ
+				State.ManualCarryBlocked = true
+				local carried = carriedAnimal()
+				local _, root = getChar()
+				if not carried or not root then error("ไม่พบโมเดลสัตว์ที่ถืออยู่") end
+				local identity = { Name = carried:GetAttribute("AnimalName") or carried.Name,
+					HatchId = carried:GetAttribute("HatchId") }
+				local zoneId = carried:GetAttribute("ZoneId")
+				if zoneId == nil then
+					local folder = workspace:FindFirstChild("AnimalPickups")
+					local matching, bestDistance = nil, math.huge
+					for _, candidate in ipairs(folder and folder:GetChildren() or {}) do
+						if candidate:IsA("Model") and candidate:GetAttribute("ZoneId") ~= nil then
+							local sameHatch = identity.HatchId ~= nil and candidate:GetAttribute("HatchId") == identity.HatchId
+							local sameName = identity.HatchId == nil and normaliseAnimalName(candidate:GetAttribute("AnimalName")) == normaliseAnimalName(identity.Name)
+							if sameHatch or sameName then
+								local distance = (animalPosition(candidate) - root.Position).Magnitude
+								if distance < bestDistance then matching, bestDistance = candidate, distance end
+							end
+						end
+					end
+					zoneId = matching and matching:GetAttribute("ZoneId")
+				end
+				local zone
+				if zoneId ~= nil then
+					local number = tostring(zoneId):match("(%d+)$")
+					zone = number and ("โซนที่ " .. number) or tostring(zoneId)
+				else
+					zone = zoneOfPosition(root.Position)
+				end
+				if not zone then error("ไม่พบโซนของสัตว์ที่ถืออยู่") end
+				local destination = State.FindMoney and Finder.MoneyDestination or Finder.BuffDestination
+				if State.FindBuff and Finder.BuffDestination == "จุด AFK" then destination = "จุด AFK" end
+				deliverAnimal(identity, destination, true, zone)
+			else
+				carrySince = nil
+			end
+		end)
+		if not ok then finderSay("รับช่วงสัตว์ที่ถืออยู่ไม่สำเร็จ " .. tostring(err)) end
+		task.wait(0.25)
+	end
+end)
+
+task.spawn(function()
+	while gui.Parent do
+		-- รอผ่านขั้นเตรียมและวาร์ปจนถึงโซนที่เลือกจริงก่อนเปิดหาตัวต่อ
+		local zone = activeZone()
+		local ready = State.Garden and Garden.ReadyZone == zone
+			or (not State.Garden and State.AutoFarm and State.ReadyZone == zone)
+		local inFarmZone = ready and isNearZone(zone)
+		if finderResume and not State.Closed and not State.DeliveryBusy and inFarmZone then
+			local resume = finderResume
+			finderResume = nil
+			if resume.Money then moneyToggle.Set(true) end
+			if resume.Buff then buffToggle.Set(true) end
+			if resume.Gems and not State.Garden then gemToggle.Set(true) end
+			say("ถึง " .. zone .. " แล้ว เปิดหาตัวต่อ")
+		end
+		if (State.FindMoney or State.FindBuff) and not State.DeliveryBusy and inFarmZone and not isCarrying() then
+			local ok, err = pcall(function()
+				local candidate, destination = chooseAnimal()
+				if candidate then deliverAnimal(candidate.Animal, destination)
+				else pcall(function() finderStatus.Text = "สถานะหาตัว รอสัตว์ที่ตรงเงื่อนไข" end) end
+			end)
+			if not ok then finderSay("ตรวจหาสัตว์ไม่สำเร็จ " .. tostring(err)) end
+		end
+		task.wait(0.5)
+	end
+end)
+
+-- 3) สวน
+do
+	local gardenPage = addTab("สวน")
+	local gardenEggPicker, lastGardenEggList
+	local function refreshGardenEggList()
+		if not gardenEggPicker then return end
+		Garden.Progress() -- เก็บจำนวนตำแหน่งตั้งแต่หน้า UI ยังไม่เริ่มทำสวน
+		local list = eggTypesOf(Garden.Zone)
+		local key = table.concat(list, "|")
+		if key ~= lastGardenEggList then
+			lastGardenEggList = key
+			gardenEggPicker.SetOptions(list)
+		end
+		-- รายชื่ออาจว่างชั่วคราวระหว่างเกิดใหม่ จึงเก็บชนิดไข่ที่เลือกไว้
+	end
+	makeDropdown(gardenPage, "เลือกโซน", CONFIG.ZoneOrder, Garden.Zone, function(zone)
+		if Garden.Zone == zone then return end
+		Garden.Zone, Garden.Egg, Garden.ReadyZone = zone, nil, nil
+		gardenToggle.Set(false)
+		gardenEggPicker.Set(nil, true)
+		refreshGardenEggList()
+	end)
+	gardenEggPicker = makeDropdown(gardenPage, "เลือกไข่", {}, Garden.Egg, function(egg)
+		Garden.Egg = egg
+	end)
+	local gardenHPNote
+	local function updateGardenHP(text)
+		Garden.MinHP = parseMoney(text) or 0
+		if gardenHPNote then gardenHPNote.Text = "ขั้นต่ำ " .. string.format("%.6g", Garden.MinHP) .. " HP (0 = ทุกน้ำหนัก)" end
+	end
+	local gardenHPBox = makeTextBox(gardenPage, "น้ำหนักขั้นต่ำ (HP)", "", updateGardenHP)
+	gardenHPNote = makeNote(gardenPage, "ขั้นต่ำ 0 HP (0 = ทุกน้ำหนัก)")
+	gardenHPBox:GetPropertyChangedSignal("Text"):Connect(function() updateGardenHP(gardenHPBox.Text) end)
+	gardenToggle = makeToggle(gardenPage, "เริ่มทำสวน", false, Callbacks.Garden)
+	Garden.Status = makeNote(gardenPage, "ตรง 0/0 ฟอง")
+	refreshGardenEggList()
+	task.spawn(function()
+		while gui.Parent do
+			refreshGardenEggList()
+			task.wait(1.5)
+		end
+	end)
+
+end
+
+-- 4) เพิ่ม FPS
+local fpsPage = addTab("เพิ่ม FPS")
+makeToggle(fpsPage, "ลดกราฟิก (เพิ่ม FPS)", fps.saved.boost, Callbacks.FpsBoost)
+makeToggle(fpsPage, "ปลดล็อก FPS", fps.saved.unlock, Callbacks.UnlockFps)
+if type(setfpscap) ~= "function" then
+	makeNote(fpsPage, "* ตัวรันนี้ไม่รองรับ setfpscap จึงปลดล็อก FPS ไม่ได้")
+end
+fps.start(makeNote(fpsPage, "FPS: 0"))
+
+selectTab(tabs[1])
+
+---------------------------------------------------------------------
+-- Drag + hotkey
+---------------------------------------------------------------------
+-- ทำให้ลากได้ คืนค่าฟังก์ชันเช็กว่าเพิ่งลากไปหรือเปล่า (กันกดติดตอนลากเสร็จ)
+local function makeDraggable(frame)
+	local dragging, dragStart, startPos, moved
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragging, dragStart, startPos, moved = true, input.Position, frame.Position, false
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then dragging = false end
+			end)
+		end
+	end)
+	UIS.InputChanged:Connect(function(input)
+		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch) then
+			local d = input.Position - dragStart
+			if d.Magnitude > 4 then moved = true end
+			frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+		end
+	end)
+	return function() return moved end
+end
+
+makeDraggable(main)
+local floatMoved = makeDraggable(floatLogo)
+
+logo.MouseButton1Click:Connect(function() setMinimized(true) end)
+floatLogo.MouseButton1Click:Connect(function()
+	if not floatMoved() then setMinimized(false) end
+end)
+
+UIS.InputBegan:Connect(function(input, processed)
+	if not processed and input.KeyCode == CONFIG.ToggleKey then
+		setMinimized(main.Visible)
+	end
+end)
